@@ -13,7 +13,6 @@
   <ItemGroup>
     <Folder Include="Ultils\" />
     <Folder Include="Services\" />
-    <Folder Include="UseCase\" />
   </ItemGroup>
 
 </Project>
