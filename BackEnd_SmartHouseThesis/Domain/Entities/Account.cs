@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public  class Users :BaseEntity 
+    public  class Account :BaseEntity 
     {
         public string? UserName { get; set; }
         [JsonIgnore]
@@ -17,6 +18,11 @@ namespace Domain.Entities
         public string? Address { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
-        public string? Role { get; set; }
+        //
+        [ForeignKey(nameof(RoleId))]
+        public Guid? RoleId { get; set; }
+        public virtual Role? Role { get; set; }
+        //
+        public ICollection<Constract> Constracts { get; set; }
     }
 }

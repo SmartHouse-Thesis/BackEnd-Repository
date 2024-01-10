@@ -9,6 +9,6 @@ namespace Application.UseCase
 {
     public interface UserService
     {
-         Task<bool> RegisterAccount(Users user);
+         Task<bool> RegisterAccount(Account user);
     }
 }
