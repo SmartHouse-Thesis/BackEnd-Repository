@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public  class Promotion :BaseEntity 
+    public class Survey :BaseEntity
     {
-        public decimal? Discount { get; set; }
+        public string? Description { get; set; }
+        public string? Note { get; set; }
+        
     }
 }

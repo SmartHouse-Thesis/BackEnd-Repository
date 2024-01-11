@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public  class Promotion :BaseEntity 
+    public class WarrantyReport : BaseEntity
     {
-        public decimal? Discount { get; set; }
     }
 }

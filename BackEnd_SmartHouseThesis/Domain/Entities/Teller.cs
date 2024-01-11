@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class Customer : BaseEntity
+    public class Teller : BaseEntity
     {
         public string? UserName { get; set; }
         [JsonIgnore]

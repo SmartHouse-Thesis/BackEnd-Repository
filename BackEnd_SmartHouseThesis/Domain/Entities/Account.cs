@@ -20,7 +20,11 @@ namespace Domain.Entities
         public string? LastName { get; set; }
 
         public bool? Status { get; set; }
-        public bool? isLeader { get;set; }
+        //
+        [ForeignKey(nameof(RoleId))]
+        public Guid? RoleId { get; set; }
+        public virtual Role Role { get; set; }
+        //
 
     }
 }

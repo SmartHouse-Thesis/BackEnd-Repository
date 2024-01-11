@@ -18,6 +18,8 @@ namespace Domain
         public bool? IsDelete { get; set; }
         public DateTime? DeletionDate { get; set; }
         public Guid? DeletedBy { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set;}
 
     }
 }

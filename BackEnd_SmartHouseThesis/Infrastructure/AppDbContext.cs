@@ -24,7 +24,7 @@ namespace Infrastructure
         public DbSet<Promotion> Promotion { get; set; } = null!;
         public DbSet<Role> Role { get; set; } = null!;
         public DbSet<Package> ServicePack { get; set; } = null!;
-        public DbSet<Warranty> Warranty { get; set; } = null!;
+        public DbSet<WarrantyReport> WarrantyReports { get; set; } = null!;
         public DbSet<Payment> Payment { get; set; } = null!;
         public DbSet<Image> Image { get; set; } = null!;
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
