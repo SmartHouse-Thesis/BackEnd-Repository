@@ -13,8 +13,23 @@ namespace Domain.Entities
         public string? Description { get; set; }
         public decimal? TotalCost { get; set; }
         public int? Status { get; set; }
-        
         public string? ImageFile { get; set; }
+
+        public ICollection<Payment> Payments { get; set; }
+
+        public ICollection<Package> Packages { get; set; }
+
+        [ForeignKey(nameof(CustomerId))]
+        public Guid? CustomerId { get; set; }
+        public virtual Customer Customer { get; set; }
+
+        [ForeignKey(nameof(TellerId))]
+        public Guid? TellerId { get; set; }
+        public virtual Teller Teller { get; set; }
+
+        [ForeignKey(nameof(RenevueId))]
+        public Guid? RenevueId { get; set; }
+        public virtual Revenue Revenue { get; set; }
 
 
     }

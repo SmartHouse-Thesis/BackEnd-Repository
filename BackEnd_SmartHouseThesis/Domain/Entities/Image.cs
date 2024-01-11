@@ -11,6 +11,10 @@ namespace Domain.Entities
     {
         public string? Data { get; set; }
 
+
+        [ForeignKey(nameof(DeviceId))]
+        public Guid? DeviceId { get; set; }
+        public virtual Device Device { get; set; }
         
     }
 }

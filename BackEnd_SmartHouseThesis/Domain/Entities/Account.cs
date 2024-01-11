@@ -18,13 +18,31 @@ namespace Domain.Entities
         public string? Address { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
-
-        public bool? Status { get; set; }
         //
         [ForeignKey(nameof(RoleId))]
         public Guid? RoleId { get; set; }
         public virtual Role Role { get; set; }
+
+        //
+        [ForeignKey(nameof(StaffId))]
+        public Guid? StaffId { get; set; }
+        public virtual Staff Staff { get; set; }
+
+        [ForeignKey(nameof(CustomerId))]
+        public Guid? CustomerId { get; set; }
+        public virtual Customer Customer { get; set; }
+
+
+        [ForeignKey(nameof(OwnerId))]
+        public Guid? OwnerId { get; set; }
+        public virtual Owner Owner { get; set; }
+
+
+        [ForeignKey(nameof(TellerId))]
+        public Guid? TellerId { get; set; }
+        public virtual Teller Teller { get; set; }
         //
 
+        public ICollection<Survey> Surveys { get; set; }  
     }
 }

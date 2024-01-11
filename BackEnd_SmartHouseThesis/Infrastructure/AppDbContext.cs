@@ -18,15 +18,26 @@ namespace Infrastructure
         {
             this.ChangeTracker.LazyLoadingEnabled = false;
         }
+        public DbSet<Acceptance> Acceptances { get; set; } = null!;
         public DbSet<Account> Accounts { get; set; } = null!;
+        public DbSet<Chat> Chats { get; set; } = null!;
         public DbSet<Constract> Constracts { get; set; } = null!;
+        public DbSet<Customer> Customers { get; set; } = null!;
         public DbSet<Device> Device { get; set; } = null!;
-        public DbSet<Promotion> Promotion { get; set; } = null!;
-        public DbSet<Role> Role { get; set; } = null!;
-        public DbSet<Package> ServicePack { get; set; } = null!;
-        public DbSet<WarrantyReport> WarrantyReports { get; set; } = null!;
-        public DbSet<Payment> Payment { get; set; } = null!;
+        public DbSet<Feedback> Feedbacks { get; set; } = null!;
         public DbSet<Image> Image { get; set; } = null!;
+        public DbSet<Owner> Owner { get; set; } = null!;
+        public DbSet<Package> Packages { get; set; } = null!;
+        public DbSet<Payment> Payment { get; set; } = null!;
+        public DbSet<Promotion> Promotion { get; set; } = null!;
+        public DbSet<Request> Requests { get; set; } = null!;
+        public DbSet<Revenue> Revenues { get; set; } = null!;
+        public DbSet<Role> Role { get; set; } = null!;
+        public DbSet<Staff> Staff { get; set; } = null!;
+        public DbSet<Survey> Surveys { get; set; } = null!;
+        public DbSet<Team> Team { get; set; } = null!;
+        public DbSet<Teller> Tellers { get; set; } = null!;
+        public DbSet<WarrantyReport> WarrantyReport { get; set; } = null!;
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             /*if (!optionsBuilder.IsConfigured)
@@ -42,11 +53,33 @@ namespace Infrastructure
                         .GetConnectionString("SmartHomeDB");
 
             optionsBuilder.UseSqlServer(connectionString);
-
         }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Customer>()
+                .HasOne(c => c.Account)
+                 .WithOne(a => a.Customer)
+                .HasForeignKey<Customer>(c => c.Id);
+
+            modelBuilder.Entity<Owner>()
+                .HasOne(c => c.Account)
+                 .WithOne(a => a.Owner)
+                .HasForeignKey<Owner>(c => c.Id);
+
+            modelBuilder.Entity<Staff>()
+                .HasOne(c => c.Account)
+                 .WithOne(a => a.Staff)
+                .HasForeignKey<Staff>(c => c.Id);
+
+            modelBuilder.Entity<Teller>()
+                .HasOne(c => c.Account)
+                 .WithOne(a => a.Teller)
+                .HasForeignKey<Teller>(c => c.Id);
+
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
     }
+
+
 }

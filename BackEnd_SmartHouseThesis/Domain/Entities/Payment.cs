@@ -14,6 +14,12 @@ namespace Domain.Entities
         public decimal? Amount { get; set; }
         public bool? isDeposit { get; set; }
 
-        
+        [ForeignKey(nameof(CustomerId))]
+        public Guid? CustomerId { get; set; }
+        public virtual Customer Customer { get; set; }
+
+        [ForeignKey(nameof(ConstractId))]
+        public Guid? ConstractId { get; set; }
+        public virtual Constract Contract { get; set; }
     }
 }

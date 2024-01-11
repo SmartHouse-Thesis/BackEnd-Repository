@@ -8,6 +8,8 @@ namespace Domain.Entities
 {
     public class Team :BaseEntity
     {
-
+        public Guid? StaffId { get; set; }
+        public Guid? StaffLeadId { get; set; }
+        public ICollection<Staff> Staffs { get; set; } 
     }
 }
