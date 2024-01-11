@@ -13,17 +13,9 @@ namespace Domain.Entities
         public string? Description { get; set; }
         public decimal? TotalCost { get; set; }
         public int? Status { get; set; }
-        //
-        [ForeignKey(nameof(PackageId))]
-        public Guid? PackageId { get; set; }
-        public virtual ServicePack ServicePack { get; set; }
-        //
-        [ForeignKey(nameof(AccountId))]
-        public Guid? AccountId { get; set; }
-        public virtual Account Account { get; set; }
-        //
-        public ICollection<Payment> Payment { get; set; }
-        //
-        public ICollection<Image> Images { get; set; }
+        
+        public string? ImageFile { get; set; }
+
+
     }
 }

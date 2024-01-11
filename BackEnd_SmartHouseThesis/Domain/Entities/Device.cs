@@ -14,15 +14,8 @@ namespace Domain.Entities
         public string? Description { get; set; }
         public decimal? Price { get; set; }
         public int? Quantity { get; set; }
-        public DateTime? Period { get; set; }
-        //
-        public ICollection<ServicePack> ServicePack { get; set; }
-        //
-        public ICollection<Image> Image { get; set; }
-        //
-        [ForeignKey(nameof(WarrantyId))]
-        public Guid? WarrantyId { get; set; }
-        public virtual Warranty Warranty { get; set; }
+        public int? WarrantyTime { get; set;}
+    
 
 
     }

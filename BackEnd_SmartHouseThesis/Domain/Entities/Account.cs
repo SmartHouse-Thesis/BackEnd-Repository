@@ -18,11 +18,9 @@ namespace Domain.Entities
         public string? Address { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
-        //
-        [ForeignKey(nameof(RoleId))]
-        public Guid? RoleId { get; set; }
-        public virtual Role? Role { get; set; }
-        //
-        public ICollection<Constract> Constracts { get; set; }
+
+        public bool? Status { get; set; }
+        public bool? isLeader { get;set; }
+
     }
 }
