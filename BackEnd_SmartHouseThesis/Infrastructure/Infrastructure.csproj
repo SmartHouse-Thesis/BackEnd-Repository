@@ -13,7 +13,6 @@
   <ItemGroup>
     <Folder Include="DAO\" />
     <Folder Include="Mapper\" />
-    <Folder Include="Repositories\" />
   </ItemGroup>
 
   <ItemGroup>
