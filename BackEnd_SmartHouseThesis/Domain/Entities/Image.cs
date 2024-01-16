@@ -11,10 +11,13 @@ namespace Domain.Entities
     {
         public string? Data { get; set; }
 
-
         [ForeignKey(nameof(DeviceId))]
         public Guid? DeviceId { get; set; }
         public virtual Device Device { get; set; }
-        
+
+        [ForeignKey(nameof(PackageId))]
+        public Guid? PackageId { get; set; }
+
+        public virtual Package Package { get; set; }
     }
 }

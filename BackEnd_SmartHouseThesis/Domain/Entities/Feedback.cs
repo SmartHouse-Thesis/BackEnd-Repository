@@ -14,6 +14,7 @@ namespace Domain.Entities
 
         public ICollection<Package> Packages { get; set; }
 
+
         [ForeignKey(nameof(CustomerId))]
         public Guid? CustomerId { get; set; }
         public virtual Customer Customer { get; set; }

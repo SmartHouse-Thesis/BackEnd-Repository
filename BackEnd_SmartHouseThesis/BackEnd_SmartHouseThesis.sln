@@ -3,13 +3,18 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackEnd_SmartHouseThesis", "BackEnd_SmartHouseThesis\BackEnd_SmartHouseThesis.csproj", "{FC72D8B4-DC02-4D74-9702-0308D9565343}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BackEnd_SmartHouseThesis", "BackEnd_SmartHouseThesis\BackEnd_SmartHouseThesis.csproj", "{FC72D8B4-DC02-4D74-9702-0308D9565343}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{2600F4FF-3C3A-42F2-9EED-B24D1541AB63}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{2600F4FF-3C3A-42F2-9EED-B24D1541AB63}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{E1FAD1F1-A010-41B6-94CC-6FD5E6FCEC04}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{E1FAD1F1-A010-41B6-94CC-6FD5E6FCEC04}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{355F144A-7F69-48EE-9BAD-8A17DE8A42E3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "Application\Application.csproj", "{355F144A-7F69-48EE-9BAD-8A17DE8A42E3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C58318D5-D3EC-48A9-87BC-B6C86D70DD49}"
+	ProjectSection(SolutionItems) = preProject
+		Note.txt = Note.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

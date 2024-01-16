@@ -1,0 +1,35 @@
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+dotnet tool list --global
+dotnet tool update --global dotnet-ef --version 6.0.23 
+dotnet tool install --global dotnet-ef --version 6.0.23 
+dotnet tool uninstall --global 
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+dotnet ef migrations add init_1 --project Infrastructure --startup-project BackEnd_SmartHouseThesis
+dotnet ef migrations add init_2 --project Infrastructure --startup-project BackEnd_SmartHouseThesis
+
+dotnet ef database update --project Infrastructure --startup-project BackEnd_SmartHouseThesis
+dotnet ef migrations remove --project Infrastructure --startup-project BackEnd_SmartHouseThesis
+
+dotnet ef migrations list
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+"ConnectionStrings": {
+    "SmartHomeDB": "Server=(local);Uid=sa;Pwd=12345;Database=ISHE_Database"
+  }
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+dotnet add package Microsoft.EntityFrameworkCore.SqlServer –version 5.0.17 6.0.10
+dotnet add package Microsoft.EntityFrameworkCore.Design --version 5.0.17  6.0.10
+dotnet add package Microsoft.EntityFrameworkCore.Tools --version 5.0.17 
+dotnet add package Microsoft.VisualStudio.Web.CodeGeneration.Design 
+
+dotnet add package Microsoft.Extensions.Configuration –version 5.0.0  6.0.1
+dotnet add package Microsoft.Extensions.Configuration.Json –version 5.0.0 6.0.1

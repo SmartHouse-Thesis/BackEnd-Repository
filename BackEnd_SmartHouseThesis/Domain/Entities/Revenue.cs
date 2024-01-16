@@ -9,7 +9,7 @@ namespace Domain.Entities
 {
     public class Revenue : BaseEntity
     {
-        public decimal? Total { get; set; }
+        public decimal? TotalRevenue { get; set; }
         public int? TotalConstract {  get; set; }
 
         [ForeignKey(nameof(OwnerId))]

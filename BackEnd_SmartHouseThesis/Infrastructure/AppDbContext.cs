@@ -35,7 +35,6 @@ namespace Infrastructure
         public DbSet<Role> Role { get; set; } = null!;
         public DbSet<Staff> Staff { get; set; } = null!;
         public DbSet<Survey> Surveys { get; set; } = null!;
-        public DbSet<Team> Team { get; set; } = null!;
         public DbSet<Teller> Tellers { get; set; } = null!;
         public DbSet<WarrantyReport> WarrantyReport { get; set; } = null!;
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -57,25 +56,73 @@ namespace Infrastructure
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            // one-to-one 
+            //Account - Cus,Owner,Staff,Teller
             modelBuilder.Entity<Customer>()
                 .HasOne(c => c.Account)
                  .WithOne(a => a.Customer)
                 .HasForeignKey<Customer>(c => c.Id);
 
             modelBuilder.Entity<Owner>()
-                .HasOne(c => c.Account)
+                .HasOne(o => o.Account)
                  .WithOne(a => a.Owner)
-                .HasForeignKey<Owner>(c => c.Id);
+                .HasForeignKey<Owner>(o => o.Id);
 
             modelBuilder.Entity<Staff>()
-                .HasOne(c => c.Account)
+                .HasOne(s => s.Account)
                  .WithOne(a => a.Staff)
-                .HasForeignKey<Staff>(c => c.Id);
+                .HasForeignKey<Staff>(s => s.Id);
 
             modelBuilder.Entity<Teller>()
-                .HasOne(c => c.Account)
+                .HasOne(t => t.Account)
                  .WithOne(a => a.Teller)
-                .HasForeignKey<Teller>(c => c.Id);
+                .HasForeignKey<Teller>(t => t.Id);
+
+            //Survey-Request
+            modelBuilder.Entity<Survey>()
+                .HasOne(s => s.Request)
+                 .WithOne(r => r.Survey)
+                .HasForeignKey<Survey>(c => c.RequestId);
+
+            modelBuilder.Entity<Request>()
+               .HasOne(s => s.Survey)
+                .WithOne(r => r.Request)
+               .HasForeignKey<Request>(c => c.SurveyId);
+
+            //Constract-Acceptance
+            modelBuilder.Entity<Constract>()
+                .HasOne(c => c.Acceptance)
+                 .WithOne(a => a.Constract)
+                .HasForeignKey<Constract>(c => c.AcceptanceId);
+
+            modelBuilder.Entity<Acceptance>()
+               .HasOne(a => a.Constract)
+                .WithOne(c => c.Acceptance)
+               .HasForeignKey<Acceptance>(c => c.ConstractId);
+
+            //Package-Image
+            modelBuilder.Entity<Package>()
+                   .HasOne(p => p.Image)
+                   .WithOne(i => i.Package)
+                   .HasForeignKey<Package>(c => c.ImageId);
+
+            modelBuilder.Entity<Image>()
+                .HasOne(i=>i.Package)
+                .WithOne(p=>p.Image)
+                .HasForeignKey<Image>(c => c.PackageId);
+
+            //Acceptance-WarrantyReport
+            /* 
+            modelBuilder.Entity<Acceptance>()
+                .HasOne(a => a.WarrantyReport)
+                .WithOne(w => w.Acceptance)
+                .HasForeignKey<Acceptance>(c => c.WarrantyId);
+
+            modelBuilder.Entity<WarrantyReport>()
+                .HasOne(w => w.Acceptance)
+                .WithOne(a => a.WarrantyReport)
+                .HasForeignKey<WarrantyReport>(c => c.AcceptanceId);*/
 
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }

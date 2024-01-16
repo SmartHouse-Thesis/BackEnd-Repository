@@ -12,8 +12,11 @@ namespace Domain.Entities
         public string? Title { get; set; } 
         public string? Description { get; set; }
         public decimal? TotalCost { get; set; }
-        public int? Status { get; set; }
-        public string? ImageFile { get; set; }
+        public int? Status { get; set; } // trạng thái của Constract: chưa cọc,đặt cọc - scan, lắp đặt, nghiệm thu, xóa 
+        public DateTime? StartPlanDate { get; set; } // ngày lắp đặt
+        public DateTime? EndPlanDate { get; set; } // ngày hoàn thành
+
+        public string? ImageFile { get; set; } // ảnh của hợp đồng
 
         public ICollection<Payment> Payments { get; set; }
 
@@ -27,10 +30,17 @@ namespace Domain.Entities
         public Guid? TellerId { get; set; }
         public virtual Teller Teller { get; set; }
 
-        [ForeignKey(nameof(RenevueId))]
-        public Guid? RenevueId { get; set; }
+        [ForeignKey(nameof(StaffId))]
+        public Guid? StaffId { get; set; }
+        public virtual Staff Staff { get; set; }
+
+        [ForeignKey(nameof(RevenueId))]
+        public Guid? RevenueId { get; set; }
         public virtual Revenue Revenue { get; set; }
 
+        [ForeignKey(nameof(AcceptanceId))]
+        public Guid? AcceptanceId { get; set; }
+        public virtual Acceptance Acceptance { get; set; }
 
     }
 }

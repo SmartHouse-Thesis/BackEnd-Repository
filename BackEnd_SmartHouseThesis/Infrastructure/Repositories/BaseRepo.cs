@@ -23,6 +23,11 @@ namespace Infrastructure.Repositories
             _logger = logger;
         }
 
+        public BaseRepo(AppDbContext dbContext)
+        {
+            this.dbContext = dbContext;
+        }
+
         public IQueryable<T> FindAll(List<string> includes = null)
         {
             try

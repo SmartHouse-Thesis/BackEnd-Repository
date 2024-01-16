@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240111193728_init_1")]
+    [Migration("20240116182532_init_1")]
     partial class init_1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -45,6 +45,9 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("ConstractId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
@@ -57,13 +60,7 @@ namespace Infrastructure.Migrations
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("DeletionDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("DeviceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("EndDate")
+                    b.Property<DateTime?>("EndWarranty")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ImageFile")
@@ -78,17 +75,16 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("ModificationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime?>("StartWarranty")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId");
+                    b.HasIndex("ConstractId")
+                        .IsUnique()
+                        .HasFilter("[ConstractId] IS NOT NULL");
 
-                    b.HasIndex("DeviceId");
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("Acceptances");
                 });
@@ -108,20 +104,11 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("DeletionDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
@@ -138,9 +125,6 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("ModificationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("OwnerId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Password")
                         .HasColumnType("nvarchar(max)");
 
@@ -149,18 +133,6 @@ namespace Infrastructure.Migrations
 
                     b.Property<Guid?>("RoleId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("StaffId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("TellerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -187,12 +159,6 @@ namespace Infrastructure.Migrations
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("DeletionDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
 
@@ -203,9 +169,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("ModificationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("StartDate")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("TellerId")
@@ -226,6 +189,9 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("AcceptanceId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
@@ -238,13 +204,10 @@ namespace Infrastructure.Migrations
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("DeletionDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("EndDate")
+                    b.Property<DateTime?>("EndPlanDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ImageFile")
@@ -259,13 +222,13 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("ModificationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("RenevueId")
+                    b.Property<Guid?>("RevenueId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("RevenueId")
+                    b.Property<Guid?>("StaffId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("StartDate")
+                    b.Property<DateTime?>("StartPlanDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("Status")
@@ -286,6 +249,8 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("RevenueId");
 
+                    b.HasIndex("StaffId");
+
                     b.HasIndex("TellerId");
 
                     b.ToTable("Constracts");
@@ -305,12 +270,6 @@ namespace Infrastructure.Migrations
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("DeletionDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
 
@@ -322,9 +281,6 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("RoleName")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -346,17 +302,11 @@ namespace Infrastructure.Migrations
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("DeletionDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DeviceName")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
@@ -378,9 +328,6 @@ namespace Infrastructure.Migrations
 
                     b.Property<int?>("Quantity")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<int?>("WarrantyTime")
                         .HasColumnType("int");
@@ -413,14 +360,8 @@ namespace Infrastructure.Migrations
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("DeletionDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
@@ -429,9 +370,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("ModificationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("StartDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -459,14 +397,8 @@ namespace Infrastructure.Migrations
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("DeletionDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<Guid?>("DeviceId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
@@ -477,12 +409,16 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("ModificationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
+                    b.Property<Guid?>("PackageId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.HasIndex("DeviceId");
+
+                    b.HasIndex("PackageId")
+                        .IsUnique()
+                        .HasFilter("[PackageId] IS NOT NULL");
 
                     b.ToTable("Image");
                 });
@@ -501,12 +437,6 @@ namespace Infrastructure.Migrations
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("DeletionDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
 
@@ -519,9 +449,6 @@ namespace Infrastructure.Migrations
                     b.Property<string>("RoleName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
-
                     b.HasKey("Id");
 
                     b.ToTable("Owner");
@@ -533,7 +460,7 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ConstractId")
+                    b.Property<Guid?>("ContractId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CreatedBy")
@@ -545,16 +472,13 @@ namespace Infrastructure.Migrations
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("DeletionDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<Guid?>("FeedbackId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ImageId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool?>("IsDelete")
@@ -581,12 +505,9 @@ namespace Infrastructure.Migrations
                     b.Property<decimal?>("PromotionPrice")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("ConstractId");
+                    b.HasIndex("ContractId");
 
                     b.HasIndex("FeedbackId");
 
@@ -606,7 +527,7 @@ namespace Infrastructure.Migrations
                     b.Property<decimal?>("Amount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid?>("ConstractId")
+                    b.Property<Guid?>("ContractId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CreatedBy")
@@ -621,11 +542,8 @@ namespace Infrastructure.Migrations
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("DeletionDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
@@ -636,21 +554,21 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("ModificationDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("PaymentDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("PaymentName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PaymentType")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<bool?>("isDeposit")
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ConstractId");
+                    b.HasIndex("ContractId");
 
                     b.HasIndex("CustomerId");
 
@@ -672,14 +590,8 @@ namespace Infrastructure.Migrations
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("DeletionDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<decimal?>("Discount")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
@@ -692,9 +604,6 @@ namespace Infrastructure.Migrations
 
                     b.Property<Guid?>("OwnerId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -721,14 +630,8 @@ namespace Infrastructure.Migrations
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("DeletionDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
@@ -739,12 +642,19 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("ModificationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
+                    b.Property<int?>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("SurveyId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
+
+                    b.HasIndex("SurveyId")
+                        .IsUnique()
+                        .HasFilter("[SurveyId] IS NOT NULL");
 
                     b.ToTable("Requests");
                 });
@@ -764,12 +674,6 @@ namespace Infrastructure.Migrations
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("DeletionDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
 
@@ -782,14 +686,11 @@ namespace Infrastructure.Migrations
                     b.Property<Guid?>("OwnerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal?>("Total")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<int?>("TotalConstract")
                         .HasColumnType("int");
+
+                    b.Property<decimal?>("TotalRevenue")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
@@ -813,12 +714,6 @@ namespace Infrastructure.Migrations
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("DeletionDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
 
@@ -830,9 +725,6 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("RoleName")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -853,14 +745,11 @@ namespace Infrastructure.Migrations
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("DeletionDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
+
+                    b.Property<Guid?>("ManageId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("ModificationBy")
                         .HasColumnType("uniqueidentifier");
@@ -871,18 +760,10 @@ namespace Infrastructure.Migrations
                     b.Property<string>("RoleName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("TeamId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<bool?>("isLeader")
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TeamId");
 
                     b.ToTable("Staff");
                 });
@@ -905,14 +786,8 @@ namespace Infrastructure.Migrations
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("DeletionDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
@@ -926,63 +801,25 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("RecommendPacket")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("RequestId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
+                    b.Property<decimal?>("RoomArea")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid?>("StaffId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AccountId");
 
-                    b.HasIndex("RequestId");
+                    b.HasIndex("StaffId");
 
                     b.ToTable("Surveys");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Team", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("CreationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("DeletedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("DeletionDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool?>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid?>("ModificationBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("ModificationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("StaffId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("StaffLeadId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Team");
                 });
 
             modelBuilder.Entity("Domain.Entities.Teller", b =>
@@ -999,12 +836,6 @@ namespace Infrastructure.Migrations
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("DeletionDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
 
@@ -1017,9 +848,6 @@ namespace Infrastructure.Migrations
                     b.Property<string>("RoleName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
-
                     b.HasKey("Id");
 
                     b.ToTable("Tellers");
@@ -1031,6 +859,9 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("AcceptanceId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
@@ -1040,14 +871,11 @@ namespace Infrastructure.Migrations
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("DeletionDate")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("DeviceId")
+                    b.Property<Guid>("DeviceId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("ImageFile")
                         .HasColumnType("nvarchar(max)");
@@ -1061,16 +889,15 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("ModificationDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("ResolveDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid?>("StaffId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("StartWarranty")
-                        .HasColumnType("datetime2");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("AcceptanceId");
 
                     b.HasIndex("DeviceId");
 
@@ -1096,17 +923,17 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Acceptance", b =>
                 {
+                    b.HasOne("Domain.Entities.Constract", "Constract")
+                        .WithOne("Acceptance")
+                        .HasForeignKey("Domain.Entities.Acceptance", "ConstractId");
+
                     b.HasOne("Domain.Entities.Customer", "Customer")
                         .WithMany("Acceptances")
                         .HasForeignKey("CustomerId");
 
-                    b.HasOne("Domain.Entities.Device", "Device")
-                        .WithMany("Acceptances")
-                        .HasForeignKey("DeviceId");
+                    b.Navigation("Constract");
 
                     b.Navigation("Customer");
-
-                    b.Navigation("Device");
                 });
 
             modelBuilder.Entity("Domain.Entities.Account", b =>
@@ -1136,14 +963,16 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Constract", b =>
                 {
                     b.HasOne("Domain.Entities.Customer", "Customer")
-                        .WithMany()
+                        .WithMany("Constracts")
                         .HasForeignKey("CustomerId");
 
                     b.HasOne("Domain.Entities.Revenue", "Revenue")
                         .WithMany("Constracts")
-                        .HasForeignKey("RevenueId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RevenueId");
+
+                    b.HasOne("Domain.Entities.Staff", "Staff")
+                        .WithMany("Constracts")
+                        .HasForeignKey("StaffId");
 
                     b.HasOne("Domain.Entities.Teller", "Teller")
                         .WithMany("Constracts")
@@ -1152,6 +981,8 @@ namespace Infrastructure.Migrations
                     b.Navigation("Customer");
 
                     b.Navigation("Revenue");
+
+                    b.Navigation("Staff");
 
                     b.Navigation("Teller");
                 });
@@ -1191,7 +1022,13 @@ namespace Infrastructure.Migrations
                         .WithMany("Images")
                         .HasForeignKey("DeviceId");
 
+                    b.HasOne("Domain.Entities.Package", "Package")
+                        .WithOne("Image")
+                        .HasForeignKey("Domain.Entities.Image", "PackageId");
+
                     b.Navigation("Device");
+
+                    b.Navigation("Package");
                 });
 
             modelBuilder.Entity("Domain.Entities.Owner", b =>
@@ -1209,7 +1046,7 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Domain.Entities.Constract", "Contract")
                         .WithMany("Packages")
-                        .HasForeignKey("ConstractId");
+                        .HasForeignKey("ContractId");
 
                     b.HasOne("Domain.Entities.Feedback", "Feedback")
                         .WithMany("Packages")
@@ -1236,7 +1073,7 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Domain.Entities.Constract", "Contract")
                         .WithMany("Payments")
-                        .HasForeignKey("ConstractId");
+                        .HasForeignKey("ContractId");
 
                     b.HasOne("Domain.Entities.Customer", "Customer")
                         .WithMany("Payments")
@@ -1262,7 +1099,13 @@ namespace Infrastructure.Migrations
                         .WithMany("Requests")
                         .HasForeignKey("CustomerId");
 
+                    b.HasOne("Domain.Entities.Survey", "Survey")
+                        .WithOne("Request")
+                        .HasForeignKey("Domain.Entities.Request", "SurveyId");
+
                     b.Navigation("Customer");
+
+                    b.Navigation("Survey");
                 });
 
             modelBuilder.Entity("Domain.Entities.Revenue", b =>
@@ -1282,28 +1125,20 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Team", "Team")
-                        .WithMany("Staffs")
-                        .HasForeignKey("TeamId");
-
                     b.Navigation("Account");
-
-                    b.Navigation("Team");
                 });
 
             modelBuilder.Entity("Domain.Entities.Survey", b =>
                 {
-                    b.HasOne("Domain.Entities.Account", "Account")
+                    b.HasOne("Domain.Entities.Account", null)
                         .WithMany("Surveys")
                         .HasForeignKey("AccountId");
 
-                    b.HasOne("Domain.Entities.Request", "Request")
+                    b.HasOne("Domain.Entities.Staff", "Staff")
                         .WithMany("Surveys")
-                        .HasForeignKey("RequestId");
+                        .HasForeignKey("StaffId");
 
-                    b.Navigation("Account");
-
-                    b.Navigation("Request");
+                    b.Navigation("Staff");
                 });
 
             modelBuilder.Entity("Domain.Entities.Teller", b =>
@@ -1319,13 +1154,21 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.WarrantyReport", b =>
                 {
+                    b.HasOne("Domain.Entities.Acceptance", "Acceptance")
+                        .WithMany()
+                        .HasForeignKey("AcceptanceId");
+
                     b.HasOne("Domain.Entities.Device", "Device")
                         .WithMany("WarrantyReports")
-                        .HasForeignKey("DeviceId");
+                        .HasForeignKey("DeviceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Domain.Entities.Staff", "Staff")
                         .WithMany("WarrantyReports")
                         .HasForeignKey("StaffId");
+
+                    b.Navigation("Acceptance");
 
                     b.Navigation("Device");
 
@@ -1351,6 +1194,9 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Constract", b =>
                 {
+                    b.Navigation("Acceptance")
+                        .IsRequired();
+
                     b.Navigation("Packages");
 
                     b.Navigation("Payments");
@@ -1362,6 +1208,8 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("Chats");
 
+                    b.Navigation("Constracts");
+
                     b.Navigation("Feedbacks");
 
                     b.Navigation("Payments");
@@ -1371,8 +1219,6 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Device", b =>
                 {
-                    b.Navigation("Acceptances");
-
                     b.Navigation("Images");
 
                     b.Navigation("WarrantyReports");
@@ -1394,14 +1240,15 @@ namespace Infrastructure.Migrations
                     b.Navigation("Revenue");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Package", b =>
+                {
+                    b.Navigation("Image")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Domain.Entities.Promotion", b =>
                 {
                     b.Navigation("Packages");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Request", b =>
-                {
-                    b.Navigation("Surveys");
                 });
 
             modelBuilder.Entity("Domain.Entities.Revenue", b =>
@@ -1416,12 +1263,17 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Staff", b =>
                 {
+                    b.Navigation("Constracts");
+
+                    b.Navigation("Surveys");
+
                     b.Navigation("WarrantyReports");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Team", b =>
+            modelBuilder.Entity("Domain.Entities.Survey", b =>
                 {
-                    b.Navigation("Staffs");
+                    b.Navigation("Request")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Entities.Teller", b =>

@@ -21,9 +21,8 @@ namespace Domain.Entities
         public ICollection<Package> Packages { get; set; }
         public ICollection<WarrantyReport> WarrantyReports { get; set; }
 
-        public ICollection<Acceptance> Acceptances { get; set; }
 
-       // [ForeignKey(nameof(OwnerId))]
+        [ForeignKey(nameof(OwnerId))]
         public Guid? OwnerId { get; set; }
         public virtual Owner Owner { get; set; }
 

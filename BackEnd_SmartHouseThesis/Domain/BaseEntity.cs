@@ -11,15 +11,13 @@ namespace Domain
     {
         [Key]
         public Guid Id { get; set; }
-        public DateTime? CreationDate { get; set; }
-        public Guid? CreatedBy { get; set; }
-        public DateTime? ModificationDate { get; set; }
-        public Guid? ModificationBy { get; set; }
-        public bool? IsDelete { get; set; }
-        public DateTime? DeletionDate { get; set; }
-        public Guid? DeletedBy { get; set; }
-        public DateTime? StartDate { get; set; }
-        public DateTime? EndDate { get; set;}
+        public DateTime? CreationDate { get; set; } //ngày tạo 
+        public Guid? CreatedBy { get; set; } // tạo bởi ai 
+        public DateTime? ModificationDate { get; set; } // ngày chỉnh sửa
+        public Guid? ModificationBy { get; set; } // chỉnh bởi ai
+        public bool? IsDelete { get; set; } // xóaStatus
+        public Guid? DeletedBy { get; set; } //xóa bởi ai 
+         
 
     }
 }

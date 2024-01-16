@@ -11,16 +11,16 @@ namespace Domain.Entities
     public class Staff : BaseEntity
     {
         public bool? isLeader { get; set; }
+        public Guid? ManageId { get; set; } //id của staffLead (dành cho các Staff thường)
+        
         public string? RoleName { get; set; }
         /*[ForeignKey(nameof(AccountId))]
         public Guid? AccountId { get; set; } */
+
+
         public virtual Account Account { get; set; }
-
-        [ForeignKey(nameof(TeamId))]
-        public Guid? TeamId { get; set; }
-        public virtual Team Team { get; set; }
-
         public ICollection<WarrantyReport> WarrantyReports { get; set; }
-
+        public ICollection<Constract> Constracts { get; set; }
+        public ICollection<Survey> Surveys { get; set; }  
     }
 }

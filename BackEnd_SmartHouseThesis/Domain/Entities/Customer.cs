@@ -10,12 +10,9 @@ namespace Domain.Entities
 {
     public class Customer : BaseEntity 
     {
-        /* [ForeignKey(nameof(AccountId))]
-         public Guid? AccountId { get; set; } */
+        public string? RoleName { get; set; }
         public virtual Account Account { get; set; }
-
-        public string? RoleName { get; set; } 
-
+        public ICollection<Constract> Constracts { get; set; }
         public ICollection<Chat> Chats { get; set; }
         
         public ICollection<Payment> Payments { get; set; }

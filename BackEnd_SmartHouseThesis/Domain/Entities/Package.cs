@@ -25,12 +25,17 @@ namespace Domain.Entities
         public Guid? PromotionId { get; set; }
         public virtual Promotion Promotion { get; set; }
 
-        [ForeignKey(nameof(ConstractId))]
-        public Guid? ConstractId { get; set; }
+        [ForeignKey(nameof(ContractId))]
+        public Guid? ContractId { get; set; }
         public virtual Constract Contract { get; set; }
 
         [ForeignKey(nameof(FeedbackId))]
         public Guid? FeedbackId { get; set; }
         public virtual Feedback Feedback { get; set; }
+
+
+        [ForeignKey(nameof(ImageId))]
+        public Guid? ImageId { get; set; }
+        public virtual Image Image { get; set; }
     }
 }
