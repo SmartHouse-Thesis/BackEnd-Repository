@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
-    public class ManufactureRepository : BaseRepo<Manufacture>
+    public class ManufactureRepository : BaseRepo<Manufacturer>
     {
         public ManufactureRepository(AppDbContext dbContext) : base(dbContext)
         {

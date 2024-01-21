@@ -13,10 +13,10 @@ dotnet ef migrations add init_1 --project Infrastructure --startup-project BackE
 dotnet ef migrations add init_2 --project Infrastructure --startup-project BackEnd_SmartHouseThesis
 
 dotnet ef database update --project Infrastructure --startup-project BackEnd_SmartHouseThesis
+dotnet ef database drop -f --project Infrastructure --startup-project BackEnd_SmartHouseThesis
 dotnet ef migrations remove --project Infrastructure --startup-project BackEnd_SmartHouseThesis
 
 dotnet ef migrations list
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 

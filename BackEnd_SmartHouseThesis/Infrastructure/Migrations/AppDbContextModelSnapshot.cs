@@ -43,7 +43,7 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ConstractId")
+                    b.Property<Guid?>("ContractId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CreatedBy")
@@ -57,9 +57,6 @@ namespace Infrastructure.Migrations
 
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("EndWarranty")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("ImageFile")
                         .HasColumnType("nvarchar(max)");
@@ -78,9 +75,9 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ConstractId")
+                    b.HasIndex("ContractId")
                         .IsUnique()
-                        .HasFilter("[ConstractId] IS NOT NULL");
+                        .HasFilter("[ContractId] IS NOT NULL");
 
                     b.HasIndex("CustomerId");
 
@@ -181,7 +178,7 @@ namespace Infrastructure.Migrations
                     b.ToTable("Chats");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Constract", b =>
+            modelBuilder.Entity("Domain.Entities.Contract", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -306,11 +303,14 @@ namespace Infrastructure.Migrations
                     b.Property<string>("DeviceName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("DeviceType")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Manufacturer")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid?>("ManufacturerId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("ModificationBy")
                         .HasColumnType("uniqueidentifier");
@@ -318,19 +318,20 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("ModificationDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("OrderId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("OwnerId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal?>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WarrantyTime")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("ManufacturerId");
+
+                    b.HasIndex("OrderId");
 
                     b.HasIndex("OwnerId");
 
@@ -421,6 +422,140 @@ namespace Infrastructure.Migrations
                     b.ToTable("Image");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Manufacturer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool?>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("ModificationBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModificationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("PackageId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PackageId")
+                        .IsUnique()
+                        .HasFilter("[PackageId] IS NOT NULL");
+
+                    b.ToTable("Manufacturer");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Order", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ConstructEndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ConstructStartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool?>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("ModificationBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModificationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("PaymentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("StaffId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("TotalAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("PaymentId");
+
+                    b.HasIndex("StaffId");
+
+                    b.ToTable("Order");
+                });
+
+            modelBuilder.Entity("Domain.Entities.OrderDetail", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("DeviceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool?>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("ModificationBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModificationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeviceId");
+
+                    b.ToTable("OrderDetail");
+                });
+
             modelBuilder.Entity("Domain.Entities.Owner", b =>
                 {
                     b.Property<Guid>("Id")
@@ -482,6 +617,9 @@ namespace Infrastructure.Migrations
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
 
+                    b.Property<Guid?>("ManufacturerId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("ModificationBy")
                         .HasColumnType("uniqueidentifier");
 
@@ -493,6 +631,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("PackageName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("PolicyId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal?>("Price")
                         .HasColumnType("decimal(18,2)");
@@ -573,6 +714,53 @@ namespace Infrastructure.Migrations
                     b.ToTable("Payment");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Policy", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool?>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("ModificationBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModificationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("OwnerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("PackageId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OwnerId");
+
+                    b.HasIndex("PackageId")
+                        .IsUnique()
+                        .HasFilter("[PackageId] IS NOT NULL");
+
+                    b.ToTable("Policy");
+                });
+
             modelBuilder.Entity("Domain.Entities.Promotion", b =>
                 {
                     b.Property<Guid>("Id")
@@ -591,6 +779,9 @@ namespace Infrastructure.Migrations
                     b.Property<decimal?>("Discount")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
 
@@ -602,6 +793,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<Guid?>("OwnerId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -772,9 +966,6 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AccountId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
@@ -796,9 +987,6 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("ModificationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Note")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<Guid?>("RecommendPacket")
                         .HasColumnType("uniqueidentifier");
 
@@ -812,8 +1000,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AccountId");
 
                     b.HasIndex("StaffId");
 
@@ -837,6 +1023,9 @@ namespace Infrastructure.Migrations
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
 
+                    b.Property<Guid?>("ManufacturerId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("ModificationBy")
                         .HasColumnType("uniqueidentifier");
 
@@ -848,55 +1037,9 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ManufacturerId");
+
                     b.ToTable("Tellers");
-                });
-
-            modelBuilder.Entity("Domain.Entities.WarrantyReport", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("CreationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("DeletedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("DeviceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ImageFile")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool?>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid?>("ModificationBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("ModificationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("ResolveDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("StaffId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DeviceId");
-
-                    b.HasIndex("StaffId");
-
-                    b.ToTable("WarrantyReport");
                 });
 
             modelBuilder.Entity("DevicePackage", b =>
@@ -916,15 +1059,15 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Acceptance", b =>
                 {
-                    b.HasOne("Domain.Entities.Constract", "Constract")
+                    b.HasOne("Domain.Entities.Contract", "Contract")
                         .WithOne("Acceptance")
-                        .HasForeignKey("Domain.Entities.Acceptance", "ConstractId");
+                        .HasForeignKey("Domain.Entities.Acceptance", "ContractId");
 
                     b.HasOne("Domain.Entities.Customer", "Customer")
                         .WithMany("Acceptances")
                         .HasForeignKey("CustomerId");
 
-                    b.Navigation("Constract");
+                    b.Navigation("Contract");
 
                     b.Navigation("Customer");
                 });
@@ -953,22 +1096,22 @@ namespace Infrastructure.Migrations
                     b.Navigation("Teller");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Constract", b =>
+            modelBuilder.Entity("Domain.Entities.Contract", b =>
                 {
                     b.HasOne("Domain.Entities.Customer", "Customer")
-                        .WithMany("Constracts")
+                        .WithMany("Contracts")
                         .HasForeignKey("CustomerId");
 
                     b.HasOne("Domain.Entities.Revenue", "Revenue")
-                        .WithMany("Constracts")
+                        .WithMany("Contracts")
                         .HasForeignKey("RevenueId");
 
                     b.HasOne("Domain.Entities.Staff", "Staff")
-                        .WithMany("Constracts")
+                        .WithMany("Contracts")
                         .HasForeignKey("StaffId");
 
                     b.HasOne("Domain.Entities.Teller", "Teller")
-                        .WithMany("Constracts")
+                        .WithMany("Contracts")
                         .HasForeignKey("TellerId");
 
                     b.Navigation("Customer");
@@ -993,9 +1136,21 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Device", b =>
                 {
+                    b.HasOne("Domain.Entities.Manufacturer", "Manufacturer")
+                        .WithMany("Devices")
+                        .HasForeignKey("ManufacturerId");
+
+                    b.HasOne("Domain.Entities.Order", "Order")
+                        .WithMany("Devices")
+                        .HasForeignKey("OrderId");
+
                     b.HasOne("Domain.Entities.Owner", "Owner")
                         .WithMany("Devices")
                         .HasForeignKey("OwnerId");
+
+                    b.Navigation("Manufacturer");
+
+                    b.Navigation("Order");
 
                     b.Navigation("Owner");
                 });
@@ -1024,6 +1179,53 @@ namespace Infrastructure.Migrations
                     b.Navigation("Package");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Manufacturer", b =>
+                {
+                    b.HasOne("Domain.Entities.Package", "Package")
+                        .WithOne("Manufacturer")
+                        .HasForeignKey("Domain.Entities.Manufacturer", "PackageId");
+
+                    b.Navigation("Package");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Order", b =>
+                {
+                    b.HasOne("Domain.Entities.Customer", "Customer")
+                        .WithMany("Orders")
+                        .HasForeignKey("CustomerId");
+
+                    b.HasOne("Domain.Entities.Payment", "Payment")
+                        .WithMany("Orders")
+                        .HasForeignKey("PaymentId");
+
+                    b.HasOne("Domain.Entities.Staff", "Staff")
+                        .WithMany("Orders")
+                        .HasForeignKey("StaffId");
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Payment");
+
+                    b.Navigation("Staff");
+                });
+
+            modelBuilder.Entity("Domain.Entities.OrderDetail", b =>
+                {
+                    b.HasOne("Domain.Entities.Device", "Device")
+                        .WithMany("OrderDetails")
+                        .HasForeignKey("DeviceId");
+
+                    b.HasOne("Domain.Entities.Order", "Order")
+                        .WithOne("OrderDetail")
+                        .HasForeignKey("Domain.Entities.OrderDetail", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Device");
+
+                    b.Navigation("Order");
+                });
+
             modelBuilder.Entity("Domain.Entities.Owner", b =>
                 {
                     b.HasOne("Domain.Entities.Account", "Account")
@@ -1037,7 +1239,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Package", b =>
                 {
-                    b.HasOne("Domain.Entities.Constract", "Contract")
+                    b.HasOne("Domain.Entities.Contract", "Contract")
                         .WithMany("Packages")
                         .HasForeignKey("ContractId");
 
@@ -1064,7 +1266,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Payment", b =>
                 {
-                    b.HasOne("Domain.Entities.Constract", "Contract")
+                    b.HasOne("Domain.Entities.Contract", "Contract")
                         .WithMany("Payments")
                         .HasForeignKey("ContractId");
 
@@ -1077,10 +1279,25 @@ namespace Infrastructure.Migrations
                     b.Navigation("Customer");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Policy", b =>
+                {
+                    b.HasOne("Domain.Entities.Owner", "Owner")
+                        .WithMany("Policies")
+                        .HasForeignKey("OwnerId");
+
+                    b.HasOne("Domain.Entities.Package", "Package")
+                        .WithOne("Policy")
+                        .HasForeignKey("Domain.Entities.Policy", "PackageId");
+
+                    b.Navigation("Owner");
+
+                    b.Navigation("Package");
+                });
+
             modelBuilder.Entity("Domain.Entities.Promotion", b =>
                 {
                     b.HasOne("Domain.Entities.Owner", "Owner")
-                        .WithMany("Promotion")
+                        .WithMany("Promotions")
                         .HasForeignKey("OwnerId");
 
                     b.Navigation("Owner");
@@ -1104,7 +1321,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Revenue", b =>
                 {
                     b.HasOne("Domain.Entities.Owner", "Owner")
-                        .WithMany("Revenue")
+                        .WithMany("Revenues")
                         .HasForeignKey("OwnerId");
 
                     b.Navigation("Owner");
@@ -1123,10 +1340,6 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Survey", b =>
                 {
-                    b.HasOne("Domain.Entities.Account", null)
-                        .WithMany("Surveys")
-                        .HasForeignKey("AccountId");
-
                     b.HasOne("Domain.Entities.Staff", "Staff")
                         .WithMany("Surveys")
                         .HasForeignKey("StaffId");
@@ -1142,24 +1355,13 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Domain.Entities.Manufacturer", "Manufacturer")
+                        .WithMany()
+                        .HasForeignKey("ManufacturerId");
+
                     b.Navigation("Account");
-                });
 
-            modelBuilder.Entity("Domain.Entities.WarrantyReport", b =>
-                {
-                    b.HasOne("Domain.Entities.Device", "Device")
-                        .WithMany("WarrantyReports")
-                        .HasForeignKey("DeviceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Staff", "Staff")
-                        .WithMany("WarrantyReports")
-                        .HasForeignKey("StaffId");
-
-                    b.Navigation("Device");
-
-                    b.Navigation("Staff");
+                    b.Navigation("Manufacturer");
                 });
 
             modelBuilder.Entity("Domain.Entities.Account", b =>
@@ -1173,13 +1375,11 @@ namespace Infrastructure.Migrations
                     b.Navigation("Staff")
                         .IsRequired();
 
-                    b.Navigation("Surveys");
-
                     b.Navigation("Teller")
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.Entities.Constract", b =>
+            modelBuilder.Entity("Domain.Entities.Contract", b =>
                 {
                     b.Navigation("Acceptance")
                         .IsRequired();
@@ -1195,9 +1395,11 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("Chats");
 
-                    b.Navigation("Constracts");
+                    b.Navigation("Contracts");
 
                     b.Navigation("Feedbacks");
+
+                    b.Navigation("Orders");
 
                     b.Navigation("Payments");
 
@@ -1208,12 +1410,25 @@ namespace Infrastructure.Migrations
                 {
                     b.Navigation("Images");
 
-                    b.Navigation("WarrantyReports");
+                    b.Navigation("OrderDetails");
                 });
 
             modelBuilder.Entity("Domain.Entities.Feedback", b =>
                 {
                     b.Navigation("Packages");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Manufacturer", b =>
+                {
+                    b.Navigation("Devices");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Order", b =>
+                {
+                    b.Navigation("Devices");
+
+                    b.Navigation("OrderDetail")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Entities.Owner", b =>
@@ -1222,15 +1437,28 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("Packages");
 
-                    b.Navigation("Promotion");
+                    b.Navigation("Policies");
 
-                    b.Navigation("Revenue");
+                    b.Navigation("Promotions");
+
+                    b.Navigation("Revenues");
                 });
 
             modelBuilder.Entity("Domain.Entities.Package", b =>
                 {
                     b.Navigation("Image")
                         .IsRequired();
+
+                    b.Navigation("Manufacturer")
+                        .IsRequired();
+
+                    b.Navigation("Policy")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Entities.Payment", b =>
+                {
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("Domain.Entities.Promotion", b =>
@@ -1240,7 +1468,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Revenue", b =>
                 {
-                    b.Navigation("Constracts");
+                    b.Navigation("Contracts");
                 });
 
             modelBuilder.Entity("Domain.Entities.Role", b =>
@@ -1250,11 +1478,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Staff", b =>
                 {
-                    b.Navigation("Constracts");
+                    b.Navigation("Contracts");
+
+                    b.Navigation("Orders");
 
                     b.Navigation("Surveys");
-
-                    b.Navigation("WarrantyReports");
                 });
 
             modelBuilder.Entity("Domain.Entities.Survey", b =>
@@ -1267,7 +1495,7 @@ namespace Infrastructure.Migrations
                 {
                     b.Navigation("Chats");
 
-                    b.Navigation("Constracts");
+                    b.Navigation("Contracts");
                 });
 #pragma warning restore 612, 618
         }

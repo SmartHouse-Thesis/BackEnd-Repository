@@ -16,8 +16,8 @@ namespace Domain.Entities
         public Guid? DeviceId { get; set; }
         public virtual Device Device { get; set; }
 
-        [ForeignKey(nameof(OrderId))]
-        public Guid? OrderId { get; set; }
+        /*[ForeignKey(nameof(OrderId))]
+        public Guid? OrderId { get; set; }*/
         public virtual Order Order { get; set; }
     }
 }
