@@ -13,8 +13,6 @@ namespace Domain.Entities
         public decimal? RoomArea { get; set; } 
         public Guid? RecommendPacket { get; set; }
 
-        public string? Note { get; set; }
-
         [ForeignKey(nameof(StaffId))]
         public Guid? StaffId { get; set; }
         public virtual Staff Staff { get; set; }

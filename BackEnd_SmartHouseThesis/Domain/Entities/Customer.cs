@@ -12,7 +12,7 @@ namespace Domain.Entities
     {
         public string? RoleName { get; set; }
         public virtual Account Account { get; set; }
-        public ICollection<Constract> Constracts { get; set; }
+        public ICollection<Contract> Contracts { get; set; }
         public ICollection<Chat> Chats { get; set; }
         
         public ICollection<Payment> Payments { get; set; }
@@ -20,7 +20,7 @@ namespace Domain.Entities
         public ICollection<Feedback> Feedbacks { get; set; }
         public ICollection<Acceptance> Acceptances { get; set; }
         public ICollection<Request > Requests { get; set; } 
-
+        public ICollection<Order> Orders { get; set; }
 
     }
 }

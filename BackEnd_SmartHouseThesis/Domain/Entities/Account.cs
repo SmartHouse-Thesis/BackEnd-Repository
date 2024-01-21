@@ -32,6 +32,5 @@ namespace Domain.Entities
         public virtual Teller Teller { get; set; }
         //
 
-        public ICollection<Survey> Surveys { get; set; }  
     }
 }

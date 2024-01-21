@@ -7,13 +7,14 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public  class Promotion :BaseEntity 
+    public class Policy : BaseEntity
     {
-        public decimal? Discount { get; set; }
-        public DateTime? StartDate { get; set; }
-        public DateTime? EndDate { get; set; }
+        public string? Type { get; set; }
+        public string? Content { get; set; }
 
-        public ICollection<Package> Packages { get; set; }
+        [ForeignKey(nameof(PackageId))]
+        public Guid? PackageId { get; set; }
+        public virtual Package Package { get; set; }
 
         [ForeignKey(nameof(OwnerId))]
         public Guid? OwnerId { get; set; }

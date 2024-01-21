@@ -27,7 +27,7 @@ namespace Domain.Entities
 
         [ForeignKey(nameof(ContractId))]
         public Guid? ContractId { get; set; }
-        public virtual Constract Contract { get; set; }
+        public virtual Contract Contract { get; set; }
 
         [ForeignKey(nameof(FeedbackId))]
         public Guid? FeedbackId { get; set; }
@@ -37,5 +37,13 @@ namespace Domain.Entities
         [ForeignKey(nameof(ImageId))]
         public Guid? ImageId { get; set; }
         public virtual Image Image { get; set; }
+
+        [ForeignKey(nameof(ManufacturerId))]
+        public Guid? ManufacturerId { get; set; }
+        public virtual Manufacturer Manufacturer { get; set; }
+
+        [ForeignKey(nameof(PolicyId))]
+        public Guid? PolicyId { get; set; }
+        public virtual Policy Policy { get; set; }
     }
 }

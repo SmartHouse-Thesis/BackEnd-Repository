@@ -19,8 +19,8 @@ namespace Domain.Entities
 
 
         public virtual Account Account { get; set; }
-        public ICollection<WarrantyReport> WarrantyReports { get; set; }
-        public ICollection<Constract> Constracts { get; set; }
-        public ICollection<Survey> Surveys { get; set; }  
+        public ICollection<Contract> Contracts { get; set; }
+        public ICollection<Survey> Surveys { get; set; }
+        public ICollection<Order> Orders { get; set; }
     }
 }
