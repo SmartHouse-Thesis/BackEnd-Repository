@@ -16,6 +16,6 @@ namespace Domain.Entities
         public Guid? OwnerId { get; set; }
         public virtual Owner Owner { get; set; }
 
-        public ICollection<Constract> Constracts { get; set; }
+        public ICollection<Contract> Contracts { get; set; }
     }
 }

@@ -16,7 +16,8 @@ namespace Domain.Entities
         public string? RoleName { get; set; }
         public ICollection<Device> Devices { get; set; }
         public ICollection<Package> Packages { get; set; }
-        public ICollection<Promotion> Promotion { get; set; }
-        public ICollection<Revenue> Revenue { get; set; } 
+        public ICollection<Promotion> Promotions { get; set; }
+        public ICollection<Revenue> Revenues { get; set; }
+        public ICollection<Policy> Policies { get; set; }
     }
 }

@@ -20,7 +20,7 @@ namespace Domain.Entities
 
         public ICollection<Payment> Payments { get; set; }
 
-        public ICollection<Package> Packages { get; set; }
+        public ICollection<Package> Packages { get; set; }  
 
         [ForeignKey(nameof(CustomerId))]
         public Guid? CustomerId { get; set; }

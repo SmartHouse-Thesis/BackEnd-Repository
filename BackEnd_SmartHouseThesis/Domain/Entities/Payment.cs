@@ -17,12 +17,14 @@ namespace Domain.Entities
         public DateTime? PaymentDate { get; set; } // ngày thanh toán 
         public string? Description { get; set; } // mô tả thanh toán 
 
+        public ICollection<Order> Orders { get; set; }
+
         [ForeignKey(nameof(CustomerId))]
         public Guid? CustomerId { get; set; }
         public virtual Customer Customer { get; set; }
 
         [ForeignKey(nameof(ContractId))]
         public Guid? ContractId { get; set; }
-        public virtual Constract Contract { get; set; }
+        public virtual Contract Contract { get; set; }
     }
 }

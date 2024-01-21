@@ -16,7 +16,11 @@ namespace Domain.Entities
         public virtual Account Account { get; set; }
         public string? RoleName { get; set; }
         public ICollection<Chat> Chats { get; set; }
-        public ICollection<Constract> Constracts { get; set; }
+        public ICollection<Contract> Contracts { get; set; }
+
+        [ForeignKey(nameof(ManufacturerId))]
+        public Guid? ManufacturerId { get; set; }
+        public virtual Manufacturer Manufacturer { get; set; }
 
     }
 }

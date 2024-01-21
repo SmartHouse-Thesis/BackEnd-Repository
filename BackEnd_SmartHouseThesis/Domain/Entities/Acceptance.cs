@@ -10,15 +10,13 @@ namespace Domain.Entities
     public class Acceptance : BaseEntity
     {
 
-        public DateTime? StartWarranty { get; set; } // ngày bắt đầu bảo hành
-        public DateTime? EndWarranty { get; set; } // ngày kết thúc bảo hành 
+        public DateTime? StartWarranty { get; set; } // ngày bắt đầu bảo hành 
         public string? ImageFile { get; set; } // ảnh bảng nghiệm thu
-        
 
         //
-        [ForeignKey(nameof(ConstractId))]
-        public Guid? ConstractId { get; set; }
-        public virtual Constract Constract { get; set; }
+        [ForeignKey(nameof(ContractId))]
+        public Guid? ContractId { get; set; }
+        public virtual Contract Contract { get; set; }
 
 
         //
