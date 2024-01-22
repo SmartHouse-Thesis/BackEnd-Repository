@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BackEnd_SmartHouseThesis")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+750414a77d7abbae733183ad9f4ff9ff59532fd9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
 [assembly: System.Reflection.AssemblyProductAttribute("BackEnd_SmartHouseThesis")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BackEnd_SmartHouseThesis")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

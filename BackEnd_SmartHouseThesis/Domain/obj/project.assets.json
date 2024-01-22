@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\OneDrive - Đại học FPT- FPT University\\Documents\\Chuyên Ngành 9\\Đồ Án\\Project\\BackEnd_SmartHouseThesis\\Domain\\Domain.csproj",
+      "projectUniqueName": "D:\\OneDrive - Đại học FPT- FPT University\\Documents\\Chuyên Ngành 9\\Đồ Án\\BackEnd_repository\\BackEnd_SmartHouseThesis\\Domain\\Domain.csproj",
       "projectName": "Domain",
-      "projectPath": "D:\\OneDrive - Đại học FPT- FPT University\\Documents\\Chuyên Ngành 9\\Đồ Án\\Project\\BackEnd_SmartHouseThesis\\Domain\\Domain.csproj",
+      "projectPath": "D:\\OneDrive - Đại học FPT- FPT University\\Documents\\Chuyên Ngành 9\\Đồ Án\\BackEnd_repository\\BackEnd_SmartHouseThesis\\Domain\\Domain.csproj",
       "packagesPath": "C:\\Users\\TRUONGTRUNG\\.nuget\\packages\\",
-      "outputPath": "D:\\OneDrive - Đại học FPT- FPT University\\Documents\\Chuyên Ngành 9\\Đồ Án\\Project\\BackEnd_SmartHouseThesis\\Domain\\obj\\",
+      "outputPath": "D:\\OneDrive - Đại học FPT- FPT University\\Documents\\Chuyên Ngành 9\\Đồ Án\\BackEnd_repository\\BackEnd_SmartHouseThesis\\Domain\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "D:\\IDEs\\Visual studio SDKs\\NuGetPackages"

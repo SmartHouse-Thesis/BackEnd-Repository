@@ -10,5 +10,6 @@ namespace Application.UseCase
     public interface UserService
     {
          Task<bool> RegisterAccount(Account user);
+
     }
 }

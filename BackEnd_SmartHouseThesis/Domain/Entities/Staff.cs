@@ -16,8 +16,6 @@ namespace Domain.Entities
         public string? RoleName { get; set; }
         /*[ForeignKey(nameof(AccountId))]
         public Guid? AccountId { get; set; } */
-
-
         public virtual Account Account { get; set; }
         public ICollection<Contract> Contracts { get; set; }
         public ICollection<Survey> Surveys { get; set; }

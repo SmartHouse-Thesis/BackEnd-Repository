@@ -21,7 +21,7 @@ namespace Infrastructure
         public DbSet<Acceptance> Acceptances { get; set; } = null!;
         public DbSet<Account> Accounts { get; set; } = null!;
         public DbSet<Chat> Chats { get; set; } = null!;
-        public DbSet<Constract> Constracts { get; set; } = null!;
+        public DbSet<Contract> Contracts { get; set; } = null!;
         public DbSet<Customer> Customers { get; set; } = null!;
         public DbSet<Device> Device { get; set; } = null!;
         public DbSet<Feedback> Feedbacks { get; set; } = null!;
@@ -36,7 +36,6 @@ namespace Infrastructure
         public DbSet<Staff> Staff { get; set; } = null!;
         public DbSet<Survey> Surveys { get; set; } = null!;
         public DbSet<Teller> Tellers { get; set; } = null!;
-        public DbSet<WarrantyReport> WarrantyReport { get; set; } = null!;
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             /*if (!optionsBuilder.IsConfigured)
@@ -91,15 +90,15 @@ namespace Infrastructure
                .HasForeignKey<Request>(c => c.SurveyId);
 
             //Constract-Acceptance
-            modelBuilder.Entity<Constract>()
+            modelBuilder.Entity<Contract>()
                 .HasOne(c => c.Acceptance)
-                 .WithOne(a => a.Constract)
-                .HasForeignKey<Constract>(c => c.AcceptanceId);
+                 .WithOne(a => a.Contract)
+                .HasForeignKey<Contract>(c => c.AcceptanceId);
 
             modelBuilder.Entity<Acceptance>()
-               .HasOne(a => a.Constract)
+               .HasOne(a => a.Contract)
                 .WithOne(c => c.Acceptance)
-               .HasForeignKey<Acceptance>(c => c.ConstractId);
+               .HasForeignKey<Acceptance>(c => c.ContractId);
 
             //Package-Image
             modelBuilder.Entity<Package>()
@@ -111,6 +110,34 @@ namespace Infrastructure
                 .HasOne(i=>i.Package)
                 .WithOne(p=>p.Image)
                 .HasForeignKey<Image>(c => c.PackageId);
+
+            //Order-OrderDetail
+            modelBuilder.Entity<OrderDetail>()
+               .HasOne(o => o.Order)
+                .WithOne(a => a.OrderDetail)
+               .HasForeignKey<OrderDetail>(o => o.Id);
+
+            //Packge - Manufacturer 
+            modelBuilder.Entity<Package>()
+                   .HasOne(p => p.Manufacturer)
+                   .WithOne(i => i.Package)
+                   .HasForeignKey<Package>(c => c.ManufacturerId);
+
+            modelBuilder.Entity<Manufacturer>()
+                .HasOne(i => i.Package)
+                .WithOne(p => p.Manufacturer)
+                .HasForeignKey<Manufacturer>(c => c.PackageId);
+
+            //Packge - Policy 
+            modelBuilder.Entity<Package>()
+                   .HasOne(p => p.Policy)
+                   .WithOne(i => i.Package)
+                   .HasForeignKey<Package>(c => c.PolicyId);
+
+            modelBuilder.Entity<Policy>()
+                .HasOne(i => i.Package)
+                .WithOne(p => p.Policy)
+                .HasForeignKey<Policy>(c => c.PackageId);
 
             //Acceptance-WarrantyReport
             /* 

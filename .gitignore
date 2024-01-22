@@ -4,3 +4,7 @@
 
 /.vs
 /BackEnd_SmartHouseThesis/.vs/BackEnd_SmartHouseThesis
+/BackEnd_SmartHouseThesis/Application/bin/Debug/net6.0
+/BackEnd_SmartHouseThesis/BackEnd_SmartHouseThesis/bin/Debug/net6.0
+/BackEnd_SmartHouseThesis/Domain/bin/Debug/net6.0
+/BackEnd_SmartHouseThesis/Infrastructure/bin/Debug/net6.0

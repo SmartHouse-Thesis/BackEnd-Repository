@@ -12,11 +12,9 @@ namespace Infrastructure.Repositories
 
     public class BaseRepo<T> : IBaseRepo<T> where T : class
     {
-        private AppDbContext dbContext;
+        private readonly AppDbContext _dbContext;
+        private readonly ILogger<BaseRepo<T>> _logger;
 
-        private AppDbContext _dbContext { get; set; }
-        private ILogger<BaseRepo<T>> _logger { get; set; }
-        
         public BaseRepo(AppDbContext dbContext, ILogger<BaseRepo<T>> logger)
         {
             _dbContext = dbContext;
@@ -25,10 +23,10 @@ namespace Infrastructure.Repositories
 
         public BaseRepo(AppDbContext dbContext)
         {
-            this.dbContext = dbContext;
+            _dbContext = dbContext;
         }
 
-        public IQueryable<T> FindAll(List<string> includes = null)
+        public async Task<IQueryable<T>> FindAllAsync(List<string> includes = null)
         {
             try
             {
@@ -36,45 +34,48 @@ namespace Infrastructure.Repositories
 
                 if (includes != null && includes.Any())
                 {
-                    includes.Where(i => i != null).ToList().ForEach(i => { items = items.Include(i); });
+                    foreach (var include in includes.Where(i => i != null))
+                    {
+                        items = items.Include(include);
+                    }
                 }
 
                 return items;
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "{Repo} FindAll function error", typeof(BaseRepo<T>));
+                _logger.LogError(e, "{Repo} FindAllAsync function error", typeof(BaseRepo<T>));
                 return null;
             }
         }
 
-        public T Get(Guid id)
+        public async Task<T> GetAsync(Guid id)
         {
             try
             {
-                T items = _dbContext.Set<T>().Find(id);
-                return items;
+                T item = await _dbContext.Set<T>().FindAsync(id);
+                return item;
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "{Repo} Get function error", typeof(BaseRepo<T>));
+                _logger.LogError(e, "{Repo} GetAsync function error", typeof(BaseRepo<T>));
                 return null;
             }
         }
 
-        public void Add(T entity)
+        public async Task AddAsync(T entity)
         {
             try
             {
-                _dbContext.Set<T>().Add(entity);
+                await _dbContext.Set<T>().AddAsync(entity);
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "{Repo} Add function error", typeof(BaseRepo<T>));
+                _logger.LogError(e, "{Repo} AddAsync function error", typeof(BaseRepo<T>));
             }
         }
 
-        public void Update(T entity)
+        public async Task UpdateAsync(T entity)
         {
             try
             {
@@ -82,11 +83,11 @@ namespace Infrastructure.Repositories
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "{Repo} Update function error", typeof(BaseRepo<T>));
+                _logger.LogError(e, "{Repo} UpdateAsync function error", typeof(BaseRepo<T>));
             }
         }
 
-        public void Remove(T entity)
+        public async Task RemoveAsync(T entity)
         {
             try
             {
@@ -94,29 +95,30 @@ namespace Infrastructure.Repositories
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "{Repo} Remove function error", typeof(BaseRepo<T>));
+                _logger.LogError(e, "{Repo} RemoveAsync function error", typeof(BaseRepo<T>));
             }
         }
-/*
-        //
-        IQueryable<T> IBaseRepo<T>.FindAll(List<string> includes)
-        {
-            throw new NotImplementedException();
-        }
 
-        Task<int> IBaseRepo<T>.Add(T entity)
-        {
-            throw new NotImplementedException();
-        }
+    /*
+            //
+            IQueryable<T> IBaseRepo<T>.FindAll(List<string> includes)
+            {
+                throw new NotImplementedException();
+            }
 
-        Task<int> IBaseRepo<T>.Update(T entity)
-        {
-            throw new NotImplementedException();
-        }
+            Task<int> IBaseRepo<T>.Add(T entity)
+            {
+                throw new NotImplementedException();
+            }
 
-        Task<int> IBaseRepo<T>.Remove(T entity)
-        {
-            throw new NotImplementedException();
-        }*/
-    }
+            Task<int> IBaseRepo<T>.Update(T entity)
+            {
+                throw new NotImplementedException();
+            }
+
+            Task<int> IBaseRepo<T>.Remove(T entity)
+            {
+                throw new NotImplementedException();
+            }*/
+}
 }

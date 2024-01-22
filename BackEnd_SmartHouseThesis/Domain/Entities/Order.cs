@@ -16,8 +16,8 @@ namespace Domain.Entities
 
         public ICollection<Device> Devices { get; set; }
 
-        [ForeignKey(nameof(OrderDetailId))]
-        public Guid? OrderDetailId { get; set; }
+        /*[ForeignKey(nameof(OrderDetailId))]
+        public Guid? OrderDetailId { get; set; }*/
         public virtual OrderDetail OrderDetail { get; set; }
 
         [ForeignKey(nameof(PaymentId))]

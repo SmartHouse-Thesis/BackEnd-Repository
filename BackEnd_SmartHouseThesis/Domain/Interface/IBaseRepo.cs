@@ -8,13 +8,13 @@ namespace Domain.Interface
 {
     public interface IBaseRepo<T>
     {
-        IQueryable<T> FindAll(List<string> includes = null);
-        T Get(Guid id);
+        Task<IQueryable<T>> FindAllAsync(List<string> includes = null);
+        Task<T> GetAsync(Guid id);
 
-        void Add(T entity);
+        Task AddAsync(T entity);
 
-        void Update(T entity);
+        Task UpdateAsync(T entity);
 
-        void Remove(T entity);
+        Task RemoveAsync(T entity);
     }
 }
