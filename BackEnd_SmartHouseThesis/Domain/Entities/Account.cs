@@ -24,6 +24,7 @@ namespace Domain.Entities
         /// <summary>
         /// /////////////////////////////// 
         /// </summary>
+        
         public virtual Staff Staff { get; set; }
         public virtual Customer Customer { get; set; }
 

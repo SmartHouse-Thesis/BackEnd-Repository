@@ -1,4 +1,5 @@
-﻿using Domain.Interface;
+﻿using Domain.Entities;
+using Domain.Interface;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -30,7 +31,7 @@ namespace Infrastructure.Repositories
         {
             try
             {
-                IQueryable<T> items = _dbContext.Set<T>().AsNoTracking();
+                IQueryable<T> items =  _dbContext.Set<T>().AsNoTracking();
 
                 if (includes != null && includes.Any())
                 {
@@ -67,7 +68,8 @@ namespace Infrastructure.Repositories
         {
             try
             {
-                await _dbContext.Set<T>().AddAsync(entity);
+                 _dbContext.Set<T>().AddAsync(entity);
+                SaveAsync();
             }
             catch (Exception e)
             {
@@ -80,6 +82,7 @@ namespace Infrastructure.Repositories
             try
             {
                 _dbContext.Set<T>().Update(entity);
+                SaveAsync();
             }
             catch (Exception e)
             {
@@ -92,6 +95,7 @@ namespace Infrastructure.Repositories
             try
             {
                 _dbContext.Set<T>().Remove(entity);
+                SaveAsync();
             }
             catch (Exception e)
             {
@@ -99,26 +103,38 @@ namespace Infrastructure.Repositories
             }
         }
 
-    /*
-            //
-            IQueryable<T> IBaseRepo<T>.FindAll(List<string> includes)
+        public async Task SaveAsync()
+        {
+            try
             {
-                throw new NotImplementedException();
+                await _dbContext.SaveChangesAsync();
             }
-
-            Task<int> IBaseRepo<T>.Add(T entity)
+            catch (Exception e)
             {
-                throw new NotImplementedException();
+                _logger.LogError(e, "{Repo} SaveAsync function error", typeof(BaseRepo<T>));
             }
+        }
 
-            Task<int> IBaseRepo<T>.Update(T entity)
-            {
-                throw new NotImplementedException();
-            }
+        /*
+                //
+                IQueryable<T> IBaseRepo<T>.FindAll(List<string> includes)
+                {
+                    throw new NotImplementedException();
+                }
 
-            Task<int> IBaseRepo<T>.Remove(T entity)
-            {
-                throw new NotImplementedException();
-            }*/
-}
+                Task<int> IBaseRepo<T>.Add(T entity)
+                {
+                    throw new NotImplementedException();
+                }
+
+                Task<int> IBaseRepo<T>.Update(T entity)
+                {
+                    throw new NotImplementedException();
+                }
+
+                Task<int> IBaseRepo<T>.Remove(T entity)
+                {
+                    throw new NotImplementedException();
+                }*/
+    }
 }

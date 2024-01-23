@@ -15,7 +15,6 @@ namespace Domain.Entities
         public int? Status { get; set; } // trạng thái của Constract: chưa cọc,đặt cọc - scan, lắp đặt, nghiệm thu, xóa 
         public DateTime? StartPlanDate { get; set; } // ngày lắp đặt
         public DateTime? EndPlanDate { get; set; } // ngày hoàn thành
-
         public string? ImageFile { get; set; } // ảnh của hợp đồng
 
         public ICollection<Payment> Payments { get; set; }

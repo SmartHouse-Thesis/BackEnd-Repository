@@ -1,4 +1,6 @@
 ﻿using Application.Services;
+using AutoMapper;
+using Domain.DTOs.Request;
 using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,10 +13,11 @@ namespace BackEnd_SmartHouseThesis.Controllers
     public class AccountController : ControllerBase
     {
         private readonly AccountService _accountService;
-
-        public AccountController(AccountService accountService)
+        private readonly IMapper _mapper;
+        public AccountController(AccountService accountService, IMapper mapper)
         {
             _accountService = accountService;
+            _mapper = mapper;
         }
 
         // GET: api/<AccountController>/GettAllAccount
@@ -39,20 +42,39 @@ namespace BackEnd_SmartHouseThesis.Controllers
 
         // POST api/<AccountController>/CreateAccout/
         [HttpPost("CreateAccout")]
-        public async Task<IActionResult> CreateAccout([FromBody] Account account)
+        public async Task<IActionResult> CreateAccout([FromBody] RegisterRequest account)
         {
-            var _account = await _accountService.GetAccount(account.Id);
+            var _account = await _accountService.GetAccountByEmail(account.Email);
             if (_account != null)
             {
                 return BadRequest("Account is exist!! ");
             }
             else
             {
-                await _accountService.CreateAccount(account);
+                _account = _mapper.Map<Account>(account);
+                await _accountService.CreateAccount(_account);             
                 return Ok();
             }
         }
 
+        /*[HttpPost("Register")]
+        public async Task<IActionResult> RegisterAccount([FromBody] RegisterRequest account)
+        {
+            if (ModelState.IsValid)
+            {
+                var _account = _mapper.Map<Account>(account);
+                if (_account != null)
+                {
+                    return BadRequest("Account is exist!! ");
+                }
+                else
+                {
+                    await _accountService.CreateAccount(account);
+                    return Ok();
+                }
+            }
+           
+        }*/
 
         // PUT api/<AccountController>/UpdateAccount/5
         [HttpPut("UpdateAccount/{id}")]
@@ -85,5 +107,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
                 return BadRequest("Account can't do it right now!! ");
             }
         }
+
+        //
     }
 }

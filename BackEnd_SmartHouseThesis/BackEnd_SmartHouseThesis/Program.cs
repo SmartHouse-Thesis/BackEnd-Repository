@@ -1,7 +1,13 @@
 using Application.Services;
+using BackEnd_SmartHouseThesis;
 using BackEnd_SmartHouseThesis.Controllers;
+using Domain.Entities;
 using Infrastructure;
+using Infrastructure.Mapper;
 using Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -31,10 +37,36 @@ builder.Services.AddScoped<PromotionRepository>();
 //Account
 builder.Services.AddScoped<AccountService>();
 builder.Services.AddScoped<AccountRepository>();
+//Contract
+builder.Services.AddScoped<ContractService>();
+builder.Services.AddScoped<ContractRepository>();
+
+
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddAutoMapper(typeof(AccountMappingProfile));
+/*
+builder.Services.AddIdentity<Account, Role>();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+.AddJwtBearer(option =>
+{
+    option.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = configuration["JwtIssuer"],
+        ValidAudience = configuration["JwtAudience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSecurityKey"]))
+    };
+});*/
+
+//builder.Services.ConfigureServices(builder.Configuration);
 
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -63,6 +95,10 @@ app.UseCors(builder =>
 
 app.UseHttpsRedirection();
 
+//use Routing
+app.UseRouting();
+//use Authentication
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

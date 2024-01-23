@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,8 +10,8 @@ namespace Domain
 {
     public class BaseEntity
     {
-        [Key]
-        public Guid Id { get; set; }
+        [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; } 
         public DateTime? CreationDate { get; set; } //ngày tạo 
         public Guid? CreatedBy { get; set; } // tạo bởi ai 
         public DateTime? ModificationDate { get; set; } // ngày chỉnh sửa
