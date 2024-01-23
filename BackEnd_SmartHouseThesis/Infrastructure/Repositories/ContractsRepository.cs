@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
-    public class ConstractsRepository : BaseRepo<ConstractsRepository>
+    public class ContractsRepository : BaseRepo<ConstractRepository>
     {
-        public ConstractsRepository(AppDbContext dbContext) : base(dbContext)
+        public ContractsRepository(AppDbContext dbContext) : base(dbContext)
         {
         }
     }

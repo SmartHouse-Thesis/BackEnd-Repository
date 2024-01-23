@@ -1,6 +1,14 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\BackEnd_SmartHouseThesis",
+    "\\BackEnd_SmartHouseThesis\\Controllers",
+    "\\Domain",
+    "\\Domain\\Entities",
+    "\\Domain\\Interface",
+    "\\Infrastructure",
+    "\\Infrastructure\\Repositories"
   ],
+  "SelectedNode": "\\BackEnd_SmartHouseThesis\\Controllers\\DevicesController.cs",
   "PreviewInSolutionExplorer": false
 }
