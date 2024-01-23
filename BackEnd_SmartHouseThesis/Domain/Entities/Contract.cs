@@ -19,9 +19,7 @@ namespace Domain.Entities
         public string? ImageFile { get; set; } // ảnh của hợp đồng
 
         public ICollection<Payment> Payments { get; set; }
-
         public ICollection<Package> Packages { get; set; }  
-
         [ForeignKey(nameof(CustomerId))]
         public Guid? CustomerId { get; set; }
         public virtual Customer Customer { get; set; }

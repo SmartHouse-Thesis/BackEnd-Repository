@@ -28,6 +28,10 @@ builder.Services.AddScoped<PolicyRepository>();
 //Promotion
 builder.Services.AddScoped<PromotionService>();
 builder.Services.AddScoped<PromotionRepository>();
+//Account
+builder.Services.AddScoped<AccountService>();
+builder.Services.AddScoped<AccountRepository>();
+
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllers();

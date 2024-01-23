@@ -36,6 +36,7 @@ namespace Infrastructure
         public DbSet<Staff> Staff { get; set; } = null!;
         public DbSet<Survey> Surveys { get; set; } = null!;
         public DbSet<Teller> Tellers { get; set; } = null!;
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             /*if (!optionsBuilder.IsConfigured)
@@ -55,6 +56,13 @@ namespace Infrastructure
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<Role>().HasData(
+                new Role { Id = Guid.NewGuid(), RoleName="Owner" },
+                new Role { Id = Guid.NewGuid(), RoleName = "Staff" },
+                new Role { Id = Guid.NewGuid(), RoleName = "Teller" },
+                new Role { Id = Guid.NewGuid(), RoleName = "Customer" }
+                );
 
             // one-to-one 
             //Account - Cus,Owner,Staff,Teller
