@@ -1,5 +1,6 @@
 ﻿using Domain.Entities;
 using Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -17,7 +18,6 @@ namespace Application.Services
         {
             _accountRepository = accountRepository;
         }
-
         public async Task CreateAccount(Account account) => await _accountRepository.AddAsync(account);
 
         public async Task UpdateAccount(Account account) => await _accountRepository.UpdateAsync(account);

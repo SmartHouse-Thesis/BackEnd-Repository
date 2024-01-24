@@ -14,9 +14,7 @@ namespace BackEnd_SmartHouseThesis
     public static class DependencyInjection
     {
         public static void ConfigureServices(this IServiceCollection services, IConfiguration configuration)
-        {
-            
-
+        {          
             // Đăng ký DbContext
             services.AddDbContext<AppDbContext>();
             services.AddScoped<AppDbContext>();
@@ -48,11 +46,18 @@ namespace BackEnd_SmartHouseThesis
             //Contract
             services.AddScoped<ContractService>();
             services.AddScoped<ContractRepository>();
+            //Role 
+            services.AddScoped<RoleService>();
+            services.AddScoped<RoleRepository>();
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddAutoMapper(typeof(AccountMappingProfile));
 
             services.AddIdentity<Account, Role>();
+            services.AddIdentity<Account, Owner>();
+            services.AddIdentity<Account, Staff>();
+            services.AddIdentity<Account, Teller>();
+            services.AddIdentity<Account, Customer>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(option =>
                 {

@@ -63,6 +63,7 @@ namespace Infrastructure
                 new Role { Id = Guid.NewGuid(), RoleName = "Teller" },
                 new Role { Id = Guid.NewGuid(), RoleName = "Customer" }
                 );
+            
 
             // one-to-one 
             //Account - Cus,Owner,Staff,Teller

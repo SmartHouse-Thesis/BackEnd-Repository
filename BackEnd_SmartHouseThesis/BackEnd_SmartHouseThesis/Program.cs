@@ -40,6 +40,9 @@ builder.Services.AddScoped<AccountRepository>();
 //Contract
 builder.Services.AddScoped<ContractService>();
 builder.Services.AddScoped<ContractRepository>();
+//Role
+builder.Services.AddScoped<RoleService>();
+builder.Services.AddScoped<RoleRepository>();
 
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

@@ -19,7 +19,7 @@ namespace Domain.Entities
 
         //
         [ForeignKey(nameof(RoleId))]
-        public Guid? RoleId { get; set; }
+        public Guid RoleId { get; set; }
         public virtual Role Role { get; set; }
         /// <summary>
         /// /////////////////////////////// 
