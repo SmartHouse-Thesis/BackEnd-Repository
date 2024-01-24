@@ -9,11 +9,15 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = BackEnd_SmartHouseThesis
 build_property.RootNamespace = BackEnd_SmartHouseThesis
-build_property.ProjectDir = D:\OneDrive - Đại học FPT- FPT University\Documents\Chuyên Ngành 9\Đồ Án\BackEnd_repository\BackEnd_SmartHouseThesis\BackEnd_SmartHouseThesis\
+build_property.ProjectDir = D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\BackEnd_SmartHouseThesis\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 6.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = D:\OneDrive - Đại học FPT- FPT University\Documents\Chuyên Ngành 9\Đồ Án\BackEnd_repository\BackEnd_SmartHouseThesis\BackEnd_SmartHouseThesis
+build_property.MSBuildProjectDirectory = D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\BackEnd_SmartHouseThesis
 build_property._RazorSourceGeneratorDebug = 
+
+[D:/FPTSubjects/BackEnd-Repository/BackEnd_SmartHouseThesis/BackEnd_SmartHouseThesis/Views/Chat.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2hhdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 

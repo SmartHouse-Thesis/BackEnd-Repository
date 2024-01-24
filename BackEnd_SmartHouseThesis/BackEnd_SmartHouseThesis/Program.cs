@@ -1,4 +1,5 @@
 using Application.Services;
+using SignalRChat.Hubs;
 using BackEnd_SmartHouseThesis;
 using BackEnd_SmartHouseThesis.Controllers;
 using Domain.Entities;
@@ -11,6 +12,7 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
+builder.Services.AddSignalR();
 builder.Services.AddDbContext<AppDbContext>();
 builder.Services.AddScoped<AppDbContext>();
 //Account
@@ -72,6 +74,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+app.MapHub<ChatHub>("/chatHub");
 //////////////////////////////////////////////////////////////////////////////////////////
 ///Add Cors 
 builder.Services.AddCors();
