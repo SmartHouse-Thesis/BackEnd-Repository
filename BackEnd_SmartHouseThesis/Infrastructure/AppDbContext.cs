@@ -63,8 +63,7 @@ namespace Infrastructure
                 new Role { Id = Guid.NewGuid(), RoleName = "Teller" },
                 new Role { Id = Guid.NewGuid(), RoleName = "Customer" }
                 );
-            modelBuilder.Entity<Account>().HasData(
-                new Account { Id = Guid.NewGuid(), Email = "owner@gmail.com", Address="123", RoleId })
+
             // one-to-one 
             //Account - Cus,Owner,Staff,Teller
             modelBuilder.Entity<Customer>()

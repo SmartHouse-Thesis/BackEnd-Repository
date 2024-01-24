@@ -48,11 +48,18 @@ namespace BackEnd_SmartHouseThesis
             //Contract
             services.AddScoped<ContractService>();
             services.AddScoped<ContractRepository>();
+            //Role 
+            services.AddScoped<RoleService>();
+            services.AddScoped<RoleRepository>();
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddAutoMapper(typeof(AccountMappingProfile));
 
             services.AddIdentity<Account, Role>();
+            services.AddIdentity<Account, Owner>();
+            services.AddIdentity<Account, Staff>();
+            services.AddIdentity<Account, Teller>();
+            services.AddIdentity<Account, Customer>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(option =>
                 {

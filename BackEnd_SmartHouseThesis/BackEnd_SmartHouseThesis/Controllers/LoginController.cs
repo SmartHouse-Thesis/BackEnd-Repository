@@ -26,6 +26,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
         [HttpPost]
         public void Post([FromBody] string value)
         {
+
         }
 
         // PUT api/<LoginController>/5

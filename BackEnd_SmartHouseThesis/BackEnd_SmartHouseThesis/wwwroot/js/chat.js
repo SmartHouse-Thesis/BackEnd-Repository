@@ -1,7 +1,18 @@
 ﻿"use strict";
 
-var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub", {
+    accessTokenFactory: () => {
+        const token = retrieveToken();
+        return token;
+    }
+})
+.build();
 
+function retrieveToken() {
+    // Retrieve the JWT token from localStorage
+    const token = localStorage.getItem("your_token_key");
+    return token;
+}
 //Disable the send button until connection is established.
 document.getElementById("sendButton").disabled = true;
 

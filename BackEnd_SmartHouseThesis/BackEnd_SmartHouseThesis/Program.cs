@@ -9,6 +9,8 @@ using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.Extensions.Options;
+using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -42,14 +44,24 @@ builder.Services.AddScoped<AccountRepository>();
 //Contract
 builder.Services.AddScoped<ContractService>();
 builder.Services.AddScoped<ContractRepository>();
+//Role
+builder.Services.AddScoped<RoleService>();
+builder.Services.AddScoped<RoleRepository>();
 
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddAutoMapper(typeof(AccountMappingProfile));
-/*
+
 builder.Services.AddIdentity<Account, Role>();
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-.AddJwtBearer(option =>
+builder.Services.AddIdentity<Account, Customer>();
+builder.Services.AddIdentity<Account, Staff>();
+builder.Services.AddIdentity<Account, Teller>();
+builder.Services.AddIdentity<Account, Owner>();
+
+builder.Services.AddAuthentication(options => {
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(option =>
 {
     option.TokenValidationParameters = new TokenValidationParameters
     {
@@ -57,11 +69,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = configuration["JwtIssuer"],
-        ValidAudience = configuration["JwtAudience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSecurityKey"]))
+        ValidIssuer = "ISHE",
+        ValidAudience = "ISHE",
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SmartHomeISHE"))
     };
-});*/
+});
 
 //builder.Services.ConfigureServices(builder.Configuration);
 
@@ -79,7 +91,10 @@ app.MapHub<ChatHub>("/chatHub");
 ///Add Cors 
 builder.Services.AddCors();
 
-
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("TellerOrCustomerPolicy", policy => policy.RequireRole("Teller", "Customer"));
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
