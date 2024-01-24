@@ -1,4 +1,7 @@
 ﻿using Application.Services;
+using Application.UseCase;
+using AutoMapper;
+using Domain.DTOs.Request;
 using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,10 +15,13 @@ namespace BackEnd_SmartHouseThesis.Controllers
     {
 
         private readonly DeviceService _deviceService;
-
-        public DevicesController(DeviceService deviceService)
+        private readonly OwnerService _ownerService;
+        private readonly IMapper _mapper;
+        public DevicesController(DeviceService promotionService, OwnerService ownerService, IMapper mapper)
         {
-            _deviceService = deviceService;
+            _deviceService = promotionService;
+            _ownerService = ownerService;
+            _mapper = mapper;
         }
 
         // GET: api/<DevicesController>/GetAllDevices
@@ -39,35 +45,50 @@ namespace BackEnd_SmartHouseThesis.Controllers
         }
 
         // POST api/<DevicesController>/CreateDevice/
-        [HttpPost("CreateDevice")]
-        public async Task<IActionResult> CreateDevice([FromBody] Device device)
+        [HttpPost("CreateDevice/{ownerId}")]
+        public async Task<IActionResult> CreateDevice(Guid ownerId,[FromBody] DeviceRequest device)
         {
-            var _device = await _deviceService.GetDevice(device.Id);
-            if(_device != null)
+            var owner = await _ownerService.GetOwner(ownerId);
+            if (owner != null)
             {
-                return BadRequest("Devices is exist!! ");
-            }else
+                var _device = _mapper.Map<Device>(device);
+                _device.CreationDate = DateTime.Now;
+                _device.CreatedBy = owner.Id;
+                await _deviceService.CreateDevice(_device);
+                return Ok(_device);
+            }
+            else
             {
-                await _deviceService.CreateDevice(device);
-                return Ok();
+                return BadRequest("Owner is not exist!! ");
             }
         }
 
 
         // PUT api/<DevicesController>/UpdateDevice/5
         [HttpPut("UpdateDevice/{id}")]
-        public async Task<IActionResult> UpdateDevice(Guid id, [FromBody] Device device)
+        public async Task<IActionResult> UpdateDevice(Guid id, Guid ownerId ,[FromBody] DeviceRequest device)
         {
-            var _device = await _deviceService.GetDevice(id);
-            if (_device != null)
-            {              
+            var owner = await _ownerService.GetOwner(ownerId);
+            if (owner != null)
+            {
+                var _devi = _deviceService.GetDevice(id);
+                if (_devi != null)
+                {
+                    var _device = _mapper.Map<Device>(device);
+                    _device.ModificationDate = DateTime.Now;
+                    _device.ModificationBy = ownerId;
                     await _deviceService.UpdateDevice(_device);
                     return Ok(_device);
                 }
                 else
                 {
-                    return BadRequest("Devices can't do it right now!! ");
-                }           
+                    return BadRequest("Device is not exist!! ");
+                }
+            }
+            else
+            {
+                return BadRequest("Owner is not exist!! ");
+            }
         }
 
         // DELETE api/<DevicesController>/Delete/5

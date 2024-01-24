@@ -27,6 +27,18 @@ namespace Infrastructure.Mapper
                 .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
                 .ForMember(des => des.RoleName, act => act.MapFrom(src => src.Role.RoleName));
 
+            CreateMap<Account, Customer>()
+               .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
+               .ForMember(des => des.RoleName, act => act.MapFrom(src => src.Role.RoleName));
+
+            CreateMap<Account, Staff>()
+              .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
+              .ForMember(des => des.RoleName, act => act.MapFrom(src => src.Role.RoleName));
+
+            CreateMap<Account, Teller>()
+              .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
+              .ForMember(des => des.RoleName, act => act.MapFrom(src => src.Role.RoleName));
+
             CreateMap<AccountUpdate, Account>()
                 .ForMember(des => des.Email, act => act.MapFrom(src => src.Email))
                 .ForMember(des => des.Phone, act => act.MapFrom(src => src.Phone))

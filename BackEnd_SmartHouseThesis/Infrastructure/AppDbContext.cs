@@ -69,7 +69,7 @@ namespace Infrastructure
             //Account - Cus,Owner,Staff,Teller
             modelBuilder.Entity<Customer>()
                 .HasOne(c => c.Account)
-                 .WithOne(a => a.Customer)
+                 .WithOne(a => a.Customer)         
                 .HasForeignKey<Customer>(c => c.Id);
 
             modelBuilder.Entity<Owner>()

@@ -1,18 +1,16 @@
 using Application.Services;
 using BackEnd_SmartHouseThesis;
-using BackEnd_SmartHouseThesis.Controllers;
-using Domain.Entities;
 using Infrastructure;
 using Infrastructure.Mapper;
 using Infrastructure.Repositories;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
+
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddDbContext<AppDbContext>();
 builder.Services.AddScoped<AppDbContext>();
+
+///AddService
 //Account
 builder.Services.AddScoped<AccountService>();
 builder.Services.AddScoped<AccountRepository>();
@@ -27,7 +25,7 @@ builder.Services.AddScoped<ManufacturerService>();
 builder.Services.AddScoped<ManufactureRepository>();
 //Package
 builder.Services.AddScoped<PackageServices>();
-builder.Services.AddScoped <PackageRepository>();
+builder.Services.AddScoped<PackageRepository>();
 //Policy
 builder.Services.AddScoped<PolicyService>();
 builder.Services.AddScoped<PolicyRepository>();
@@ -44,9 +42,13 @@ builder.Services.AddScoped<ContractRepository>();
 builder.Services.AddScoped<RoleService>();
 builder.Services.AddScoped<RoleRepository>();
 
-
+///Mapping
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddAutoMapper(typeof(AccountMappingProfile));
+builder.Services.AddAutoMapper(typeof(PromotionMapping));
+builder.Services.AddAutoMapper(typeof(DeviceMapping));
+builder.Services.AddAutoMapper(typeof(PackageMapping));
+
 /*
 builder.Services.AddIdentity<Account, Role>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -98,9 +100,9 @@ app.UseCors(builder =>
 
 app.UseHttpsRedirection();
 
-//use Routing
+///use Routing
 app.UseRouting();
-//use Authentication
+///use Authentication
 app.UseAuthentication();
 app.UseAuthorization();
 

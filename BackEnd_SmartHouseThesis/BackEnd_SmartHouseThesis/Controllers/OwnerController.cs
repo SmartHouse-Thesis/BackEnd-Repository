@@ -104,7 +104,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }*/
         }
 
-
+/*
         // PUT api/<OwnerController>/UpdateOwner/5
         [HttpPut("UpdateOwner/{id}")]
         public async Task<IActionResult> UpdateOwner(Guid id, [FromBody] Owner owner)
@@ -136,7 +136,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
                 return BadRequest("Owner can't do it right now!! ");
             }
         }
-
+*/
         //
     }
 }

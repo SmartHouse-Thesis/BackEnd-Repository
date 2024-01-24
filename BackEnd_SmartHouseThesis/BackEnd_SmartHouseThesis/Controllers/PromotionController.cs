@@ -1,6 +1,9 @@
 ﻿using Application.Services;
+using AutoMapper;
+using Domain.DTOs.Request;
 using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Principal;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -11,10 +14,13 @@ namespace BackEnd_SmartHouseThesis.Controllers
     public class PromotionController : ControllerBase
     {
         private readonly PromotionService _promotionServices;
-
-        public PromotionController(PromotionService promotionService)
+        private readonly OwnerService _ownerService;
+        private readonly IMapper _mapper;
+        public PromotionController(PromotionService promotionService,OwnerService ownerService, IMapper mapper)
         {
             _promotionServices = promotionService;
+            _ownerService = ownerService;
+            _mapper = mapper;
         }
 
         // GET: api/<PromotionController>/GetAllPromotion
@@ -38,34 +44,49 @@ namespace BackEnd_SmartHouseThesis.Controllers
         }
 
         // POST api/<PromotionController>/CreateDevice/
-        [HttpPost("CreatePromotion")]
-        public async Task<IActionResult> CreatePromotion([FromBody] Promotion promotion)
+        [HttpPost("CreatePromotion/{ownerId}")]
+        public async Task<IActionResult> CreatePromotion(Guid ownerId,[FromBody] PromotionRequest promotion)
         {
-            var promo = await _promotionServices.GetPromotion(promotion.Id);
-            if(promo != null)
+            var owner = await _ownerService.GetOwner(ownerId);
+            if(owner != null)
             {
-                return BadRequest("Promotion is exist!!");
-            } else
+                var _promotion = _mapper.Map<Promotion>(promotion);
+                _promotion.CreationDate = DateTime.Now;
+                _promotion.CreatedBy= owner.Id;
+                await _promotionServices.CreatePromotion(_promotion);
+                return Ok(_promotion);
+            }
+            else
             {
-                await _promotionServices.CreatePromotion(promo);
-                return Ok();
-            }            
+                return BadRequest("Owner is not exist!! ");
+            }                   
         }
 
 
         // PUT api/<PromotionController>/UpdateDevice/5
         [HttpPut("UpdateDevice/{id}")]
-        public async Task<IActionResult> UpdatePromotion(Guid id, [FromBody] Promotion promotion)
+        public async Task<IActionResult> UpdatePromotion(Guid id, Guid ownerId, [FromBody] PromotionRequest promotion)
         {
-            var promo = await _promotionServices.GetPromotion(id);
-            if (promo != null)
+
+            var owner = await _ownerService.GetOwner(ownerId);
+            if (owner != null)
             {
-                await _promotionServices.UpdatePromotion(promotion);
-                return Ok(promo); 
+                var _promo = _promotionServices.GetPromotion(id);
+                if(_promo!= null)
+                {
+                    var _promotion = _mapper.Map<Promotion>(promotion);
+                    _promotion.ModificationDate = DateTime.Now;
+                    _promotion.ModificationBy = ownerId;
+                    await _promotionServices.UpdatePromotion(_promotion);
+                    return Ok(_promotion);
+                }else
+                {
+                    return BadRequest("Promotion is not exist!! ");
+                }                
             }
             else
             {
-                return BadRequest("Promotion can't do it right now!! ");
+                return BadRequest("Owner is not exist!! ");
             }
         }
 

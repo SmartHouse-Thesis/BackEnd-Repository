@@ -48,7 +48,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
         {
             var _account = await _accountService.GetAccountByEmail(account.Email);
             if (_account != null)
-            {
+            { 
                 return BadRequest("Account is exist!! ");
             }
             else

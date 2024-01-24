@@ -1,21 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Domain.DTOs.Request
 {
-    public  class DeviceRequest
+    public class PackageRequest
     {
-        [Required]
-        public string DeviceName { get; set; }
-        [Required]
+        public string PackageName { get; set; }
         public string Description { get; set; }
-        [Required]
         public decimal Price { get; set; }
-        [Required]
-        public string DeviceType { get; set; }
+        public decimal PromotionPrice { get; set; }
     }
 }

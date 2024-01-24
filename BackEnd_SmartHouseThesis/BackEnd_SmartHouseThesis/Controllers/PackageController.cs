@@ -1,4 +1,6 @@
 ﻿using Application.Services;
+using AutoMapper;
+using Domain.DTOs.Request;
 using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,18 +12,21 @@ namespace BackEnd_SmartHouseThesis.Controllers
     [ApiController]
     public class PackageController : ControllerBase
     {
-        private readonly PackageServices _packageServices;
-
-        public PackageController(PackageServices PackageServices)
+        private readonly PackageServices _packageService;
+        private readonly OwnerService _ownerService;
+        private readonly IMapper _mapper;
+        public PackageController(PackageServices packageService, OwnerService ownerService, IMapper mapper)
         {
-            _packageServices = PackageServices;
+            _packageService = packageService;
+            _ownerService = ownerService;
+            _mapper = mapper;
         }
 
         // GET: api/<PackageController>/GetAllPack
         [HttpGet("GetAllPack")]
         public async Task<IActionResult> GetAllPack()
         {
-            var packs = await _packageServices.GetAll();
+            var packs = await _packageService.GetAll();
             return Ok(packs);
         }
 
@@ -29,7 +34,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
         [HttpGet("GetPackage/{id}")]
         public async Task<IActionResult> GetPackage(Guid id)
         {
-            var pack = await _packageServices.GetPackage(id);
+            var pack = await _packageService.GetPackage(id);
             if (pack == null)
             {
                 return NotFound();
@@ -38,35 +43,49 @@ namespace BackEnd_SmartHouseThesis.Controllers
         }
 
         // POST api/<PackageController>/CreatePackage/
-        [HttpPost("CreatePackage")]
-        public async Task<IActionResult> CreatePackage([FromBody] Package package)
+        [HttpPost("CreatePackage/{ownerId}")]
+        public async Task<IActionResult> CreatePackage(Guid ownerId,[FromBody] PackageRequest package)
         {
-            var pack = await _packageServices.GetPackage(package.Id);
-            if (pack != null)
+            var owner = await _ownerService.GetOwner(ownerId);
+            if (owner != null)
             {
-                return BadRequest("Package is exist!!");
+                var _package = _mapper.Map<Package>(package);
+                _package.CreationDate = DateTime.Now;
+                _package.CreatedBy = owner.Id;
+                await _packageService.CreatePackage(_package);
+                return Ok(_package);
             }
             else
             {
-                await _packageServices.CreatePackage(pack);
-                return Ok();
+                return BadRequest("Owner is not exist!! ");
             }
         }
 
 
         // PUT api/<PackageController>/UpdatePackage/5
         [HttpPut("UpdatePackage/{id}")]
-        public async Task<IActionResult> UpdatePackage(Guid id, [FromBody] Package package)
+        public async Task<IActionResult> UpdatePackage(Guid id,Guid ownerId ,[FromBody] PackageRequest package)
         {
-            var pack = await _packageServices.GetPackage(id);
-            if (pack != null)
+            var owner = await _ownerService.GetOwner(ownerId);
+            if (owner != null)
             {
-                await _packageServices.UpdatePackage(package);
-                return Ok(pack);
+                var _pack = _ownerService.GetOwner(id);
+                if (_pack != null)
+                {
+                    var _package = _mapper.Map<Package>(package);
+                    _package.ModificationDate = DateTime.Now;
+                    _package.ModificationBy = ownerId;
+                    await _packageService.UpdatePackage(_package);
+                    return Ok(_package);
+                }
+                else
+                {
+                    return BadRequest("Promotion is not exist!! ");
+                }
             }
             else
             {
-                return BadRequest("Package can't do it right now!! ");
+                return BadRequest("Owner is not exist!! ");
             }
         }
 
@@ -74,10 +93,10 @@ namespace BackEnd_SmartHouseThesis.Controllers
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var pack = await _packageServices.GetPackage(id);
+            var pack = await _packageService.GetPackage(id);
             if (pack != null)
             {
-                await _packageServices.DeletePackage(pack);
+                await _packageService.DeletePackage(pack);
                 return Ok(pack);
             }
             else
