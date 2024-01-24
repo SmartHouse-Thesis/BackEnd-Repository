@@ -23,9 +23,14 @@ namespace Infrastructure.Mapper
              .ForMember(des => des.FirstName, act => act.MapFrom(src => src.FirstName))
              .ForMember(des => des.LastName, act => act.MapFrom(src => src.LastName));
 
-               CreateMap<Guid, string>().ConstructUsing(x =>x.ToString());
-               CreateMap<string, Guid>().ConstructUsing(x => new Guid(x));
-        
+            CreateMap<Account, Owner>()
+                .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
+                .ForMember(des => des.RoleName, act => act.MapFrom(src => src.Role.RoleName));
+
+            CreateMap<Guid, string>().ConstructUsing(x =>x.ToString());
+            CreateMap<string, Guid>().ConstructUsing(x => new Guid(x));
+            
+            
         }
     }
 }
