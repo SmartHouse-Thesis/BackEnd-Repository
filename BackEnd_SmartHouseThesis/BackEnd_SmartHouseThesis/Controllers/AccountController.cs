@@ -13,36 +13,38 @@ namespace BackEnd_SmartHouseThesis.Controllers
     public class AccountController : ControllerBase
     {
         private readonly AccountService _accountService;
+        private readonly RoleService _roleService; 
         private readonly IMapper _mapper;
-        public AccountController(AccountService accountService, IMapper mapper)
+        public AccountController(AccountService accountService, IMapper mapper, RoleService roleService)
         {
             _accountService = accountService;
             _mapper = mapper;
+            _roleService = roleService;
         }
 
         // GET: api/<AccountController>/GettAllAccount
         [HttpGet("GettAllAccount")]
         public async Task<IActionResult> GettAllAccount()
         {
-            var devices = await _accountService.GetAll();
-            return Ok(devices);
+            var account = await _accountService.GetAll();
+            return Ok(account);
         }
 
         // GET api/<AccountController>/GetAccout/5
         [HttpGet("GetAccout/{id}")]
         public async Task<IActionResult> GetAccout(Guid id)
         {
-            var device = await _accountService.GetAccount(id);
-            if (device == null)
+            var account = await _accountService.GetAccount(id);
+            if (account == null)
             {
                 return NotFound();
             }
-            return Ok(device);
+            return Ok(account);
         }
 
-        // POST api/<AccountController>/CreateAccout/
-        [HttpPost("CreateAccout")]
-        public async Task<IActionResult> CreateAccout([FromBody] RegisterRequest account)
+        // POST api/<AccountController>/CreateAccount/
+        [HttpPost("CreateAccount")] 
+        public async Task<IActionResult> CreateAccount([FromBody] RegisterRequest account)
         {
             var _account = await _accountService.GetAccountByEmail(account.Email);
             if (_account != null)
@@ -52,29 +54,12 @@ namespace BackEnd_SmartHouseThesis.Controllers
             else
             {
                 _account = _mapper.Map<Account>(account);
-                await _accountService.CreateAccount(_account);             
-                return Ok();
+                _account.CreationDate = DateTime.Now;
+                _account.Role = await _roleService.getRoleByRoleName(account.RoleName);
+                await _accountService.CreateAccount(_account);
+                return Ok(_account);
             }
         }
-
-        /*[HttpPost("Register")]
-        public async Task<IActionResult> RegisterAccount([FromBody] RegisterRequest account)
-        {
-            if (ModelState.IsValid)
-            {
-                var _account = _mapper.Map<Account>(account);
-                if (_account != null)
-                {
-                    return BadRequest("Account is exist!! ");
-                }
-                else
-                {
-                    await _accountService.CreateAccount(account);
-                    return Ok();
-                }
-            }
-           
-        }*/
 
         // PUT api/<AccountController>/UpdateAccount/5
         [HttpPut("UpdateAccount/{id}")]
@@ -99,7 +84,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             var _account = await _accountService.GetAccount(id);
             if (_account != null)
             {
-                await _accountService.UpdateAccount(_account);
+                await _accountService.DeleteAccount(_account);
                 return Ok(_account);
             }
             else
