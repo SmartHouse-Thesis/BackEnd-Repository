@@ -1,8 +1,12 @@
 using Application.Services;
 using BackEnd_SmartHouseThesis;
+using Domain.Entities;
 using Infrastructure;
 using Infrastructure.Mapper;
 using Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -49,20 +53,26 @@ builder.Services.AddAutoMapper(typeof(PromotionMapping));
 builder.Services.AddAutoMapper(typeof(DeviceMapping));
 builder.Services.AddAutoMapper(typeof(PackageMapping));
 
-/*
-builder.Services.AddIdentity<Account, Role>();
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-.AddJwtBearer(option =>
+builder.Services.AddAuthentication();
+/*builder.Services.AddAuthorization();
+builder.Services.AddIdentity<Account,Role>();
+builder.Services.AddAuthentication(options =>
 {
-    option.TokenValidationParameters = new TokenValidationParameters
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(o =>
+{
+    o.TokenValidationParameters = new TokenValidationParameters
     {
+        ValidIssuer = configuration["Jwt:Issuer"],
+        ValidAudience = configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey
+        (Encoding.UTF8.GetBytes(configuration["Jwt:Key"])),
         ValidateIssuer = true,
         ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = configuration["JwtIssuer"],
-        ValidAudience = configuration["JwtAudience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSecurityKey"]))
+        ValidateLifetime = false,
+        ValidateIssuerSigningKey = true
     };
 });*/
 

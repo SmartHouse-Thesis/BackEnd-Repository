@@ -8,10 +8,8 @@ namespace Domain.Enum
 {
     public enum ContractStatus
     {
-        Draft,      //0
-        Process,    //1
-        Deposit,    //2
-        Completed,  //3
-        Cancle      //4
+        Deposit, //1
+        Process, //2
+        Completed,//3  
     }
 }

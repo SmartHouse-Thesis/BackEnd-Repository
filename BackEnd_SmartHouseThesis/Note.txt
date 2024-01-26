@@ -24,6 +24,8 @@ dotnet ef migrations list
     "SmartHomeDB": "Server=(local);Uid=sa;Pwd=12345;Database=ISHE_Database"
   }
 
+"Data Source=SQL8004.site4now.net;Initial Catalog=db_aa455a_ishedb;User Id=db_aa455a_ishedb_admin;Password=thanhtu98"
+
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 dotnet add package Microsoft.EntityFrameworkCore.SqlServer –version 5.0.17 6.0.10
