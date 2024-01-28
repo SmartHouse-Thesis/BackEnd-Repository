@@ -55,7 +55,6 @@ namespace BackEnd_SmartHouseThesis.Controllers
             {
                 return BadRequest("Customer is not exist");
             }
-
             if (teller != null && customer !=null)
             {
                 var _contract = _mapper.Map<Contract>(contract);

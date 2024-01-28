@@ -8,16 +8,14 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
-    public class RequestRepository : BaseRepo<Request>
+    public class AcceptanceRepossitory : BaseRepo<Acceptance>
     {
-        public RequestRepository(AppDbContext dbContext) : base(dbContext)
+        public AcceptanceRepossitory(AppDbContext dbContext) : base(dbContext)
         {
         }
 
-        public RequestRepository(AppDbContext dbContext, ILogger<BaseRepo<Request>> logger) : base(dbContext, logger)
+        public AcceptanceRepossitory(AppDbContext dbContext, ILogger<BaseRepo<Acceptance>> logger) : base(dbContext, logger)
         {
         }
-
-
     }
 }
