@@ -21,7 +21,8 @@ namespace Infrastructure.Mapper
              .ForMember(des => des.Password, act => act.MapFrom(src => src.Password))
              .ForMember(des => des.Address, act => act.MapFrom(src => src.Address))
              .ForMember(des => des.FirstName, act => act.MapFrom(src => src.FirstName))
-             .ForMember(des => des.LastName, act => act.MapFrom(src => src.LastName));
+             .ForMember(des => des.LastName, act => act.MapFrom(src => src.LastName))
+             .ForMember(des => des.Role.RoleName, act => act.MapFrom(src => src.RoleName));
 
             CreateMap<Account, Owner>()
                 .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))

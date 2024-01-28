@@ -54,7 +54,7 @@ builder.Services.AddAutoMapper(typeof(AccountMappingProfile));
 builder.Services.AddAutoMapper(typeof(PromotionMapping));
 builder.Services.AddAutoMapper(typeof(DeviceMapping));
 builder.Services.AddAutoMapper(typeof(PackageMapping));
-
+builder.Services.AddAutoMapper(typeof(PolicyMapping));
 builder.Services.AddAuthentication();
 /*builder.Services.AddAuthorization();
 builder.Services.AddIdentity<Account,Role>();

@@ -9,7 +9,7 @@ namespace Domain.Entities
 {
     public class Contract : BaseEntity
     {
-        public string? Title { get; set; } 
+        public string? Email { get; set; } 
         public string? Description { get; set; }
         public decimal? TotalCost { get; set; }
         public int? Status { get; set; } // trạng thái của Constract: chưa cọc,đặt cọc - scan, lắp đặt, nghiệm thu, xóa 
