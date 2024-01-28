@@ -52,6 +52,7 @@ namespace BackEnd_SmartHouseThesis
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddAutoMapper(typeof(AccountMappingProfile));
+            
 
             services.AddIdentity<Account, Role>();
             services.AddIdentity<Account, Owner>();

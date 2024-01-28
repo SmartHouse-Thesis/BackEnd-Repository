@@ -11,6 +11,7 @@ namespace Domain.Entities
     {
 
         public DateTime? StartWarranty { get; set; } // ngày bắt đầu bảo hành 
+        public DateTime? AcceptanceDate { get; set; } // 
         public string? ImageFile { get; set; } // ảnh bảng nghiệm thu
 
         //

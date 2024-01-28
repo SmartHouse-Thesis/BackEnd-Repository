@@ -1,4 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Domain.DTOs;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,37 +13,49 @@ namespace BackEnd_SmartHouseThesis.Controllers
     [ApiController]
     public class LoginController : ControllerBase
     {
-        // GET: api/<LoginController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private IConfiguration _config;
+
+        public LoginController (IConfiguration config)
         {
-            return new string[] { "value1", "value2" };
+            _config = config;
         }
 
-        // GET api/<LoginController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        private Authen AuthenticateAccount(Authen authen)
         {
-            return "value";
+            Authen _authen = null;
+            if (authen.Email == "admin" && authen.Password == "123")
+            {
+                _authen = new Authen { Email = "admin" };
+
+            }
+            return _authen;
         }
 
-        // POST api/<LoginController>
+        private string GenerateToken(Authen authen)
+        {
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            var token = new JwtSecurityToken(_config["Jwt:Issuer"], _config["Jwt:Audience"], null,
+                expires: DateTime.Now.AddMinutes(1), signingCredentials: credentials);
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        // POST api/<LoginController>/Login/
+        [AllowAnonymous]
         [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login([FromBody] Authen authen)
         {
-
+            IActionResult response = Unauthorized();
+            var user = AuthenticateAccount(authen);
+            if (user != null)
+            {
+                var token = GenerateToken(authen);
+                response = Ok(new { token = token });
+            }
+            return response;
         }
 
-        // PUT api/<LoginController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
 
-        // DELETE api/<LoginController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
 }

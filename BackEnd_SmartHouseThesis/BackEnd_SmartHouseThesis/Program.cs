@@ -47,6 +47,11 @@ builder.Services.AddScoped<ContractRepository>();
 //Role
 builder.Services.AddScoped<RoleService>();
 builder.Services.AddScoped<RoleRepository>();
+//
+builder.Services.AddScoped<PolicyService>();
+builder.Services.AddScoped<PolicyRepository>();
+
+
 
 ///Mapping
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -54,10 +59,9 @@ builder.Services.AddAutoMapper(typeof(AccountMappingProfile));
 builder.Services.AddAutoMapper(typeof(PromotionMapping));
 builder.Services.AddAutoMapper(typeof(DeviceMapping));
 builder.Services.AddAutoMapper(typeof(PackageMapping));
+builder.Services.AddAutoMapper(typeof(PolicyMapping));
 
-builder.Services.AddAuthentication();
-/*builder.Services.AddAuthorization();
-builder.Services.AddIdentity<Account,Role>();
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -67,16 +71,16 @@ builder.Services.AddAuthentication(options =>
 {
     o.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidIssuer = configuration["Jwt:Issuer"],
-        ValidAudience = configuration["Jwt:Audience"],
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey
-        (Encoding.UTF8.GetBytes(configuration["Jwt:Key"])),
+        (Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidateLifetime = false,
         ValidateIssuerSigningKey = true
     };
-});*/
+});
 
 //builder.Services.ConfigureServices(builder.Configuration);
 
@@ -88,12 +92,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var app = builder.Build();
-app.MapHub<ChatHub>("/chatHub");
 //////////////////////////////////////////////////////////////////////////////////////////
 ///Add Cors 
 builder.Services.AddCors();
 
+var app = builder.Build();
+app.MapHub<ChatHub>("/chatHub");
 
 
 // Configure the HTTP request pipeline.

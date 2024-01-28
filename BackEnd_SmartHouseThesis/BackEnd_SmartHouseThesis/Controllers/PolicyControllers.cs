@@ -1,4 +1,7 @@
 ﻿using Application.Services;
+using Application.UseCase;
+using AutoMapper;
+using Domain.DTOs.Request;
 using Domain.Entities;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +15,13 @@ namespace BackEnd_SmartHouseThesis.Controllers
     public class PolicyControllers : ControllerBase
     {
         private readonly PolicyService _policyService;
-
-        public PolicyControllers(PolicyService policyService)
+        private readonly OwnerService _ownerService; 
+        private readonly IMapper _mapper;
+        public PolicyControllers(PolicyService policyService, OwnerService ownerService, IMapper mapper )
         {
             _policyService = policyService;
+            _ownerService = ownerService;
+            _mapper = mapper;
         }
 
         // GET: api/<PromotionController>/GetAllPolicys
@@ -39,35 +45,49 @@ namespace BackEnd_SmartHouseThesis.Controllers
         }
 
         // POST api/<PromotionController>/CreatePolicy/
-        [HttpPost("CreatePolicy")]
-        public async Task<IActionResult> CreatePolicy([FromBody] Policy policy)
+        [HttpPost("CreatePolicy/{ownerId}")]
+        public async Task<IActionResult> CreatePolicy(Guid ownerId, [FromBody] PolicyRequest policy)
         {
-            var poli = await _policyService.GetPolicy(policy.Id);
-            if (poli != null)
+            var owner = await _ownerService.GetOwner(ownerId);
+            if (owner != null)
             {
-                return BadRequest("Policy is exist!!");
+                var _policy = _mapper.Map<Policy>(policy);
+                _policy.CreationDate = DateTime.Now;
+                _policy.CreatedBy = owner.Id;
+                await _policyService.CreatePolicy(_policy);
+                return Ok(_policy);
             }
             else
             {
-                await _policyService.CreatePolicy(poli);
-                return Ok();
+                return BadRequest("Not Owner");
             }
         }
 
 
         // PUT api/<PromotionController>/UpdatePolicy/5
         [HttpPut("UpdatePolicy/{id}")]
-        public async Task<IActionResult> UpdatePolicy(Guid id, [FromBody] Policy policy)
+        public async Task<IActionResult> UpdatePolicy(Guid id, Guid ownerId, [FromBody] PolicyRequest policy)
         {
-            var poli = await _policyService.GetPolicy(id);
-            if (poli != null)
+            var owner = await _ownerService.GetOwner(ownerId);
+            if (owner != null)
             {
-                await _policyService.UpdatePolicy(policy);
-                return Ok(poli);
+                var _poli = _policyService.GetPolicy(id);
+                if (_poli != null)
+                {
+                    var _policy = _mapper.Map<Policy>(policy);
+                    _policy.ModificationDate = DateTime.Now;
+                    _policy.ModificationBy = ownerId;
+                    await _policyService.UpdatePolicy(_policy);
+                    return Ok(_policy);
+                }
+                else
+                {
+                    return BadRequest("Policy is not exist!! ");
+                }
             }
             else
             {
-                return BadRequest("Policy can't do it right now!! ");
+                return BadRequest("Owner is not exist!! ");
             }
         }
 

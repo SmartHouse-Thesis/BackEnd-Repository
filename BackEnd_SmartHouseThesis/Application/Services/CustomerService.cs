@@ -12,7 +12,9 @@ namespace Application.Services
     public class CustomerService
     {
         private readonly CustomerRepository _customerRepository;
-        public CustomerService(CustomerRepository customerRepository)
+        private readonly AccountRepository _accountRepopistory;
+
+        public CustomerService(CustomerRepository customerRepository, AccountRepository accountRepository)
         {
             _customerRepository = customerRepository;
         }
@@ -22,5 +24,6 @@ namespace Application.Services
         public async Task<IQueryable<Customer>> GetAll() => await _customerRepository.FindAllAsync();
         public async Task<Customer> GetCustomer(Guid id) => await _customerRepository.GetAsync(id);
         public async Task CreateCustomer(Customer customer) => await _customerRepository.AddAsync(customer);
+
     }
 }
