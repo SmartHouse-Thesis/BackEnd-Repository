@@ -15,7 +15,7 @@ namespace Application.Services
         {
             _chatRepository = chatRepository;
         }
-        public async Task SaveChatLog(string chatMessage, string sender, string receiver) => await _chatRepository.SaveChatLog(chatMessage, sender, receiver);
+        public async Task SaveChatLog(string chatMessage, Guid senderId, Guid receiverId) => await _chatRepository.SaveChatLog(chatMessage, senderId, receiverId);
 
         public async Task<List<Chat>> GetChatLogs(Guid senderId, Guid receiverId) => await _chatRepository.GetChatLogs(senderId, receiverId);
     }

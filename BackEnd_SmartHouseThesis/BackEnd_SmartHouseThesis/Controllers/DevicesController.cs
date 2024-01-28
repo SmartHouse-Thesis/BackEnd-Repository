@@ -32,6 +32,13 @@ namespace BackEnd_SmartHouseThesis.Controllers
             return Ok(devices);
         }
 
+        [HttpGet("GetDevicesByManu/{manuName}")]
+        public async Task<IActionResult> GetDevicesByManu(string manuName)
+        {
+            var devices = await _deviceService.GetListDeviceByManufacturer(manuName);
+            return Ok(devices);
+        }
+
         // GET api/<DevicesController>/GetDevice/5
         [HttpGet("GetDevice/{id}")]
         public async Task<IActionResult> GetDevice(Guid id)

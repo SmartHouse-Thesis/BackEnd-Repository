@@ -30,6 +30,13 @@ namespace BackEnd_SmartHouseThesis.Controllers
             return Ok(packs);
         }
 
+        [HttpGet("GetPackagesByManu/{manuName}")]
+        public async Task<IActionResult> GetPackagesByManu(string manuName)
+        {
+            var packages = await _packageService.GetListPackagesByManufacturer(manuName);
+            return Ok(packages);
+        }
+
         // GET api/<PackageController>/GetPackage/5
         [HttpGet("GetPackage/{id}")]
         public async Task<IActionResult> GetPackage(Guid id)

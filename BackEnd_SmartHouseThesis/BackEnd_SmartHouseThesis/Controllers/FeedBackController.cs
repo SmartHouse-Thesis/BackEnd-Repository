@@ -1,5 +1,6 @@
 ﻿using Application.Services;
 using Domain.Entities;
+using Domain.Enum;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -12,10 +13,14 @@ namespace BackEnd_SmartHouseThesis.Controllers
     {
 
         private readonly FeedbackService _feedbackService;
+        private readonly PackageServices _packageServices;
+        private readonly ContractService _contractService;
 
-        public FeedBackController(FeedbackService feedbackService)
+        public FeedBackController(FeedbackService feedbackService, PackageServices packageServices, ContractService contractService)
         {
             _feedbackService = feedbackService;
+            _packageServices = packageServices;
+            _contractService = contractService;
         }
 
         [HttpGet("GetAllFeedBacks")]
@@ -46,8 +51,14 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
             else
             {
-                await _feedbackService.CreateFeedback(feedback);
-                return Ok();
+                var package = await _packageServices.GetPackage(feedback.Package.Id);
+                var contract = await _contractService.GetContract(package.Contract.Id);
+                if (contract != null && contract.Status == (int)ContractStatus.Completed)
+                {
+                    await _feedbackService.CreateFeedback(feedback);
+                    return Ok();
+                }
+                return BadRequest("Contract is still progress");
             }
         }
 

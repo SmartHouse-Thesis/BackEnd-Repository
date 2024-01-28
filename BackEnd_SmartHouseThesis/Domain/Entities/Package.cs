@@ -16,6 +16,7 @@ namespace Domain.Entities
         public decimal? PromotionPrice { get; set; }
 
         public ICollection<Device> Devices { get; set; }
+        public ICollection<Feedback> Feedbacks { get; set; }
 
         [ForeignKey(nameof(OwnerId))]
         public Guid? OwnerId { get; set; }
@@ -28,11 +29,6 @@ namespace Domain.Entities
         [ForeignKey(nameof(ContractId))]
         public Guid? ContractId { get; set; }
         public virtual Contract Contract { get; set; }
-
-        [ForeignKey(nameof(FeedbackId))]
-        public Guid? FeedbackId { get; set; }
-        public virtual Feedback Feedback { get; set; }
-
 
         [ForeignKey(nameof(ImageId))]
         public Guid? ImageId { get; set; }

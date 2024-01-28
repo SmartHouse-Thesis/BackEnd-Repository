@@ -28,5 +28,7 @@ namespace Application.Services
         public async Task<IQueryable<Device>> GetAll() => await _deviceRepository.FindAllAsync();
 
         public async Task<Device> GetDevice(Guid id)=> await _deviceRepository.GetAsync(id);
+
+        public async Task<List<Device>> GetListDeviceByManufacturer(string manuName) => await _deviceRepository.GetListDeviceByManufacturer(manuName);
     }
 }

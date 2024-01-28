@@ -25,5 +25,7 @@ namespace Application.Services
         public async Task<IQueryable<Package>> GetAll() => await _package.FindAllAsync();
 
         public async Task<Package> GetPackage(Guid id) => await _package.GetAsync(id);
+
+        public async Task<List<Package>> GetListPackagesByManufacturer(string manuName) => await _package.GetListPackagesByManufacturer(manuName);
     }
 }

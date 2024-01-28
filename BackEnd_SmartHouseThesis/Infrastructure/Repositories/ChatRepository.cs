@@ -11,21 +11,42 @@ namespace Infrastructure.Repositories
     public class ChatRepository : BaseRepo<Chat>
     {
         private readonly AppDbContext _appDbContext;
-        public ChatRepository(AppDbContext dbContext) : base(dbContext)
+        private readonly AccountRepository _accountRepository;
+        public ChatRepository(AppDbContext dbContext, AccountRepository accountRepository) : base(dbContext)
         {
             _appDbContext = dbContext;
+            _accountRepository = accountRepository;
         }
-        public async Task SaveChatLog(string chatMessage, string sender, string receiver)
+        public async Task SaveChatLog(string chatMessage, Guid senderId, Guid receiverId)
         {
-            // Save the chat log to the database
-            var chatLog = new Chat
+            var sender = await _accountRepository.GetAsync(senderId);
+            var receiver = await _accountRepository.GetAsync(receiverId);
+            if (sender.Role.RoleName == "Teller")
             {
-                CreationDate = DateTime.Now,
-                Logchat = $"{DateTime.Now} - {sender}: {chatMessage}"
-            };
-
-             _appDbContext.Chats.Add(chatLog);
-            await _appDbContext.SaveChangesAsync();
+                var chatLog = new Chat
+                {
+                    // Save the chat log to the database
+                    TellerId = senderId,
+                    CustomerId = receiverId,
+                    CreationDate = DateTime.Now,
+                    Logchat = $"{DateTime.Now} - {sender.FirstName + " " + sender.LastName}: {chatMessage}"
+                };
+                _appDbContext.Chats.Add(chatLog);
+                await _appDbContext.SaveChangesAsync();
+            }
+            else
+            {
+                var chatLog = new Chat
+                {
+                    // Save the chat log to the database
+                    CustomerId = senderId,
+                    TellerId = receiverId,
+                    CreationDate = DateTime.Now,
+                    Logchat = $"{DateTime.Now} - {sender}: {chatMessage}"
+                };
+                _appDbContext.Chats.Add(chatLog);
+                await _appDbContext.SaveChangesAsync();
+            }
         }
         public async Task<List<Chat>> GetChatLogs(Guid senderId, Guid receiverId)
         {

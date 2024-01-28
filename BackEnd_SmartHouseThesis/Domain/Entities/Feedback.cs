@@ -12,7 +12,9 @@ namespace Domain.Entities
         public string? Description { get; set; }
         public string? Content { get; set; }
 
-        public ICollection<Package> Packages { get; set; }
+        [ForeignKey(nameof(PackageId))]
+        public Guid? PackageId { get; set; }
+        public virtual Package Package { get; set; }
 
 
         [ForeignKey(nameof(CustomerId))]
