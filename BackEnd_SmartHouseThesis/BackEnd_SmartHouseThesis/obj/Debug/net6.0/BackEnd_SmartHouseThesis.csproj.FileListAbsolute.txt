@@ -258,3 +258,16 @@ D:\OneDrive - Đại học FPT- FPT University\Documents\Chuyên Ngành 9\Đồ 
 D:\OneDrive - Đại học FPT- FPT University\Documents\Chuyên Ngành 9\Đồ Án\BackEnd_repository\BackEnd_SmartHouseThesis\BackEnd_SmartHouseThesis\obj\Debug\net6.0\BackEnd_SmartHouseThesis.pdb
 D:\OneDrive - Đại học FPT- FPT University\Documents\Chuyên Ngành 9\Đồ Án\BackEnd_repository\BackEnd_SmartHouseThesis\BackEnd_SmartHouseThesis\obj\Debug\net6.0\BackEnd_SmartHouseThesis.genruntimeconfig.cache
 D:\OneDrive - Đại học FPT- FPT University\Documents\Chuyên Ngành 9\Đồ Án\BackEnd_repository\BackEnd_SmartHouseThesis\BackEnd_SmartHouseThesis\obj\Debug\net6.0\ref\BackEnd_SmartHouseThesis.dll
+D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\BackEnd_SmartHouseThesis\obj\Debug\net6.0\BackEnd_SmartHouseThesis.csproj.AssemblyReference.cache
+D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\BackEnd_SmartHouseThesis\obj\Debug\net6.0\BackEnd_SmartHouseThesis.GeneratedMSBuildEditorConfig.editorconfig
+D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\BackEnd_SmartHouseThesis\obj\Debug\net6.0\BackEnd_SmartHouseThesis.AssemblyInfoInputs.cache
+D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\BackEnd_SmartHouseThesis\obj\Debug\net6.0\BackEnd_SmartHouseThesis.AssemblyInfo.cs
+D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\BackEnd_SmartHouseThesis\obj\Debug\net6.0\BackEnd_SmartHouseThesis.csproj.CoreCompileInputs.cache
+D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\BackEnd_SmartHouseThesis\obj\Debug\net6.0\BackEnd_SmartHouseThesis.MvcApplicationPartsAssemblyInfo.cs
+D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\BackEnd_SmartHouseThesis\obj\Debug\net6.0\BackEnd_SmartHouseThesis.MvcApplicationPartsAssemblyInfo.cache
+D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\BackEnd_SmartHouseThesis\obj\Debug\net6.0\BackEnd_SmartHouseThesis.RazorAssemblyInfo.cache
+D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\BackEnd_SmartHouseThesis\obj\Debug\net6.0\BackEnd_SmartHouseThesis.RazorAssemblyInfo.cs
+D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\BackEnd_SmartHouseThesis\obj\Debug\net6.0\BackEnd_SmartHouseThesis.sourcelink.json
+D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\BackEnd_SmartHouseThesis\obj\Debug\net6.0\BackEnd_SmartHouseThesis.dll
+D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\BackEnd_SmartHouseThesis\obj\Debug\net6.0\refint\BackEnd_SmartHouseThesis.dll
+D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\BackEnd_SmartHouseThesis\obj\Debug\net6.0\BackEnd_SmartHouseThesis.pdb
