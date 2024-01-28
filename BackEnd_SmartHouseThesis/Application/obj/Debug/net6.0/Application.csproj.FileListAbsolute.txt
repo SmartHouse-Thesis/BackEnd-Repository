@@ -16,3 +16,21 @@ D:\OneDrive - Đại học FPT- FPT University\Documents\Chuyên Ngành 9\Đồ 
 D:\OneDrive - Đại học FPT- FPT University\Documents\Chuyên Ngành 9\Đồ Án\BackEnd_repository\BackEnd_SmartHouseThesis\Application\obj\Debug\net6.0\refint\Application.dll
 D:\OneDrive - Đại học FPT- FPT University\Documents\Chuyên Ngành 9\Đồ Án\BackEnd_repository\BackEnd_SmartHouseThesis\Application\obj\Debug\net6.0\Application.pdb
 D:\OneDrive - Đại học FPT- FPT University\Documents\Chuyên Ngành 9\Đồ Án\BackEnd_repository\BackEnd_SmartHouseThesis\Application\obj\Debug\net6.0\ref\Application.dll
+D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\Application\bin\Debug\net6.0\Application.deps.json
+D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\Application\bin\Debug\net6.0\Application.dll
+D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\Application\bin\Debug\net6.0\Application.pdb
+D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\Application\bin\Debug\net6.0\Domain.dll
+D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\Application\bin\Debug\net6.0\Infrastructure.dll
+D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\Application\bin\Debug\net6.0\Domain.pdb
+D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\Application\bin\Debug\net6.0\Infrastructure.pdb
+D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\Application\obj\Debug\net6.0\Application.csproj.AssemblyReference.cache
+D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\Application\obj\Debug\net6.0\Application.GeneratedMSBuildEditorConfig.editorconfig
+D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\Application\obj\Debug\net6.0\Application.AssemblyInfoInputs.cache
+D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\Application\obj\Debug\net6.0\Application.AssemblyInfo.cs
+D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\Application\obj\Debug\net6.0\Application.csproj.CoreCompileInputs.cache
+D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\Application\obj\Debug\net6.0\Application.sourcelink.json
+D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\Application\obj\Debug\net6.0\Application.csproj.CopyComplete
+D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\Application\obj\Debug\net6.0\Application.dll
+D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\Application\obj\Debug\net6.0\refint\Application.dll
+D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\Application\obj\Debug\net6.0\Application.pdb
+D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\Application\obj\Debug\net6.0\ref\Application.dll

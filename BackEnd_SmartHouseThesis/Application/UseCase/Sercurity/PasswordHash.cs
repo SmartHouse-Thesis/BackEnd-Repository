@@ -9,7 +9,27 @@ namespace Application.UseCase.Sercurity
 {
     public class PasswordHash
     {
+        public string HashPassword(string password)
+        {
+            // Generate a salt
+            string salt = BCrypt.Net.BCrypt.GenerateSalt();
 
+            // Hash the password with the salt
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password, salt);
+
+            return hashedPassword;
+        }
+
+        // Function to verify a password
+        public  bool VerifyPassword(string password, string hashedPassword)
+        {
+            // Verify the password against the hashed password
+            bool result = BCrypt.Net.BCrypt.Verify(password, hashedPassword);
+
+            return result;
+        }
+
+/*
         public static string Encrypt(string password, string secrectKey)
         {
             string EncryptionKey = secrectKey;
@@ -52,6 +72,6 @@ namespace Application.UseCase.Sercurity
                 }
             }
             return cipherText;
-        }
+        }*/
     }
 }

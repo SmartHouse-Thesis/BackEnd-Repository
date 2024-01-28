@@ -78,7 +78,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             if (_account != null) 
             {
                 var role = await _roleService.GetRole(_account.RoleId);
-                if (role.RoleName == account.RoleName)
+                if (role.RoleName == "Customer")
                 {
                     var customer = _mapper.Map<Customer>(_account);
                     await _customerService.CreateCustomer(customer);

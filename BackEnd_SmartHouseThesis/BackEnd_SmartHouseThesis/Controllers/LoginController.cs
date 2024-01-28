@@ -43,7 +43,6 @@ namespace BackEnd_SmartHouseThesis.Controllers
         // POST api/<LoginController>/Login/
         [AllowAnonymous]
         [HttpPost]
-        [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] Authen authen)
         {
             IActionResult response = Unauthorized();

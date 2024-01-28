@@ -8,58 +8,15 @@ using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Application.UseCase.Sercurity;
+using System.Text.Json.Serialization;
 
 
 var builder = WebApplication.CreateBuilder(args);
-// Add services to the container.
-builder.Services.AddDbContext<AppDbContext>();
-builder.Services.AddScoped<AppDbContext>();
-builder.Services.AddSignalR();
-
-///AddService
-//Account
-builder.Services.AddScoped<AccountService>();
-builder.Services.AddScoped<AccountRepository>();
-//Owner
-builder.Services.AddScoped<OwnerService>();
-builder.Services.AddScoped<OwnerRepository>();
-//Device
-builder.Services.AddScoped<DeviceService>();
-builder.Services.AddScoped<DeviceRepository>();
-//Manufacture
-builder.Services.AddScoped<ManufacturerService>();
-builder.Services.AddScoped<ManufactureRepository>();
-//Package
-builder.Services.AddScoped<PackageServices>();
-builder.Services.AddScoped<PackageRepository>();
-//Policy
-builder.Services.AddScoped<PolicyService>();
-builder.Services.AddScoped<PolicyRepository>();
-//Promotion
-builder.Services.AddScoped<PromotionService>();
-builder.Services.AddScoped<PromotionRepository>();
-//Account
-builder.Services.AddScoped<AccountService>();
-builder.Services.AddScoped<AccountRepository>();
-//Contract
-builder.Services.AddScoped<ContractService>();
-builder.Services.AddScoped<ContractRepository>();
-//Role
-builder.Services.AddScoped<RoleService>();
-builder.Services.AddScoped<RoleRepository>();
-//
-builder.Services.AddScoped<PolicyService>();
-builder.Services.AddScoped<PolicyRepository>();
-
-
+builder.Services.ConfigureServices();
 
 ///Mapping
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddAutoMapper(typeof(AccountMappingProfile));
-builder.Services.AddAutoMapper(typeof(PromotionMapping));
-builder.Services.AddAutoMapper(typeof(DeviceMapping));
-builder.Services.AddAutoMapper(typeof(PackageMapping));
-builder.Services.AddAutoMapper(typeof(PolicyMapping));
+builder.Services.AutoMapper();
 
 
 builder.Services.AddAuthentication(options =>
@@ -86,7 +43,8 @@ builder.Services.AddAuthentication(options =>
 
 
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(x =>
+                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

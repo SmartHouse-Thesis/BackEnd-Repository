@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -20,8 +21,6 @@ namespace Domain.DTOs.Request
         [Required]
         [RegularExpression(@"^\w{8,}$", ErrorMessage = "Password must be at least 8 characters and contain a-z, A-Z, 0-9, and underscore characters")]
         public string Password { get; set; }
-        [Required]
-        public string RoleName { get; set; }
         [Required]
         public string Address { get; set; }
         [Required]
