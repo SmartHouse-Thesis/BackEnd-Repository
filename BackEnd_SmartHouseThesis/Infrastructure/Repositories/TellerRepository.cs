@@ -12,6 +12,7 @@ namespace Infrastructure.Repositories
     {
         public TellerRepository(AppDbContext dbContext, ILogger<BaseRepo<Teller>> logger) : base(dbContext, logger)
         {
+
         }
         public TellerRepository(AppDbContext dbContext) : base(dbContext)
         {
