@@ -13,12 +13,14 @@ namespace BackEnd_SmartHouseThesis.Controllers
     public class PackageController : ControllerBase
     {
         private readonly PackageServices _packageService;
+        private readonly PromotionService _promotionService;
         private readonly OwnerService _ownerService;
         private readonly IMapper _mapper;
-        public PackageController(PackageServices packageService, OwnerService ownerService, IMapper mapper)
+        public PackageController(PackageServices packageService, OwnerService ownerService, PromotionService promotionService, IMapper mapper)
         {
             _packageService = packageService;
             _ownerService = ownerService;
+            _promotionService = promotionService;
             _mapper = mapper;
         }
 
@@ -76,24 +78,48 @@ namespace BackEnd_SmartHouseThesis.Controllers
             var owner = await _ownerService.GetOwner(ownerId);
             if (owner != null)
             {
-                var _pack = _ownerService.GetOwner(id);
+                var _pack = await _packageService.GetPackage(id);
                 if (_pack != null)
                 {
-                    var _package = _mapper.Map<Package>(package);
-                    _package.ModificationDate = DateTime.Now;
-                    _package.ModificationBy = ownerId;
-                    await _packageService.UpdatePackage(_package);
-                    return Ok(_package);
+                    _pack = _mapper.Map<Package>(package);
+                    _pack.ModificationDate = DateTime.Now;
+                    _pack.ModificationBy = ownerId;
+                    await _packageService.UpdatePackage(_pack);
+                    return Ok(_pack);
                 }
                 else
                 {
-                    return BadRequest("Promotion is not exist!! ");
+                    return BadRequest("Package is not exist!! ");
                 }
             }
             else
             {
                 return BadRequest("Owner is not exist!! ");
             }
+        }
+
+        [HttpPut("AddPackPromo/{id}")]
+        public async Task<IActionResult> AddPackPromo(Guid id, Guid ownerId, Guid promoId)
+        {
+            var owner = await _ownerService.GetOwner(ownerId);
+            if (owner != null)
+            {
+                var _pack = await _packageService.GetPackage(id);
+                if (_pack != null)
+                {
+                    var promo = await _promotionService.GetPromotion(promoId);
+                    if (promo != null)
+                    {
+                        _pack.Promotion = promo;
+                        _pack.PromotionPrice = _pack.Price * (promo.Discount / 100);
+                        await _packageService.UpdatePackage(_pack);
+                        return Ok(_pack);
+                    }
+                    else return BadRequest("Promotion is not exist!! ");
+                }
+                else return BadRequest("Package is not exist!! ");
+            }
+            else return BadRequest("Owner is not exist!! ");
         }
 
         // DELETE api/<PackageController>/Delete/5
