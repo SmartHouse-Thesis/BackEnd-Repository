@@ -8,17 +8,18 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Infrastructure.Mapper;
+using Application.UseCase.Sercurity;
 
 namespace BackEnd_SmartHouseThesis
 {
     public static class DependencyInjection
     {
-        public static void ConfigureServices(this IServiceCollection services, IConfiguration configuration)
-        {          
-            // Đăng ký DbContext
+        public static void ConfigureServices(this IServiceCollection services)
+        {
             services.AddDbContext<AppDbContext>();
             services.AddScoped<AppDbContext>();
-
+            services.AddSignalR();
+            ///AddService
             //Account
             services.AddScoped<AccountService>();
             services.AddScoped<AccountRepository>();
@@ -46,40 +47,38 @@ namespace BackEnd_SmartHouseThesis
             //Contract
             services.AddScoped<ContractService>();
             services.AddScoped<ContractRepository>();
-            //Role 
+            //Role
             services.AddScoped<RoleService>();
             services.AddScoped<RoleRepository>();
+            //Policy
+            services.AddScoped<PolicyService>();
+            services.AddScoped<PolicyRepository>();
+            //Teller
+            services.AddScoped<TellerService>();
+            services.AddScoped<TellerRepository>();
+            //Customer
+            services.AddScoped<CustomerService>();
+            services.AddScoped<CustomerRepository>();
+            //Feedback 
+            services.AddScoped<FeedbackService>();
+            services.AddScoped<FeedbackRepository>();
+            //Survey
+            services.AddScoped<SurveyService>();
+            services.AddScoped<SurveyRepository>();
+            //PasswordHash
+            services.AddScoped<PasswordHash>();
+        }
 
+        public static void AutoMapper(this IServiceCollection services)
+        {
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddAutoMapper(typeof(AccountMappingProfile));
-            
-
-            services.AddIdentity<Account, Role>();
-            services.AddIdentity<Account, Owner>();
-            services.AddIdentity<Account, Staff>();
-            services.AddIdentity<Account, Teller>();
-            services.AddIdentity<Account, Customer>();
-
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(o =>
-            {
-                o.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidIssuer = configuration["Jwt:Issuer"],
-                    ValidAudience = configuration["Jwt:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey
-                    (Encoding.UTF8.GetBytes(configuration["Jwt:Key"])),
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = false,
-                    ValidateIssuerSigningKey = true
-                };
-            });
-
+            services.AddAutoMapper(typeof(PromotionMapping));
+            services.AddAutoMapper(typeof(DeviceMapping));
+            services.AddAutoMapper(typeof(PackageMapping));
+            services.AddAutoMapper(typeof(PolicyMapping));
         }
+
+
     }
 }

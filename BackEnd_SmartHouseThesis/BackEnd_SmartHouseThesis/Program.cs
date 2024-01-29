@@ -8,56 +8,17 @@ using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Application.UseCase.Sercurity;
+using System.Text.Json.Serialization;
 
 
 var builder = WebApplication.CreateBuilder(args);
-// Add services to the container.
-builder.Services.AddDbContext<AppDbContext>();
-builder.Services.AddScoped<AppDbContext>();
-builder.Services.AddSignalR();
-
-///AddService
-//Account
-builder.Services.AddScoped<AccountService>();
-builder.Services.AddScoped<AccountRepository>();
-//Owner
-builder.Services.AddScoped<OwnerService>();
-builder.Services.AddScoped<OwnerRepository>();
-//Device
-builder.Services.AddScoped<DeviceService>();
-builder.Services.AddScoped<DeviceRepository>();
-//Manufacture
-builder.Services.AddScoped<ManufacturerService>();
-builder.Services.AddScoped<ManufactureRepository>();
-//Package
-builder.Services.AddScoped<PackageServices>();
-builder.Services.AddScoped<PackageRepository>();
-//Policy
-builder.Services.AddScoped<PolicyService>();
-builder.Services.AddScoped<PolicyRepository>();
-//Promotion
-builder.Services.AddScoped<PromotionService>();
-builder.Services.AddScoped<PromotionRepository>();
-//Account
-builder.Services.AddScoped<AccountService>();
-builder.Services.AddScoped<AccountRepository>();
-//Contract
-builder.Services.AddScoped<ContractService>();
-builder.Services.AddScoped<ContractRepository>();
-//Role
-builder.Services.AddScoped<RoleService>();
-builder.Services.AddScoped<RoleRepository>();
+builder.Services.ConfigureServices();
 
 ///Mapping
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddAutoMapper(typeof(AccountMappingProfile));
-builder.Services.AddAutoMapper(typeof(PromotionMapping));
-builder.Services.AddAutoMapper(typeof(DeviceMapping));
-builder.Services.AddAutoMapper(typeof(PackageMapping));
-builder.Services.AddAutoMapper(typeof(PolicyMapping));
-builder.Services.AddAuthentication();
-/*builder.Services.AddAuthorization();
-builder.Services.AddIdentity<Account,Role>();
+builder.Services.AutoMapper();
+
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -67,33 +28,34 @@ builder.Services.AddAuthentication(options =>
 {
     o.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidIssuer = configuration["Jwt:Issuer"],
-        ValidAudience = configuration["Jwt:Audience"],
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey
-        (Encoding.UTF8.GetBytes(configuration["Jwt:Key"])),
+        (Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidateLifetime = false,
         ValidateIssuerSigningKey = true
     };
-});*/
+});
 
 //builder.Services.ConfigureServices(builder.Configuration);
 
 
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(x =>
+                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var app = builder.Build();
-app.MapHub<ChatHub>("/chatHub");
 //////////////////////////////////////////////////////////////////////////////////////////
 ///Add Cors 
 builder.Services.AddCors();
 
+var app = builder.Build();
+app.MapHub<ChatHub>("/chatHub");
 
 
 // Configure the HTTP request pipeline.

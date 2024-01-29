@@ -10,11 +10,11 @@ namespace Domain.DTOs.Request
     public class ContractRequest
     {
         [Required]
-        public string? Title { get; set; }
+        public string Title { get; set; } = null! ;  
         [Required]
-        public string? Description { get; set; }
+        public string Description { get; set; }
         [Required]
-        public decimal? TotalCost { get; set; }
+        public decimal TotalCost { get; set; }
 
         public int? Status { get; set; } // trạng thái của Constract: chưa cọc,đặt cọc - scan, lắp đặt, nghiệm thu, xóa 
         public DateTime? StartPlanDate { get; set; } // ngày lắp đặt

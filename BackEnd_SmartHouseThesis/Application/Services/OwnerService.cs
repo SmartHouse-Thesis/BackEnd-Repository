@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Application.Services
 {
-    public class OwnerService : IOwnerService
+    public class OwnerService 
     {
         private readonly OwnerRepository _ownerRepository;
         public OwnerService(OwnerRepository ownerRepository)

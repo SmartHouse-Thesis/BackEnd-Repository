@@ -1,4 +1,5 @@
 ﻿using Application.Services;
+using Application.UseCase.Sercurity;
 using AutoMapper;
 using Domain.DTOs.Request;
 using Domain.Entities;
@@ -15,11 +16,13 @@ namespace BackEnd_SmartHouseThesis.Controllers
         private readonly AccountService _accountService;
         private readonly RoleService _roleService; 
         private readonly IMapper _mapper;
-        public AccountController(AccountService accountService, IMapper mapper, RoleService roleService)
+        private readonly PasswordHash _passwordHash;
+        public AccountController(AccountService accountService, IMapper mapper, RoleService roleService, PasswordHash passwordHash)
         {
             _accountService = accountService;
             _mapper = mapper;
             _roleService = roleService;
+            _passwordHash = passwordHash;
         }
 
         // GET: api/<AccountController>/GettAllAccount
@@ -55,7 +58,9 @@ namespace BackEnd_SmartHouseThesis.Controllers
             {
                 _account = _mapper.Map<Account>(account);
                 _account.CreationDate = DateTime.Now;
-                _account.Role = await _roleService.getRoleByRoleName(account.RoleName);
+                _account.Password = _passwordHash.HashPassword(account.Password);
+                var Role = await _roleService.getRoleByRoleName("Customer");
+                _account.RoleId = Role.Id;
                 await _accountService.CreateAccount(_account);
                 return Ok(_account);
             }
@@ -74,7 +79,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
             else
             {
-                return BadRequest("Account can't do it right now!! ");
+                return NotFound("Account Doesnt Exist !!");
             }
         }
 
@@ -86,11 +91,11 @@ namespace BackEnd_SmartHouseThesis.Controllers
             if (_account != null)
             {
                 await _accountService.DeleteAccount(_account);
-                return Ok(_account);
+                return Ok("Remove Success");
             }
             else
             {
-                return BadRequest("Account can't do it right now!! ");
+                return NotFound("Account Doesnt Exist !!");
             }
         }
 

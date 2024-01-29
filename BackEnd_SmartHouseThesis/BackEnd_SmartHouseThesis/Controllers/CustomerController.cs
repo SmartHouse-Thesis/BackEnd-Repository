@@ -52,8 +52,8 @@ namespace BackEnd_SmartHouseThesis.Controllers
             var _account = await _accountService.GetAccount(accountId);
             if (_account != null)
             {
-                var role = await _roleService.GetRole(_account.RoleId);
-                if (role.Id == _account.RoleId)
+                var role = await _roleService.getRoleByRoleName(_account.Role.RoleName);
+                if (role.RoleName == _account.Role.RoleName)
                 {
                     var customer = _mapper.Map<Customer>(_account);
                     await _customerService.CreateCustomer(customer);
@@ -70,15 +70,15 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
         }
 
-        // POST api/<CustomerController>/CreateCustomer/{accountId}
-        [HttpPost("CreateCustomer/{accountId}")]
+        // POST api/<CustomerController>/RegisterAccount
+        [HttpPost("RegisterAccount")]
         public async Task<IActionResult> RegisterAccount([FromBody] RegisterRequest account)
         {
             var _account = await _accountService.GetAccountByEmail(account.Email);
             if (_account != null) 
             {
                 var role = await _roleService.GetRole(_account.RoleId);
-                if (role.RoleName == account.RoleName)
+                if (role.RoleName == "Customer")
                 {
                     var customer = _mapper.Map<Customer>(_account);
                     await _customerService.CreateCustomer(customer);
