@@ -11,10 +11,12 @@ namespace Application.Services
     public class StaffService
     {
         private readonly StaffRepository _staffRepository;
+        private readonly ContractRepository _contractRepository;
 
-        public StaffService(StaffRepository staffRepository)
+        public StaffService(StaffRepository staffRepository, ContractRepository contractRepository)
         {
             _staffRepository = staffRepository;
+            _contractRepository = contractRepository;
         }
 
         public async Task CreateStaff(Staff staff) => await _staffRepository.AddAsync(staff);
@@ -26,6 +28,6 @@ namespace Application.Services
 
         public async Task<Staff> GetStaff(Guid id) => await _staffRepository.GetAsync(id);
 
-
+        public async Task<List<Staff>> GetListStaffFree(DateTime NewStartPlan, DateTime NewEndPlan) => await _staffRepository.GetListStaffFree(NewStartPlan, NewEndPlan);
     }
 }
