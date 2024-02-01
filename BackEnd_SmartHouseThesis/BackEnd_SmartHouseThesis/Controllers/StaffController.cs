@@ -38,6 +38,13 @@ namespace BackEnd_SmartHouseThesis.Controllers
             return Ok(staffFree);
         }
 
+        [HttpGet("GetStaffForSurvey/{requestDate}")]
+        public async Task<IActionResult> GetStaffForSurvey(DateTime requestDate)
+        {
+            var staffFree = await _staffService.GetListStaffFreeSurvey(requestDate);
+            return Ok(staffFree);
+        }
+
         // GET api/<StaffController>/GetStaff/5
         [HttpGet("GetStaff/{id}")]
         public async Task<IActionResult> GetStaff(Guid id)

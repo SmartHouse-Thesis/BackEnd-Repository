@@ -25,5 +25,6 @@ namespace Application.Services
         public async Task<IQueryable<Request>> GetAll() => await _requestRepository.FindAllAsync();
 
         public async Task<Request> GetRequest(Guid id) => await _requestRepository.GetAsync(id);
+        public async Task<List<Request>> GetRequestByStaffId(Guid staffId) => await _requestRepository.GetRequestByStaffId(staffId);
     }
 }

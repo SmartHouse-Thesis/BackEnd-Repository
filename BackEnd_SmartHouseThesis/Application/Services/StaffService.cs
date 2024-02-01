@@ -29,5 +29,7 @@ namespace Application.Services
         public async Task<Staff> GetStaff(Guid id) => await _staffRepository.GetAsync(id);
 
         public async Task<List<Staff>> GetListStaffFree(DateTime NewStartPlan, DateTime NewEndPlan) => await _staffRepository.GetListStaffFree(NewStartPlan, NewEndPlan);
+
+        public async Task<List<Staff>> GetListStaffFreeSurvey(DateTime requestDate) => await _staffRepository.GetListStaffFreeSurvey(requestDate);
     }
 }

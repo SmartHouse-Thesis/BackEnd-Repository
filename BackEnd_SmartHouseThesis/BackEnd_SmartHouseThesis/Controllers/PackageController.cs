@@ -98,7 +98,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
         }
 
-        [HttpPut("AddPackPromo/{id}")]
+        [HttpPut("AddPackPromo/{id}/{ownerId}/{promoId}")]
         public async Task<IActionResult> AddPackPromo(Guid id, Guid ownerId, Guid promoId)
         {
             var owner = await _ownerService.GetOwner(ownerId);
