@@ -27,7 +27,7 @@ namespace Infrastructure.Repositories
         public async Task<List<Staff>> GetListStaffFree(DateTime NewStartPlan, DateTime NewEndPlan)
         {
             List<Staff> listStaffFree = new List<Staff>();
-            var listStaff = await _dbContext.Staff.ToListAsync();
+            var listStaff = await _dbContext.Staff.Where(s => s.isLeader == true).ToListAsync();
             foreach (var staff in listStaff)
             {
                 List<Contract> contracts = await _contractRepository.GetContractsByStaff(staff.Id);
@@ -41,6 +41,30 @@ namespace Infrastructure.Repositories
                     }
                 }
                 if(contractFreeCount == contractCount)
+                {
+                    listStaffFree.Add(staff);
+                }
+            }
+            return listStaffFree;
+        }
+
+        public async Task<List<Staff>> GetListStaffFreeSurvey(DateTime requestDate)
+        {
+            List<Staff> listStaffFree = new List<Staff>();
+            var listStaff = await _dbContext.Staff.Where(s => s.isLeader == true).ToListAsync();
+            foreach (var staff in listStaff)
+            {
+                List<Contract> contracts = await _contractRepository.GetContractsByStaff(staff.Id);
+                int contractCount = contracts.Count();
+                int requestFreeCount = 0;
+                foreach (var contract in contracts)
+                {
+                    if ((requestDate < contract.StartPlanDate && requestDate < contract.EndPlanDate) || (requestDate > contract.StartPlanDate && requestDate > contract.EndPlanDate))
+                    {
+                        requestFreeCount += 1;
+                    }
+                }
+                if (requestFreeCount == contractCount)
                 {
                     listStaffFree.Add(staff);
                 }

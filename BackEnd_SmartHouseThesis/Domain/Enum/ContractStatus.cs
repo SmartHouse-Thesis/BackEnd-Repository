@@ -8,7 +8,7 @@ namespace Domain.Enum
 {
     public enum ContractStatus
     {
-        Deposit = 1, //1
+        New = 1, //1
         Process = 2, //2
         Completed = 3,//3  
     }
