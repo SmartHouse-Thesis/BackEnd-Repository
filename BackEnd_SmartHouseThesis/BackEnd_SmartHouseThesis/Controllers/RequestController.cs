@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Application.Services;
+using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,6 +10,13 @@ namespace BackEnd_SmartHouseThesis.Controllers
     [ApiController]
     public class RequestController : ControllerBase
     {
+        private readonly RequestService _requestService;
+        private readonly IMapper _mapper;
+        public RequestController(RequestService requestService, IMapper mapper)
+        {
+            _requestService = requestService;
+            _mapper = mapper;
+        }
         // GET: api/<RequestController>
         [HttpGet]
         public IEnumerable<string> Get()
@@ -20,6 +29,17 @@ namespace BackEnd_SmartHouseThesis.Controllers
         public string Get(int id)
         {
             return "value";
+        }
+
+        [HttpGet("GetRequestByStaff/{staffId}")]
+        public async Task<IActionResult> GetRequestByStaff(Guid staffId)
+        {
+            var requests = await _requestService.GetRequestByStaffId(staffId);
+            if (requests == null)
+            {
+                return NotFound();
+            }
+            return Ok(requests);
         }
 
         // POST api/<RequestController>

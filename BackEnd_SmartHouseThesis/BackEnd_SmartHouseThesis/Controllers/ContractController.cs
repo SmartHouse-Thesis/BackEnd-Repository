@@ -22,6 +22,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             _contractService = contractService;
             _tellerService = tellerService;
             _mapper = mapper;
+            _customerService = customerService;
         }
 
         [HttpGet("GetAllContracts")]

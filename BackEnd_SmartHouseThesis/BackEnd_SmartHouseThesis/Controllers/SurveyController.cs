@@ -1,4 +1,5 @@
 ﻿using Application.Services;
+using AutoMapper;
 using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,17 +13,36 @@ namespace BackEnd_SmartHouseThesis.Controllers
     {
 
         private readonly SurveyService _surveyService;
+        private readonly TellerService _tellerService;
+        private readonly StaffService _staffService;
+        private readonly IMapper _mapper;
 
-        public SurveyController(SurveyService surveyService)
+        public SurveyController(SurveyService surveyService, TellerService tellerService, StaffService staffService, IMapper mapper)
         {
             _surveyService = surveyService;
+            _tellerService = tellerService;
+            _mapper = mapper;
+            _staffService = staffService;
         }
 
-        [HttpGet("GetAllSurveys")]
-        public async Task<IActionResult> GetAllSurveys()
+        [HttpGet("GetAllSurveys/{staffId}")]
+        public async Task<IActionResult> GetAllSurveys(Guid staffId)
         {
-            var surveys = await _surveyService.GetAll();
-            return Ok(surveys);
+            var staffLead = await _staffService.GetStaff(staffId);
+            if (staffLead != null)
+            {
+                if (staffLead.isLeader == true)
+                {
+                    var surveys = await _surveyService.GetAll();
+                    return Ok(surveys);
+                }
+                else
+                {
+                    var surveys = await _surveyService.GetSurveysByStaff(staffId);
+                    return Ok(surveys);
+                }
+            }
+            else { return BadRequest("Staff is not found"); }
         }
 
         [HttpGet("GetSurvey/{id}")]
@@ -37,17 +57,17 @@ namespace BackEnd_SmartHouseThesis.Controllers
         }
 
         [HttpPost("CreateSurvey")]
-        public async Task<IActionResult> CreateSurvey([FromBody] Survey survey)
+        public async Task<IActionResult> CreateSurvey(Guid tellerId, [FromBody] Survey survey)
         {
-            var _survey = await _surveyService.GetSurvey(survey.Id);
-            if (_survey != null)
-            {
-                return BadRequest("Survey is exist!! ");
-            }
+            var teller = await _tellerService.GetTeller(tellerId);
+            if (teller == null) return BadRequest("Teller is not exist!!");
             else
             {
-                await _surveyService.CreateSurvey(survey);
-                return Ok();
+                var _survey = _mapper.Map<Survey>(survey);
+                _survey.CreationDate = DateTime.Now;
+                _survey.CreatedBy = teller.Id;
+                await _surveyService.CreateSurvey(_survey);
+                return Ok(_survey);
             }
         }
 
@@ -58,8 +78,30 @@ namespace BackEnd_SmartHouseThesis.Controllers
             var _survey = await _surveyService.GetSurvey(id);
             if (_survey != null)
             {
+                _survey = _mapper.Map<Survey>(survey);
                 await _surveyService.UpdateSurvey(_survey);
                 return Ok(_survey);
+            }
+            else
+            {
+                return BadRequest("Survey can't do it right now!! ");
+            }
+        }
+
+        [HttpPut("AssignStaffSurvey/{id}/{staffid}")]
+        public async Task<IActionResult> AssignStaffSurvey(Guid id, Guid staffid)
+        {
+            var _survey = await _surveyService.GetSurvey(id);
+            if (_survey != null)
+            {
+                var _staff = await _staffService.GetStaff(staffid);
+                if(_staff != null)
+                {
+                    _survey.Staff = _staff;
+                    await _surveyService.UpdateSurvey(_survey);
+                    return Ok(_survey);
+                }
+                else return BadRequest("Staff can't do it right now!! ");
             }
             else
             {

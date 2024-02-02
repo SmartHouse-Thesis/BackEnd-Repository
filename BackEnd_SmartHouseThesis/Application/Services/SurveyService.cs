@@ -11,10 +11,12 @@ namespace Application.Services
     public class SurveyService
     {
         private readonly SurveyRepository _surveyRepository;
+        private readonly StaffRepository _staffRepository;
 
-        public SurveyService(SurveyRepository surveyRepository)
+        public SurveyService(SurveyRepository surveyRepository, StaffRepository staffRepository)
         {
             _surveyRepository = surveyRepository;
+            _staffRepository = staffRepository;
         }
 
         public async Task CreateSurvey(Survey survey) => await _surveyRepository.AddAsync(survey);
@@ -25,5 +27,7 @@ namespace Application.Services
         public async Task<IQueryable<Survey>> GetAll() => await _surveyRepository.FindAllAsync();
 
         public async Task<Survey> GetSurvey(Guid id) => await _surveyRepository.GetAsync(id);
+
+        public async Task<List<Survey>> GetSurveysByStaff(Guid staffId) => await _surveyRepository.GetSurveysByStaff(staffId);
     }
 }
