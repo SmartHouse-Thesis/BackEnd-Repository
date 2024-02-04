@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Domain.Entities;
+using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -9,6 +12,7 @@ namespace Application.UseCase.Sercurity
 {
     public class PasswordHash
     {
+
         public string HashPassword(string password)
         {
             // Generate a salt

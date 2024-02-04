@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.DTOs.Request
+namespace Domain.DTOs.Request.Put
 {
-    public  class AccountUpdate
+    public class AccountUpdate
     {
         [EmailAddress]
         public string Email { get; set; }

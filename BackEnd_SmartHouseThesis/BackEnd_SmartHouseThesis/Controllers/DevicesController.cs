@@ -1,7 +1,7 @@
 ﻿using Application.Services;
 using Application.UseCase;
 using AutoMapper;
-using Domain.DTOs.Request;
+using Domain.DTOs.Request.Post;
 using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 

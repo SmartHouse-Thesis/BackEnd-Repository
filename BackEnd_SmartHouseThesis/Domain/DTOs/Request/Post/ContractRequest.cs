@@ -5,12 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.DTOs.Request
+namespace Domain.DTOs.Request.Post
 {
     public class ContractRequest
     {
         [Required]
-        public string Title { get; set; } = null! ;  
+        public string Title { get; set; } = null!;
         [Required]
         public string Description { get; set; }
         [Required]

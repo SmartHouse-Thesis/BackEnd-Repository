@@ -17,7 +17,7 @@ namespace Domain
         public Guid? CreatedBy { get; set; } // tạo bởi ai 
         public DateTime? ModificationDate { get; set; } // ngày chỉnh sửa
         public Guid? ModificationBy { get; set; } // chỉnh bởi ai
-        public bool? IsDelete { get; set; } // xóaStatus
+        public bool? IsDelete { get; set; } // xóa Status
         public Guid? DeletedBy { get; set; } //xóa bởi ai 
          
 

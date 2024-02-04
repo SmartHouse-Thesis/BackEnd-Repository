@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.Configuration.Conventions;
-using Domain.DTOs.Request;
+using Domain.DTOs.Request.Post;
+using Domain.DTOs.Request.Put;
 using Domain.Entities;
 using Microsoft.Data.SqlClient;
 using System;
@@ -22,6 +23,11 @@ namespace Infrastructure.Mapper
              .ForMember(des => des.Address, act => act.MapFrom(src => src.Address))
              .ForMember(des => des.FirstName, act => act.MapFrom(src => src.FirstName))
              .ForMember(des => des.LastName, act => act.MapFrom(src => src.LastName));
+
+            CreateMap<LoginRequest, Account>()
+                .ForMember(des => des.Email, act => act.MapFrom(src => src.Email))
+                .ForMember(des => des.Password, act => act.MapFrom(src => src.Password));
+
 
             CreateMap<Account, Owner>()
                 .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))

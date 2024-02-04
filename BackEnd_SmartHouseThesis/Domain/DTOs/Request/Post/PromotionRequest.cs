@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.DTOs.Request
+namespace Domain.DTOs.Request.Post
 {
     public class PromotionRequest
     {
@@ -12,6 +12,6 @@ namespace Domain.DTOs.Request
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
 
-                         
+
     }
 }

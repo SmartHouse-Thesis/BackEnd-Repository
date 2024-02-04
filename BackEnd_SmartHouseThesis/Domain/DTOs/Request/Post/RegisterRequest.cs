@@ -8,15 +8,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.DTOs.Request
+namespace Domain.DTOs.Request.Post
 {
     public class RegisterRequest
     {
         [Required]
-        [EmailAddress(ErrorMessage ="Invalid Email")]
+        [EmailAddress(ErrorMessage = "Invalid Email")]
         public string Email { get; set; }
         [Required]
-        [Phone(ErrorMessage ="Invalid Phone")]
+        [Phone(ErrorMessage = "Invalid Phone")]
         public string Phone { get; set; }
         [Required]
         [RegularExpression(@"^\w{8,}$", ErrorMessage = "Password must be at least 8 characters and contain a-z, A-Z, 0-9, and underscore characters")]

@@ -1,4 +1,6 @@
-﻿using Domain.Entities;
+﻿using Domain.DTOs.Request.Post;
+using Domain.DTOs.Response;
+using Domain.Entities;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -20,8 +22,15 @@ namespace Application.Services
         }
         public async Task CreateAccount(Account account) => await _accountRepository.AddAsync(account);
 
-        public async Task UpdateAccount(Account account) => await _accountRepository.UpdateAsync(account);
-
+        public async Task UpdateAccount(Account account) {
+            var _acc = GetAccount(account.Id);
+                if(_acc != null)
+            {
+                await _accountRepository.UpdateAsync(account);
+            }
+                       
+        }
+        public Account Authenticate(string email, string password) => _accountRepository.Authenticate(email, password);  
         public async Task DeleteAccount(Account account) => await _accountRepository.RemoveAsync(account);
 
         public async Task<IQueryable<Account>> GetAll() => await _accountRepository.FindAllAsync();
@@ -29,5 +38,6 @@ namespace Application.Services
         public async Task<Account> GetAccount(Guid id) => await _accountRepository.GetAsync(id);
 
         public async Task<Account> GetAccountByEmail(string email) => await _accountRepository.GetAccountByEmail(email);
+
     }
 }

@@ -11,12 +11,10 @@ namespace Application.Services
     public class SurveyService
     {
         private readonly SurveyRepository _surveyRepository;
-        private readonly StaffRepository _staffRepository;
 
-        public SurveyService(SurveyRepository surveyRepository, StaffRepository staffRepository)
+        public SurveyService(SurveyRepository surveyRepository)
         {
             _surveyRepository = surveyRepository;
-            _staffRepository = staffRepository;
         }
 
         public async Task CreateSurvey(Survey survey) => await _surveyRepository.AddAsync(survey);
