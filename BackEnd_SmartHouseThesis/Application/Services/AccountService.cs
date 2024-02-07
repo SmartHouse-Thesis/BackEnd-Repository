@@ -1,4 +1,5 @@
-﻿using Domain.DTOs.Request.Post;
+﻿using Application.UseCase.Sercurity;
+using Domain.DTOs.Request.Post;
 using Domain.DTOs.Response;
 using Domain.Entities;
 using Infrastructure.Repositories;
@@ -15,12 +16,17 @@ namespace Application.Services
     public class AccountService
     {
         private readonly AccountRepository _accountRepository;
+        private readonly PasswordHash _passwordHash;
 
-        public AccountService(AccountRepository accountRepository)
+        public AccountService(AccountRepository accountRepository, PasswordHash passwordHash)
         {
             _accountRepository = accountRepository;
+
+            _passwordHash = passwordHash;
         }
-        public async Task CreateAccount(Account account) => await _accountRepository.AddAsync(account);
+        public async Task CreateAccountAsync(Account account) => await _accountRepository.AddAsync(account);
+
+        public async Task<Account> CreateAccount(Account account) => await _accountRepository.CreateAccount(account);
 
         public async Task UpdateAccount(Account account) {
             var _acc = GetAccount(account.Id);
@@ -30,7 +36,19 @@ namespace Application.Services
             }
                        
         }
-        public Account Authenticate(string email, string password) => _accountRepository.Authenticate(email, password);  
+        public async Task<Account> Authenticate(string email, string password)
+        {
+           var acc = GetAccountByEmail(email);
+            if(acc != null)
+            {
+                if(_passwordHash.VerifyPassword(password, acc.Result.Password))
+                {
+                    return await acc;
+                }
+            }
+            return null;
+        }
+
         public async Task DeleteAccount(Account account) => await _accountRepository.RemoveAsync(account);
 
         public async Task<IQueryable<Account>> GetAll() => await _accountRepository.FindAllAsync();

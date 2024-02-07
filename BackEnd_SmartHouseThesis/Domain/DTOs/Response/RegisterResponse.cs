@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace Domain.DTOs.Response
 {
-    public class AuthenResponse
+    public class RegisterResponse
     {
         public string? Message { get; set; }
-        public string? Token { get; set; }
-        
+        public Guid? Id { get; set; }
     }
 }

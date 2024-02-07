@@ -1,6 +1,7 @@
 ﻿using Application.Services;
 using AutoMapper;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -22,7 +23,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             _accountService = accountService;
             _roleService = roleService;
         }
-
+        [Authorize (Roles = "Owner")]
         // GET: api/<TellerController>/GetAllTeller
         [HttpGet("GetAllTeller")]
         public async Task<IActionResult> GetAllTeller()
@@ -30,7 +31,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             var teller = await _tellerServices.GetAll();
             return Ok(teller);
         }
-
+        [Authorize(Roles = "Owner")]
         // GET api/<TellerController>/GetTeller/5
         [HttpGet("GetTeller/{id}")]
         public async Task<IActionResult> GetTeller(Guid id)
@@ -42,7 +43,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
             return Ok(teller);
         }
-
+/*
         // POST api/<TellerController>/CreateTeller/{accountId}
         [HttpPost("CreateTeller/{accountId}")]
         public async Task<IActionResult> CreateTeller(Guid accountId)
@@ -66,6 +67,6 @@ namespace BackEnd_SmartHouseThesis.Controllers
             {
                 return BadRequest("Account doesn't exist!!");
             }
-        }
+        }*/
     }
 }

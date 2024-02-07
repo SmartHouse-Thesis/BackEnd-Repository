@@ -271,3 +271,8 @@ D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\BackEnd_SmartHouseThe
 D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\BackEnd_SmartHouseThesis\obj\Debug\net6.0\BackEnd_SmartHouseThesis.dll
 D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\BackEnd_SmartHouseThesis\obj\Debug\net6.0\refint\BackEnd_SmartHouseThesis.dll
 D:\FPTSubjects\BackEnd-Repository\BackEnd_SmartHouseThesis\BackEnd_SmartHouseThesis\obj\Debug\net6.0\BackEnd_SmartHouseThesis.pdb
+D:\OneDrive - Đại học FPT- FPT University\Documents\Chuyên Ngành 9\Đồ Án\BackEnd_repository\BackEnd_SmartHouseThesis\BackEnd_SmartHouseThesis\bin\Debug\net6.0\libman.json
+D:\OneDrive - Đại học FPT- FPT University\Documents\Chuyên Ngành 9\Đồ Án\BackEnd_repository\BackEnd_SmartHouseThesis\BackEnd_SmartHouseThesis\bin\Debug\net6.0\BackEnd_SmartHouseThesis.staticwebassets.runtime.json
+D:\OneDrive - Đại học FPT- FPT University\Documents\Chuyên Ngành 9\Đồ Án\BackEnd_repository\BackEnd_SmartHouseThesis\BackEnd_SmartHouseThesis\bin\Debug\net6.0\BCrypt.Net.dll
+D:\OneDrive - Đại học FPT- FPT University\Documents\Chuyên Ngành 9\Đồ Án\BackEnd_repository\BackEnd_SmartHouseThesis\BackEnd_SmartHouseThesis\obj\Debug\net6.0\BackEnd_SmartHouseThesis.RazorAssemblyInfo.cache
+D:\OneDrive - Đại học FPT- FPT University\Documents\Chuyên Ngành 9\Đồ Án\BackEnd_repository\BackEnd_SmartHouseThesis\BackEnd_SmartHouseThesis\obj\Debug\net6.0\BackEnd_SmartHouseThesis.RazorAssemblyInfo.cs

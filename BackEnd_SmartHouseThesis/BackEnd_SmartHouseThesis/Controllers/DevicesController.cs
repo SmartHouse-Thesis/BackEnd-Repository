@@ -3,6 +3,7 @@ using Application.UseCase;
 using AutoMapper;
 using Domain.DTOs.Request.Post;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -26,12 +27,14 @@ namespace BackEnd_SmartHouseThesis.Controllers
 
         // GET: api/<DevicesController>/GetAllDevices
         [HttpGet("GetAllDevices")]
+        [Authorize (Roles = "Owner, Customer, Staff, Teller")]
         public async Task<IActionResult> GetAllDevices()
         {
             var devices = await _deviceService.GetAll();
             return Ok(devices);
         }
 
+        [Authorize(Roles = "Owner, Customer, Teller")]
         [HttpGet("GetDevicesByManu/{manuName}")]
         public async Task<IActionResult> GetDevicesByManu(string manuName)
         {
@@ -51,6 +54,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             return Ok(device);
         }
 
+        [Authorize(Roles = "Owner")]
         // POST api/<DevicesController>/CreateDevice/
         [HttpPost("CreateDevice/{ownerId}")]
         public async Task<IActionResult> CreateDevice(Guid ownerId,[FromBody] DeviceRequest device)
@@ -70,7 +74,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
         }
 
-
+        [Authorize(Roles = "Owner")]
         // PUT api/<DevicesController>/UpdateDevice/5
         [HttpPut("UpdateDevice/{id}")]
         public async Task<IActionResult> UpdateDevice(Guid id, Guid ownerId ,[FromBody] DeviceRequest device)
@@ -97,7 +101,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
                 return BadRequest("Owner is not exist!! ");
             }
         }
-
+        [Authorize(Roles = "Owner")]
         // DELETE api/<DevicesController>/Delete/5
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(Guid id)

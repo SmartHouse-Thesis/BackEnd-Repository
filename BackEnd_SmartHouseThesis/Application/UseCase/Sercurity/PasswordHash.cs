@@ -29,7 +29,6 @@ namespace Application.UseCase.Sercurity
         {
             // Verify the password against the hashed password
             bool result = BCrypt.Net.BCrypt.Verify(password, hashedPassword);
-
             return result;
         }
 

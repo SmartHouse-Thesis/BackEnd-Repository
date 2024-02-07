@@ -1,6 +1,7 @@
 ﻿using Application.Services;
 using Domain.Entities;
 using Domain.Enum;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -22,7 +23,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             _packageServices = packageServices;
             _contractService = contractService;
         }
-
+        [Authorize(Roles = "Owner, Customer")]
         [HttpGet("GetAllFeedBacks")]
         public async Task<IActionResult> GetAllFeedBacks()
         {
@@ -30,6 +31,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             return Ok(feedbacks);
         }
 
+        [Authorize(Roles = "Owner, Customer")]
         [HttpGet("GetFeedBack/{id}")]
         public async Task<IActionResult> GetFeedBack(Guid id)
         {
@@ -41,6 +43,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             return Ok(feedback);
         }
 
+        [Authorize(Roles = "Customer")]
         [HttpPost("CreateFeedBack")]
         public async Task<IActionResult> CreateFeedBack([FromBody] Feedback feedback)
         {
@@ -62,7 +65,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
         }
 
-
+        [Authorize(Roles = "Customer")]
         [HttpPut("UpdateFeedBack/{id}")]
         public async Task<IActionResult> UpdateFeedBack(Guid id, [FromBody] Feedback feedback)
         {
@@ -78,6 +81,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
         }
 
+        [Authorize(Roles = "Customer")]
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {

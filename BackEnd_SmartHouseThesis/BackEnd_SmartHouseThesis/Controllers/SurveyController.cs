@@ -1,6 +1,7 @@
 ﻿using Application.Services;
 using AutoMapper;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -24,7 +25,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             _mapper = mapper;
             _staffService = staffService;
         }
-
+        [Authorize(Roles = "Teller, Staff")]
         [HttpGet("GetAllSurveys/{staffId}")]
         public async Task<IActionResult> GetAllSurveys(Guid staffId)
         {
@@ -44,7 +45,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
             else { return BadRequest("Staff is not found"); }
         }
-
+        [Authorize(Roles = "Teller, Staff, Customer")]
         [HttpGet("GetSurvey/{id}")]
         public async Task<IActionResult> GetSurvey(Guid id)
         {
@@ -55,7 +56,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
             return Ok(survey);
         }
-
+        [Authorize(Roles = "Customer")]
         [HttpPost("CreateSurvey")]
         public async Task<IActionResult> CreateSurvey(Guid tellerId, [FromBody] Survey survey)
         {
@@ -71,7 +72,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
         }
 
-
+        [Authorize(Roles = "Teller, Staff")]
         [HttpPut("UpdateSurvey/{id}")]
         public async Task<IActionResult> UpdateSurvey(Guid id, [FromBody] Survey survey)
         {
@@ -88,6 +89,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
         }
 
+        [Authorize(Roles = "Teller")]
         [HttpPut("AssignStaffSurvey/{id}/{staffid}")]
         public async Task<IActionResult> AssignStaffSurvey(Guid id, Guid staffid)
         {
@@ -108,7 +110,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
                 return BadRequest("Survey can't do it right now!! ");
             }
         }
-
+        [Authorize(Roles = "Teller, Customer")]
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {

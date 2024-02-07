@@ -3,6 +3,7 @@ using Application.UseCase;
 using AutoMapper;
 using Domain.DTOs.Request.Post;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -24,14 +25,14 @@ namespace BackEnd_SmartHouseThesis.Controllers
             _mapper = mapper;
             _customerService = customerService;
         }
-
+        [Authorize(Roles = "Owner")]
         [HttpGet("GetAllContracts")]
         public async Task<IActionResult> GetAllContract()
         {
             var contracts = await _contractService.GetAll();
             return Ok(contracts);
         }
-
+        [Authorize(Roles = "Customer, Teller, Staff, Owner")]
         [HttpGet("GetContract/{id}")]
         public async Task<IActionResult> GetContract(Guid id)
         {
@@ -42,7 +43,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
             return Ok(contract);
         }
-
+        [Authorize(Roles = "Teller")]
         [HttpPost("CreateContract")]
         public async Task<IActionResult> CreateContract(Guid tellerId, Guid customerId,[FromBody] ContractRequest contract)
         {
@@ -72,7 +73,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
         }
 
-
+        [Authorize(Roles = "Staff, Teller")]
         [HttpPut("UpdateContract/{id}")]
         public async Task<IActionResult> UpdateContract(Guid id, Guid personId ,[FromBody] ContractRequest contract)
         {

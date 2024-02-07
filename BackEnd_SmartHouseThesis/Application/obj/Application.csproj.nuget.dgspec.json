@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\FPTSubjects\\BackEnd-Repository\\BackEnd_SmartHouseThesis\\Application\\Application.csproj": {}
+    "D:\\OneDrive - Đại học FPT- FPT University\\Documents\\Chuyên Ngành 9\\Đồ Án\\BackEnd_repository\\BackEnd_SmartHouseThesis\\Application\\Application.csproj": {}
   },
   "projects": {
-    "D:\\FPTSubjects\\BackEnd-Repository\\BackEnd_SmartHouseThesis\\Application\\Application.csproj": {
+    "D:\\OneDrive - Đại học FPT- FPT University\\Documents\\Chuyên Ngành 9\\Đồ Án\\BackEnd_repository\\BackEnd_SmartHouseThesis\\Application\\Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\FPTSubjects\\BackEnd-Repository\\BackEnd_SmartHouseThesis\\Application\\Application.csproj",
+        "projectUniqueName": "D:\\OneDrive - Đại học FPT- FPT University\\Documents\\Chuyên Ngành 9\\Đồ Án\\BackEnd_repository\\BackEnd_SmartHouseThesis\\Application\\Application.csproj",
         "projectName": "Application",
-        "projectPath": "D:\\FPTSubjects\\BackEnd-Repository\\BackEnd_SmartHouseThesis\\Application\\Application.csproj",
-        "packagesPath": "C:\\Users\\kichi\\.nuget\\packages\\",
-        "outputPath": "D:\\FPTSubjects\\BackEnd-Repository\\BackEnd_SmartHouseThesis\\Application\\obj\\",
+        "projectPath": "D:\\OneDrive - Đại học FPT- FPT University\\Documents\\Chuyên Ngành 9\\Đồ Án\\BackEnd_repository\\BackEnd_SmartHouseThesis\\Application\\Application.csproj",
+        "packagesPath": "C:\\Users\\TRUONGTRUNG\\.nuget\\packages\\",
+        "outputPath": "D:\\OneDrive - Đại học FPT- FPT University\\Documents\\Chuyên Ngành 9\\Đồ Án\\BackEnd_repository\\BackEnd_SmartHouseThesis\\Application\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+          "D:\\IDEs\\Visual studio SDKs\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\kichi\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\TRUONGTRUNG\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -33,11 +33,11 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "D:\\FPTSubjects\\BackEnd-Repository\\BackEnd_SmartHouseThesis\\Domain\\Domain.csproj": {
-                "projectPath": "D:\\FPTSubjects\\BackEnd-Repository\\BackEnd_SmartHouseThesis\\Domain\\Domain.csproj"
+              "D:\\OneDrive - Đại học FPT- FPT University\\Documents\\Chuyên Ngành 9\\Đồ Án\\BackEnd_repository\\BackEnd_SmartHouseThesis\\Domain\\Domain.csproj": {
+                "projectPath": "D:\\OneDrive - Đại học FPT- FPT University\\Documents\\Chuyên Ngành 9\\Đồ Án\\BackEnd_repository\\BackEnd_SmartHouseThesis\\Domain\\Domain.csproj"
               },
-              "D:\\FPTSubjects\\BackEnd-Repository\\BackEnd_SmartHouseThesis\\Infrastructure\\Infrastructure.csproj": {
-                "projectPath": "D:\\FPTSubjects\\BackEnd-Repository\\BackEnd_SmartHouseThesis\\Infrastructure\\Infrastructure.csproj"
+              "D:\\OneDrive - Đại học FPT- FPT University\\Documents\\Chuyên Ngành 9\\Đồ Án\\BackEnd_repository\\BackEnd_SmartHouseThesis\\Infrastructure\\Infrastructure.csproj": {
+                "projectPath": "D:\\OneDrive - Đại học FPT- FPT University\\Documents\\Chuyên Ngành 9\\Đồ Án\\BackEnd_repository\\BackEnd_SmartHouseThesis\\Infrastructure\\Infrastructure.csproj"
               }
             }
           }
@@ -51,6 +51,12 @@
       "frameworks": {
         "net6.0": {
           "targetAlias": "net6.0",
+          "dependencies": {
+            "BCrypt.Net": {
+              "target": "Package",
+              "version": "[0.1.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -67,24 +73,24 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\FPTSubjects\\BackEnd-Repository\\BackEnd_SmartHouseThesis\\Domain\\Domain.csproj": {
+    "D:\\OneDrive - Đại học FPT- FPT University\\Documents\\Chuyên Ngành 9\\Đồ Án\\BackEnd_repository\\BackEnd_SmartHouseThesis\\Domain\\Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\FPTSubjects\\BackEnd-Repository\\BackEnd_SmartHouseThesis\\Domain\\Domain.csproj",
+        "projectUniqueName": "D:\\OneDrive - Đại học FPT- FPT University\\Documents\\Chuyên Ngành 9\\Đồ Án\\BackEnd_repository\\BackEnd_SmartHouseThesis\\Domain\\Domain.csproj",
         "projectName": "Domain",
-        "projectPath": "D:\\FPTSubjects\\BackEnd-Repository\\BackEnd_SmartHouseThesis\\Domain\\Domain.csproj",
-        "packagesPath": "C:\\Users\\kichi\\.nuget\\packages\\",
-        "outputPath": "D:\\FPTSubjects\\BackEnd-Repository\\BackEnd_SmartHouseThesis\\Domain\\obj\\",
+        "projectPath": "D:\\OneDrive - Đại học FPT- FPT University\\Documents\\Chuyên Ngành 9\\Đồ Án\\BackEnd_repository\\BackEnd_SmartHouseThesis\\Domain\\Domain.csproj",
+        "packagesPath": "C:\\Users\\TRUONGTRUNG\\.nuget\\packages\\",
+        "outputPath": "D:\\OneDrive - Đại học FPT- FPT University\\Documents\\Chuyên Ngành 9\\Đồ Án\\BackEnd_repository\\BackEnd_SmartHouseThesis\\Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+          "D:\\IDEs\\Visual studio SDKs\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\kichi\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\TRUONGTRUNG\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -127,24 +133,24 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\FPTSubjects\\BackEnd-Repository\\BackEnd_SmartHouseThesis\\Infrastructure\\Infrastructure.csproj": {
+    "D:\\OneDrive - Đại học FPT- FPT University\\Documents\\Chuyên Ngành 9\\Đồ Án\\BackEnd_repository\\BackEnd_SmartHouseThesis\\Infrastructure\\Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\FPTSubjects\\BackEnd-Repository\\BackEnd_SmartHouseThesis\\Infrastructure\\Infrastructure.csproj",
+        "projectUniqueName": "D:\\OneDrive - Đại học FPT- FPT University\\Documents\\Chuyên Ngành 9\\Đồ Án\\BackEnd_repository\\BackEnd_SmartHouseThesis\\Infrastructure\\Infrastructure.csproj",
         "projectName": "Infrastructure",
-        "projectPath": "D:\\FPTSubjects\\BackEnd-Repository\\BackEnd_SmartHouseThesis\\Infrastructure\\Infrastructure.csproj",
-        "packagesPath": "C:\\Users\\kichi\\.nuget\\packages\\",
-        "outputPath": "D:\\FPTSubjects\\BackEnd-Repository\\BackEnd_SmartHouseThesis\\Infrastructure\\obj\\",
+        "projectPath": "D:\\OneDrive - Đại học FPT- FPT University\\Documents\\Chuyên Ngành 9\\Đồ Án\\BackEnd_repository\\BackEnd_SmartHouseThesis\\Infrastructure\\Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\TRUONGTRUNG\\.nuget\\packages\\",
+        "outputPath": "D:\\OneDrive - Đại học FPT- FPT University\\Documents\\Chuyên Ngành 9\\Đồ Án\\BackEnd_repository\\BackEnd_SmartHouseThesis\\Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+          "D:\\IDEs\\Visual studio SDKs\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\kichi\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\TRUONGTRUNG\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -160,8 +166,8 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "D:\\FPTSubjects\\BackEnd-Repository\\BackEnd_SmartHouseThesis\\Domain\\Domain.csproj": {
-                "projectPath": "D:\\FPTSubjects\\BackEnd-Repository\\BackEnd_SmartHouseThesis\\Domain\\Domain.csproj"
+              "D:\\OneDrive - Đại học FPT- FPT University\\Documents\\Chuyên Ngành 9\\Đồ Án\\BackEnd_repository\\BackEnd_SmartHouseThesis\\Domain\\Domain.csproj": {
+                "projectPath": "D:\\OneDrive - Đại học FPT- FPT University\\Documents\\Chuyên Ngành 9\\Đồ Án\\BackEnd_repository\\BackEnd_SmartHouseThesis\\Domain\\Domain.csproj"
               }
             }
           }
@@ -225,7 +231,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     }

@@ -4,6 +4,7 @@ using AutoMapper;
 using Domain.DTOs.Request.Post;
 using Domain.Entities;
 using Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -23,7 +24,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             _ownerService = ownerService;
             _mapper = mapper;
         }
-
+        [Authorize(Roles = "Owner, Customer")]
         // GET: api/<PromotionController>/GetAllPolicys
         [HttpGet("GetAllPolicys")]
         public async Task<IActionResult> GetAllPolicys()
@@ -31,7 +32,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             var policys = await _policyService.GetAll();
             return Ok(policys);
         }
-
+        [Authorize(Roles = "Owner, Customer, Teller, Staff")]
         // GET api/<DevicesController>/GetPolicy/5
         [HttpGet("GetPolicy/{id}")]
         public async Task<IActionResult> GetPolicy(Guid id)
@@ -43,7 +44,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
             return Ok(policy);
         }
-
+        [Authorize(Roles = "Owner")]
         // POST api/<PromotionController>/CreatePolicy/
         [HttpPost("CreatePolicy/{ownerId}")]
         public async Task<IActionResult> CreatePolicy(Guid ownerId, [FromBody] PolicyRequest policy)
@@ -63,7 +64,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
         }
 
-
+        [Authorize(Roles = "Owner")]
         // PUT api/<PromotionController>/UpdatePolicy/5
         [HttpPut("UpdatePolicy/{id}")]
         public async Task<IActionResult> UpdatePolicy(Guid id, Guid ownerId, [FromBody] PolicyRequest policy)
@@ -90,7 +91,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
                 return BadRequest("Owner is not exist!! ");
             }
         }
-
+        [Authorize(Roles = "Owner")]
         // DELETE api/<PromotionController>/Delete/5
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(Guid id)
