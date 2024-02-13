@@ -1,5 +1,6 @@
 ﻿using Application.Services;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -16,7 +17,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
         {
             _manufacturer = manufacture;
         }
-
+        [Authorize(Roles = "Owner, Customer")]
         // GET: api/<ManufacturerController>/GetAllManufacture
         [HttpGet("GetAllManufacture")]
         public async Task<IActionResult> GetAllManufacture()
@@ -24,7 +25,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             var manu = await _manufacturer.GetAll();
             return Ok(manu);
         }
-
+        [Authorize(Roles = "Owner, Customer")]
         // GET api/<ManufacturerController>/GetManufacture/5
         [HttpGet("GetManufacture/{id}")]
         public async Task<IActionResult> GetManufacture(Guid id)
@@ -36,7 +37,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
             return Ok(manu);
         }
-
+        [Authorize(Roles = "Owner")]
         // POST api/<ManufacturerController>/CreateManufacture/
         [HttpPost("CreateManufacture")]
         public async Task<IActionResult> CreateManufacture([FromBody] Manufacturer manufacture)
@@ -53,7 +54,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
         }
 
-
+        [Authorize(Roles = "Owner")]
         // PUT api/<ManufacturerController>/UpdateManufacture/5
         [HttpPut("UpdateManufacture/{id}")]
         public async Task<IActionResult> UpdateManufacture(Guid id, [FromBody] Manufacturer manufacture)
@@ -69,7 +70,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
                 return BadRequest("Manufacturer can't do it right now!! ");
             }
         }
-
+        [Authorize(Roles = "Owner")]
         // DELETE api/<ManufacturerController>/Delete/5
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(Guid id)

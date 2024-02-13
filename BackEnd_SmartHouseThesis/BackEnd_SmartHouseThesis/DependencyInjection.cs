@@ -59,6 +59,9 @@ namespace BackEnd_SmartHouseThesis
             //Customer
             services.AddScoped<CustomerService>();
             services.AddScoped<CustomerRepository>();
+            //Staff
+            services.AddScoped<StaffService>();
+            services.AddScoped<StaffRepository>();
             //Feedback 
             services.AddScoped<FeedbackService>();
             services.AddScoped<FeedbackRepository>();

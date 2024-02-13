@@ -1,7 +1,7 @@
 ﻿using Application.Services;
 using Application.UseCase;
 using AutoMapper;
-using Domain.DTOs.Request;
+using Domain.DTOs.Request.Post;
 using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
@@ -44,7 +44,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
             return Ok(owner);
         }
-
+/*
         // POST api/<CustomerController>/CreateCustomer/{accountId}
         [HttpPost("CreateCustomer/{accountId}")]
         public async Task<IActionResult> CreateCustomer(Guid accountId)
@@ -56,7 +56,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
                 if (role.RoleName == _account.Role.RoleName)
                 {
                     var customer = _mapper.Map<Customer>(_account);
-                    await _customerService.CreateCustomer(customer);
+                    await _customerService.CreateCustomer(customer, _customerService.Get_accountService());
                     return Ok(customer);
                 }
                 else
@@ -81,7 +81,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
                 if (role.RoleName == "Customer")
                 {
                     var customer = _mapper.Map<Customer>(_account);
-                    await _customerService.CreateCustomer(customer);
+                    await _customerService.CreateCustomer(customer, _customerService.Get_accountService());
                     return Ok(customer);
                 }
                 else
@@ -92,11 +92,11 @@ namespace BackEnd_SmartHouseThesis.Controllers
             else // account chưa có 
             {
                 var _newAccount = _mapper.Map<Account>(account);
-                await _accountService.CreateAccount(_newAccount); // tạo mới account 
+                await _accountService.CreateAccountAsync(_newAccount); // tạo mới account 
                 var _customerAccount = _mapper.Map<Customer>(_newAccount);
-                await _customerService.CreateCustomer(_customerAccount); // có account tạo mới customer 
+                await _customerService.CreateCustomer(_customerAccount, _customerService.Get_accountService()); // có account tạo mới customer 
                 return Ok(_customerAccount);
             }
-        }
+        }*/
     }
 }

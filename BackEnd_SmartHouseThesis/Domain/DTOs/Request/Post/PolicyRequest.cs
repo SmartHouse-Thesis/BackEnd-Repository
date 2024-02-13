@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.DTOs.Request
+namespace Domain.DTOs.Request.Post
 {
-    public class LoginRequest
+    public class PolicyRequest
     {
         [Required]
-        public string Email { get; set; }
-        [Required] 
-        public string Password { get; set; }
+        public string Type { get; set; }
+        [Required]
+        public string Content { get; set; }
     }
 }

@@ -11,10 +11,12 @@ namespace Application.Services
     public class TellerService
     {
         private readonly TellerRepository _tellerRepository;
+        private readonly AccountService _accountService;
 
-        public TellerService(TellerRepository tellerRepository)
+        public TellerService(TellerRepository tellerRepository, AccountService accountService)
         {
             _tellerRepository = tellerRepository;
+            _accountService = accountService;
         }
 
         public async Task CreateTeller(Teller teller) => await _tellerRepository.AddAsync(teller);
@@ -25,5 +27,26 @@ namespace Application.Services
         public async Task<IQueryable<Teller>> GetAll() => await _tellerRepository.FindAllAsync();
 
         public async Task<Teller> GetTeller(Guid id) => await _tellerRepository.GetAsync(id);
+
+        public async Task CreateTeller(Account account)
+        {
+            try
+            {
+                var _account = await _accountService.GetAccountByEmail(account.Email);
+                if (_account == null)
+                {
+                    _account = await _accountService.CreateAccount(account);
+                    var teller = new Teller();
+                    teller.Id = _account.Id;
+                    teller.Account = _account;
+                    teller.RoleName = "Teller";
+                    await CreateTeller(teller);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error At CreateTeller Service");
+            }
+        }
     }
 }

@@ -1,7 +1,8 @@
 ﻿using Application.Services;
 using AutoMapper;
-using Domain.DTOs.Request;
+using Domain.DTOs.Request.Post;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Principal;
 
@@ -22,7 +23,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             _ownerService = ownerService;
             _mapper = mapper;
         }
-
+        [Authorize(Roles = "Owner, Customer, Teller, Staff")]
         // GET: api/<PromotionController>/GetAllPromotion
         [HttpGet("GetAllPromotion")]
         public async Task<IActionResult> GetAllPromotion()
@@ -30,7 +31,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             var promotions = await _promotionServices.GetAll();
             return Ok(promotions);
         }
-
+        [Authorize(Roles = "Owner, Customer, Teller, Staff")]
         // GET api/<DevicesController>/GetPromotion/5
         [HttpGet("GetPromotion/{id}")]
         public async Task<IActionResult> GetPromotion(Guid id)
@@ -42,7 +43,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
             return Ok(promo);
         }
-
+        [Authorize(Roles = "Owner")]
         // POST api/<PromotionController>/CreateDevice/
         [HttpPost("CreatePromotion/{ownerId}")]
         public async Task<IActionResult> CreatePromotion(Guid ownerId,[FromBody] PromotionRequest promotion)
@@ -62,7 +63,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }                   
         }
 
-
+        [Authorize(Roles = "Owner")]
         // PUT api/<PromotionController>/UpdateDevice/5
         [HttpPut("UpdateDevice/{id}")]
         public async Task<IActionResult> UpdatePromotion(Guid id, Guid ownerId, [FromBody] PromotionRequest promotion)
@@ -89,7 +90,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
                 return BadRequest("Owner is not exist!! ");
             }
         }
-
+        [Authorize(Roles = "Owner")]
         // DELETE api/<PromotionController>/Delete/5
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(Guid id)

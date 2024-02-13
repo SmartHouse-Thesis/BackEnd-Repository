@@ -21,6 +21,7 @@ namespace Infrastructure.Repositories
         }
         public DeviceRepository(AppDbContext dbContext) : base(dbContext)
         {
+
         }
         public async Task<List<Device>> GetListDeviceByManufacturer(string manuName)
         {

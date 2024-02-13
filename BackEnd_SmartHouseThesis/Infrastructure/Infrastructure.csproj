@@ -7,11 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Domain\Domain.csproj" />
+    <Compile Remove="DAO\**" />
+    <EmbeddedResource Remove="DAO\**" />
+    <None Remove="DAO\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DAO\" />
+    <None Remove="Repositories\i4mct4yo.wrg~" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>

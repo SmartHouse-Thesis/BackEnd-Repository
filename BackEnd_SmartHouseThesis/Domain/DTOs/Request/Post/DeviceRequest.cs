@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.DTOs.Request
+namespace Domain.DTOs.Request.Post
 {
-    public  class DeviceRequest
+    public class DeviceRequest
     {
         [Required]
         public string DeviceName { get; set; }

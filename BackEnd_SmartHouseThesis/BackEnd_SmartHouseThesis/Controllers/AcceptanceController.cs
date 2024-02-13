@@ -1,5 +1,6 @@
 ﻿using Application.Services;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -18,13 +19,14 @@ namespace BackEnd_SmartHouseThesis.Controllers
             _acceptanceService = accpetanceService;
         }
 
+        [Authorize(Roles = "Customer, Teller, Staff")]
         [HttpGet("GetAllAccpetances")]
         public async Task<IActionResult> GetAllAccpetances()
         {
             var accpetances = await _acceptanceService.GetAll();
             return Ok(accpetances);
         }
-
+        [Authorize(Roles = "Customer, Teller, Staff")]
         [HttpGet("GetAccpetance/{id}")]
         public async Task<IActionResult> GetAccpetance(Guid id)
         {
@@ -35,7 +37,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
             return Ok(accpetance);
         }
-
+        [Authorize(Roles = "Staff")]
         [HttpPost("CreateAccpetance")]
         public async Task<IActionResult> CreateAccpetance([FromBody] Acceptance accpetance)
         {
@@ -51,7 +53,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
         }
 
-
+        [Authorize(Roles = "Staff")]
         [HttpPut("UpdateAcceptance/{id}")]
         public async Task<IActionResult> UpdateAcceptance(Guid id, [FromBody] Acceptance acceptance)
         {
@@ -66,7 +68,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
                 return BadRequest("Acceptance can't do it right now!! ");
             }
         }
-
+        [Authorize(Roles = "Staff")]
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {

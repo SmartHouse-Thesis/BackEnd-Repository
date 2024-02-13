@@ -12,5 +12,7 @@ namespace Infrastructure.Repositories
         public CustomerRepository(AppDbContext dbContext) : base(dbContext)
         {
         }
+
+
     }
 }

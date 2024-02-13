@@ -47,3 +47,12 @@ dotnet add package Microsoft.Extensions.Configuration.Json –version 5.0.0 6.0.1
   "firstName": "beo",
   "lastName": "testAccount"
 }
+
+{
+  "email": "customer1@gmail.com",
+  "phone": "0909753624",
+  "password": "customerpass123",
+  "address": "customer address 1",
+  "firstName": "custome test ",
+  "lastName": "1"
+}

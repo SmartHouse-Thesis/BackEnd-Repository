@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Domain.DTOs.Request;
+using Domain.DTOs.Request.Post;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;

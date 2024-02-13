@@ -1,7 +1,8 @@
 ﻿using Application.Services;
 using AutoMapper;
-using Domain.DTOs.Request;
+using Domain.DTOs.Request.Post;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -23,7 +24,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             _promotionService = promotionService;
             _mapper = mapper;
         }
-
+        [Authorize(Roles = "Owner, Customer, Teller, Customer")]
         // GET: api/<PackageController>/GetAllPack
         [HttpGet("GetAllPack")]
         public async Task<IActionResult> GetAllPack()
@@ -31,14 +32,14 @@ namespace BackEnd_SmartHouseThesis.Controllers
             var packs = await _packageService.GetAll();
             return Ok(packs);
         }
-
+        [Authorize(Roles = "Owner, Customer, Teller, Staff")]
         [HttpGet("GetPackagesByManu/{manuName}")]
         public async Task<IActionResult> GetPackagesByManu(string manuName)
         {
             var packages = await _packageService.GetListPackagesByManufacturer(manuName);
             return Ok(packages);
         }
-
+        [Authorize(Roles = "Owner, Customer, Teller, Staff")]
         // GET api/<PackageController>/GetPackage/5
         [HttpGet("GetPackage/{id}")]
         public async Task<IActionResult> GetPackage(Guid id)
@@ -50,7 +51,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
             return Ok(pack);
         }
-
+        [Authorize(Roles = "Owner")]
         // POST api/<PackageController>/CreatePackage/
         [HttpPost("CreatePackage/{ownerId}")]
         public async Task<IActionResult> CreatePackage(Guid ownerId,[FromBody] PackageRequest package)
@@ -70,7 +71,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
         }
 
-
+        [Authorize(Roles = "Owner")]
         // PUT api/<PackageController>/UpdatePackage/5
         [HttpPut("UpdatePackage/{id}")]
         public async Task<IActionResult> UpdatePackage(Guid id,Guid ownerId ,[FromBody] PackageRequest package)
@@ -97,7 +98,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
                 return BadRequest("Owner is not exist!! ");
             }
         }
-
+        [Authorize(Roles = "Owner")]
         [HttpPut("AddPackPromo/{id}/{ownerId}/{promoId}")]
         public async Task<IActionResult> AddPackPromo(Guid id, Guid ownerId, Guid promoId)
         {
@@ -121,7 +122,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
             else return BadRequest("Owner is not exist!! ");
         }
-
+        [Authorize(Roles = "Owner")]
         // DELETE api/<PackageController>/Delete/5
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(Guid id)

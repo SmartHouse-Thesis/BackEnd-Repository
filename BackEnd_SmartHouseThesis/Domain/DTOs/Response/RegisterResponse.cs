@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace Domain.DTOs.Response
 {
-    public class LoginResponse
+    public class RegisterResponse
     {
-        public bool Success { get; set; }
-        public string Error { get; set; } 
-        public string Token { get; set; }
+        public string? Message { get; set; }
+        public Guid? Id { get; set; }
     }
 }

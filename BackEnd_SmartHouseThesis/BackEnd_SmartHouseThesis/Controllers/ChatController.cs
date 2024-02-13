@@ -1,5 +1,6 @@
 ﻿using Application.Services;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol.Plugins;
 using System;
@@ -15,6 +16,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
         {
             _chatService = chatService;
         }
+        [Authorize(Roles = "Teller, Customer")]
         [HttpGet("GetChat/{senderId}/{receiverId}")]
         public async Task<IActionResult> GetChat(Guid senderId, Guid receiverId)
         {

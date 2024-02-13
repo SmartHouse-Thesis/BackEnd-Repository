@@ -1,11 +1,77 @@
 {
   "Version": 1,
-  "Hash": "Q94sjj4gesC+qALzbQSEzivucHSMrsLMFJtlLaOYx5s=",
+  "Hash": "hiFni/AZlL4fraoSN9s40ymDB2SlrXAmutdUJw3MEsA=",
   "Source": "BackEnd_SmartHouseThesis",
   "BasePath": "_content/BackEnd_SmartHouseThesis",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [],
-  "Assets": []
+  "DiscoveryPatterns": [
+    {
+      "Name": "BackEnd_SmartHouseThesis\\wwwroot",
+      "Source": "BackEnd_SmartHouseThesis",
+      "ContentRoot": "D:\\OneDrive - Đại học FPT- FPT University\\Documents\\Chuyên Ngành 9\\Đồ Án\\BackEnd_repository\\BackEnd_SmartHouseThesis\\BackEnd_SmartHouseThesis\\wwwroot\\",
+      "BasePath": "_content/BackEnd_SmartHouseThesis",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "D:\\OneDrive - Đại học FPT- FPT University\\Documents\\Chuyên Ngành 9\\Đồ Án\\BackEnd_repository\\BackEnd_SmartHouseThesis\\BackEnd_SmartHouseThesis\\wwwroot\\js\\chat.js",
+      "SourceId": "BackEnd_SmartHouseThesis",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\OneDrive - Đại học FPT- FPT University\\Documents\\Chuyên Ngành 9\\Đồ Án\\BackEnd_repository\\BackEnd_SmartHouseThesis\\BackEnd_SmartHouseThesis\\wwwroot\\",
+      "BasePath": "_content/BackEnd_SmartHouseThesis",
+      "RelativePath": "js/chat.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\chat.js"
+    },
+    {
+      "Identity": "D:\\OneDrive - Đại học FPT- FPT University\\Documents\\Chuyên Ngành 9\\Đồ Án\\BackEnd_repository\\BackEnd_SmartHouseThesis\\BackEnd_SmartHouseThesis\\wwwroot\\js\\signalr\\dist\\browser\\signalr.js",
+      "SourceId": "BackEnd_SmartHouseThesis",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\OneDrive - Đại học FPT- FPT University\\Documents\\Chuyên Ngành 9\\Đồ Án\\BackEnd_repository\\BackEnd_SmartHouseThesis\\BackEnd_SmartHouseThesis\\wwwroot\\",
+      "BasePath": "_content/BackEnd_SmartHouseThesis",
+      "RelativePath": "js/signalr/dist/browser/signalr.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\signalr\\dist\\browser\\signalr.js"
+    },
+    {
+      "Identity": "D:\\OneDrive - Đại học FPT- FPT University\\Documents\\Chuyên Ngành 9\\Đồ Án\\BackEnd_repository\\BackEnd_SmartHouseThesis\\BackEnd_SmartHouseThesis\\wwwroot\\js\\signalr\\dist\\browser\\signalr.min.js",
+      "SourceId": "BackEnd_SmartHouseThesis",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\OneDrive - Đại học FPT- FPT University\\Documents\\Chuyên Ngành 9\\Đồ Án\\BackEnd_repository\\BackEnd_SmartHouseThesis\\BackEnd_SmartHouseThesis\\wwwroot\\",
+      "BasePath": "_content/BackEnd_SmartHouseThesis",
+      "RelativePath": "js/signalr/dist/browser/signalr.min.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\signalr\\dist\\browser\\signalr.min.js"
+    }
+  ]
 }

@@ -1,6 +1,7 @@
 ﻿using Application.Services;
 using AutoMapper;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -22,7 +23,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             _accountService = accountService;
             _roleService = roleService;
         }
-
+        [Authorize(Roles = "Owner")]
         // GET: api/<StaffController>/GetAllStaff
         [HttpGet("GetAllStaff")]
         public async Task<IActionResult> GetAllStaff()
@@ -30,21 +31,21 @@ namespace BackEnd_SmartHouseThesis.Controllers
             var staff = await _staffService.GetAll();
             return Ok(staff);
         }
-
+        [Authorize(Roles = "Owner, Teller")]
         [HttpGet("GetAllStaffFree/{startdate}/{enddate}")]
         public async Task<IActionResult> GetAllStaffFree(DateTime startdate, DateTime enddate)
         {
             var staffFree = await _staffService.GetListStaffFree(startdate, enddate);
             return Ok(staffFree);
         }
-
+        [Authorize(Roles = "Owner, Teller")]
         [HttpGet("GetStaffForSurvey/{requestDate}")]
         public async Task<IActionResult> GetStaffForSurvey(DateTime requestDate)
         {
             var staffFree = await _staffService.GetListStaffFreeSurvey(requestDate);
             return Ok(staffFree);
         }
-
+        [Authorize(Roles = "Owner, Teller")]
         // GET api/<StaffController>/GetStaff/5
         [HttpGet("GetStaff/{id}")]
         public async Task<IActionResult> GetStaff(Guid id)
@@ -56,7 +57,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
             return Ok(staff);
         }
-
+/*        [Authorize(Roles = "Owner")]
         // POST api/<StaffController>/CreateStaff/{accountId}
         [HttpPost("CreateStaff/{accountId}")]
         public async Task<IActionResult> CreateStaff(Guid accountId)
@@ -80,6 +81,6 @@ namespace BackEnd_SmartHouseThesis.Controllers
             {
                 return BadRequest("Account doesn't exist!!");
             }
-        }
+        }*/
     }
 }
