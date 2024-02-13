@@ -1,6 +1,7 @@
 ﻿using Application.Services;
 using AutoMapper;
 using Domain.DTOs.Request.Post;
+using Domain.DTOs.Response;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +31,13 @@ namespace BackEnd_SmartHouseThesis.Controllers
         public async Task<IActionResult> GetAllPack()
         {
             var packs = await _packageService.GetAll();
-            return Ok(packs);
+            var _listpacks = new List<PackageOwnerResponse>();
+            foreach (Package pack in packs)
+            {
+                var _pack = _mapper.Map<PackageOwnerResponse>(pack);
+                _listpacks.Add(_pack);
+            }
+            return Ok(_listpacks);
         }
         [Authorize(Roles = "Owner, Customer, Teller, Staff")]
         [HttpGet("GetPackagesByManu/{manuName}")]
