@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Domain.DTOs.Request.Post;
+using Domain.DTOs.Response;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,10 @@ namespace Infrastructure.Mapper
         public PolicyMapping()
         {
             CreateMap<PolicyRequest, Policy>()
+            .ForMember(des => des.Type, act => act.MapFrom(src => src.Type))
+            .ForMember(des => des.Content, act => act.MapFrom(src => src.Content));
+            
+            CreateMap<PolicyResponse, Policy>()
             .ForMember(des => des.Type, act => act.MapFrom(src => src.Type))
             .ForMember(des => des.Content, act => act.MapFrom(src => src.Content));
 

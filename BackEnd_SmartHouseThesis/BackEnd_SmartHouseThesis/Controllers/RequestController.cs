@@ -1,5 +1,8 @@
 ﻿using Application.Services;
 using AutoMapper;
+using Domain.DTOs.Response;
+using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -18,10 +21,18 @@ namespace BackEnd_SmartHouseThesis.Controllers
             _mapper = mapper;
         }
         // GET: api/<RequestController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        [Authorize(Roles = "Teller")]
+        [HttpGet("GetAllRequest")]
+        public async Task<IActionResult> GetAllRequest()
         {
-            return new string[] { "value1", "value2" };
+            var requests = await _requestService.GetAll();
+            var listrequest = new List<RequestResponse>();
+            foreach (Request request in requests)
+            {
+                var _request = _mapper.Map<RequestResponse>(request);
+                listrequest.Add(_request);
+            }
+            return Ok(listrequest);
         }
 
         // GET api/<RequestController>/5

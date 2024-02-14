@@ -2,6 +2,7 @@
 using Application.UseCase;
 using AutoMapper;
 using Domain.DTOs.Request.Post;
+using Domain.DTOs.Response;
 using Domain.Entities;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -30,7 +31,13 @@ namespace BackEnd_SmartHouseThesis.Controllers
         public async Task<IActionResult> GetAllPolicys()
         {
             var policys = await _policyService.GetAll();
-            return Ok(policys);
+            var listpolicy = new List<PolicyResponse>();
+            foreach(Policy policy in policys)
+            {
+                var _policy = _mapper.Map<PolicyResponse>(policy);
+                listpolicy.Add(_policy);
+            }
+            return Ok(listpolicy);
         }
         [Authorize(Roles = "Owner, Customer, Teller, Staff")]
         // GET api/<DevicesController>/GetPolicy/5

@@ -1,6 +1,7 @@
 ﻿using Application.Services;
 using AutoMapper;
 using Domain.DTOs.Request.Post;
+using Domain.DTOs.Response;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +30,13 @@ namespace BackEnd_SmartHouseThesis.Controllers
         public async Task<IActionResult> GetAllPromotion()
         {
             var promotions = await _promotionServices.GetAll();
-            return Ok(promotions);
+            var listpromo = new List<PromotionResponse>();
+            foreach(Promotion promotion in promotions)
+            {
+                var promo = _mapper.Map<PromotionResponse>(promotion);
+                listpromo.Add(promo);
+            }
+            return Ok(listpromo);
         }
         [Authorize(Roles = "Owner, Customer, Teller, Staff")]
         // GET api/<DevicesController>/GetPromotion/5

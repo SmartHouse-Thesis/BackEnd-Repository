@@ -2,6 +2,7 @@
 using Application.UseCase;
 using AutoMapper;
 using Domain.DTOs.Request.Post;
+using Domain.DTOs.Response;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -31,7 +32,13 @@ namespace BackEnd_SmartHouseThesis.Controllers
         public async Task<IActionResult> GetAllDevices()
         {
             var devices = await _deviceService.GetAll();
-            return Ok(devices);
+            var _devices = new List<DeviceResponse>();
+            foreach(Device device in devices)
+            {
+                var _device = _mapper.Map<DeviceResponse>(device);
+                _devices.Add(_device);
+            }
+            return Ok(_devices);
         }
 
         [Authorize(Roles = "Owner, Customer, Teller")]

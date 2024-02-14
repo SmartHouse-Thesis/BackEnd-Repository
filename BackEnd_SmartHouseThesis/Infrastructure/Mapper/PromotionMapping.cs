@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Domain.DTOs.Request.Post;
+using Domain.DTOs.Response;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,12 @@ namespace Infrastructure.Mapper
             .ForMember(des => des.Discount, act => act.MapFrom(src => src.Discount))
             .ForMember(des => des.StartDate, act => act.MapFrom(src => src.StartDate))
             .ForMember(des => des.EndDate, act => act.MapFrom(src => src.EndDate));
+
+            CreateMap<PromotionResponse, Promotion>()
+            .ForMember(des => des.Discount, act => act.MapFrom(src => src.Discount))
+            .ForMember(des => des.StartDate, act => act.MapFrom(src => src.StartDate))
+            .ForMember(des => des.EndDate, act => act.MapFrom(src => src.EndDate))
+            .ForMember(des => des.CreationDate, act => act.MapFrom(src => src.CreationDate));
 
 
             CreateMap<Guid, string>().ConstructUsing(x => x.ToString());
