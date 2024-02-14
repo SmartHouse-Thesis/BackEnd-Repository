@@ -147,23 +147,31 @@ namespace BackEnd_SmartHouseThesis.Controllers
                 return StatusCode(403, "Forbiden ");
             }
         }
-/*
+
         [Authorize(Roles = "Owner")]
         [HttpGet("get-all-staff-account")]
         public async Task<IActionResult> GetAllStaffAccount()
         {
             try
             {
-                var account = await _accountService.GetAll();
-
-                return Ok(account);
+                var accounts = await _accountService.GetAll();
+                var liststaff = new List<StaffResponse>();
+                foreach (Account account in accounts)
+                {
+                    if(account.Role.RoleName != "Owner" && account.Role.RoleName != "Customer")
+                    {
+                        var staff = _mapper.Map<StaffResponse>(account);
+                        liststaff.Add(staff);
+                    }
+                }
+                return Ok(liststaff);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error in GettAllAccount");
                 return StatusCode(500, "Internal Server Error");
             }
-        }*/
+        }
 
         [Authorize(Roles = "Owner, Teller, Customer, Staff")]
         // GET api/<AccountController>/GetAccout/5
