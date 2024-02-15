@@ -29,13 +29,13 @@ namespace BackEnd_SmartHouseThesis.Controllers
         private readonly RoleService _roleService; 
         private readonly IMapper _mapper;
         private readonly PasswordHash _passwordHash;
-
         private readonly ILogger<AccountController> _logger;
         private readonly CustomerService _customerService;
         private readonly StaffService _staffService;
         private readonly TellerService _tellerService;
+        private readonly OwnerService _ownerService;
 
-        public AccountController(AccountService accountService, IMapper mapper, RoleService roleService, PasswordHash passwordHash,CustomerService customerService,StaffService staffService , TellerService tellerService,ILogger<AccountController> logger)
+        public AccountController(AccountService accountService, IMapper mapper, RoleService roleService, PasswordHash passwordHash,CustomerService customerService,StaffService staffService , TellerService tellerService, OwnerService ownerService,ILogger<AccountController> logger)
         {
             _accountService = accountService;
             _mapper = mapper;
@@ -45,6 +45,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             _customerService = customerService;
             _staffService = staffService;
             _tellerService = tellerService;
+            _ownerService = ownerService;
         }
 
         [HttpPost("login")]
@@ -56,7 +57,6 @@ namespace BackEnd_SmartHouseThesis.Controllers
             try
             {
                 var account = _accountService.Authenticate(model.Email, model.Password);
-
                 if (account == null)
                 {
                     return Unauthorized(new AuthenResponse { Message = "Invalid username or password" });
@@ -64,7 +64,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
                 else
                 {
                     // Tạo và trả về token JWT
-                    string token = GenerateJwtToken(await account);
+                    string token = _passwordHash.GenerateJwtToken(await account);
                     //handle cookie 
                     var cookieOptions = new CookieOptions
                     {
@@ -95,10 +95,9 @@ namespace BackEnd_SmartHouseThesis.Controllers
             {
                 throw new Exception("logout Error ");
             }
-
         }
 
-        ///Hàm gen Token
+       /* ///Hàm gen Token
         private string GenerateJwtToken(Account account)
         {
             if (account == null)
@@ -127,7 +126,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
                 signingCredentials: credentials
             );
             return new JwtSecurityTokenHandler().WriteToken(token);
-        }
+        }*/
 
         [Authorize(Roles ="Owner")]
         // GET: api/<AccountController>/GettAllAccount
@@ -289,6 +288,35 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
         }
 
+        //[Authorize(Roles = "Owner")]
+        [HttpPost("create-owner")]
+        [ProducesResponseType(typeof(RegisterResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AuthenResponse), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(AuthenResponse), StatusCodes.Status403Forbidden)]
+        public async Task<IActionResult> CreateOwner([FromBody] RegisterRequest account)
+        {
+            var _account = await _accountService.GetAccountByEmail(account.Email);
+            if (_account != null)
+            {
+                return BadRequest("Account is exist!! ");
+            }
+            else
+            {
+                _account = _mapper.Map<Account>(account);
+                _account.CreationDate = DateTime.Now;
+                _account.Password = _passwordHash.HashPassword(account.Password); //hashPassword
+                var Role = await _roleService.getRoleByRoleName("Owner");
+                _account.Role = Role;
+                _account.RoleId = Role.Id;
+                await _ownerService.CreateOwner(_account);
+
+                return Ok(new RegisterResponse
+                {
+                    Message = "Create Teller Success",
+                    Id = _account.Id
+                });
+            }
+        }
 
         [Authorize(Roles = "Owner, Customer, Teller, Staff")]
         // PUT api/<AccountController>/UpdateAccount/5

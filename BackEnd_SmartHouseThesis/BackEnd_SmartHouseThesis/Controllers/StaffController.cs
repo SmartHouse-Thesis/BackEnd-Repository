@@ -31,6 +31,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             var staff = await _staffService.GetAll();
             return Ok(staff);
         }
+
         [Authorize(Roles = "Owner, Teller")]
         [HttpGet("GetAllStaffFree/{startdate}/{enddate}")]
         public async Task<IActionResult> GetAllStaffFree(DateTime startdate, DateTime enddate)
@@ -38,6 +39,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             var staffFree = await _staffService.GetListStaffFree(startdate, enddate);
             return Ok(staffFree);
         }
+
         [Authorize(Roles = "Owner, Teller")]
         [HttpGet("GetStaffForSurvey/{requestDate}")]
         public async Task<IActionResult> GetStaffForSurvey(DateTime requestDate)
@@ -45,6 +47,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             var staffFree = await _staffService.GetListStaffFreeSurvey(requestDate);
             return Ok(staffFree);
         }
+
         [Authorize(Roles = "Owner, Teller")]
         // GET api/<StaffController>/GetStaff/5
         [HttpGet("GetStaff/{id}")]
@@ -57,6 +60,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
             return Ok(staff);
         }
+
 /*        [Authorize(Roles = "Owner")]
         // POST api/<StaffController>/CreateStaff/{accountId}
         [HttpPost("CreateStaff/{accountId}")]

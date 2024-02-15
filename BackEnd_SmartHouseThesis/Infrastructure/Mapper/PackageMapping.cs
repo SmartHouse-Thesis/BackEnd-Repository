@@ -24,7 +24,7 @@ namespace Infrastructure.Mapper
                 .ForMember(des => des.PackageName, act => act.MapFrom(src => src.PackageName))
                 .ForMember(des => des.Description, act => act.MapFrom(src => src.Description))
                 .ForMember(des => des.Price, act => act.MapFrom(src => src.Price))
-                .ForMember(des => des.Image.Data, act => act.Condition(src => src.ImageData != null));
+                .ForPath(des => des.Image.Data, act => act.MapFrom(src => src.ImageData != null));
 
             CreateMap<Guid, string>().ConstructUsing(x => x.ToString());
             CreateMap<string, Guid>().ConstructUsing(x => new Guid(x));

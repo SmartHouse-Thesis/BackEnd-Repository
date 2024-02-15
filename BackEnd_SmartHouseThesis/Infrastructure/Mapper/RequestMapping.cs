@@ -13,9 +13,9 @@ namespace Infrastructure.Mapper
     {
         public RequestMapping() {
             CreateMap<RequestResponse, Request>()
-                .ForMember(des => des.Customer.Account.LastName, act => act.MapFrom(src => src.Name))
-                .ForMember(des => des.Customer.Account.Address, act => act.MapFrom(src => src.Address))
-                .ForMember(des => des.RequestDate, act => act.MapFrom(src => src.RequestDate));
+                .ForPath(des => des.Customer.Account.LastName, act => act.MapFrom(src => src.Name))
+                .ForPath(des => des.Customer.Account.Address, act => act.MapFrom(src => src.Address))
+                .ForPath(des => des.RequestDate, act => act.MapFrom(src => src.RequestDate));
         }
     }
 }

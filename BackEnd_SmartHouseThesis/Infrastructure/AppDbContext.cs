@@ -10,7 +10,6 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace Infrastructure
 {
     public class AppDbContext : DbContext
@@ -37,6 +36,7 @@ namespace Infrastructure
         public DbSet<Staff> Staff { get; set; } = null!;
         public DbSet<Survey> Surveys { get; set; } = null!;
         public DbSet<Teller> Tellers { get; set; } = null!;
+        public DbSet<Policy> Policy { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

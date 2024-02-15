@@ -1,6 +1,7 @@
 ﻿using Application.Services;
 using Application.UseCase;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Domain.DTOs.Request.Post;
 using Domain.DTOs.Response;
 using Domain.Entities;
@@ -32,12 +33,14 @@ namespace BackEnd_SmartHouseThesis.Controllers
         public async Task<IActionResult> GetAllDevices()
         {
             var devices = await _deviceService.GetAll();
-            var _devices = new List<DeviceResponse>();
-            foreach(Device device in devices)
-            {
-                var _device = _mapper.Map<DeviceResponse>(device);
-                _devices.Add(_device);
-            }
+            //var deviceModels = devices.Select(d => _mapper.Map<DeviceResponse>(devices));
+
+             var _devices = new List<DeviceResponse>();
+             foreach(var device in devices)
+             {
+                 var _deviceMap = _mapper.Map<DeviceResponse>(device);
+                 _devices.Add(_deviceMap);
+             }
             return Ok(_devices);
         }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,6 @@ namespace Domain.DTOs.Response
         public string? PackageName { get; set; }
         public string? Description { get; set; }
         public decimal? Price { get; set; }
-        public string? ImageData { get; set; }
+        public ICollection<Image>? ImageData { get; set; }
     }
 }

@@ -14,12 +14,12 @@ namespace Infrastructure.Mapper
         public StaffMapping()
         {
             CreateMap<StaffResponse, Account>()
-                .ForMember(des => des.Email, act => act.MapFrom(src => src.Email))
-                .ForMember(des => des.Phone, act => act.MapFrom(src => src.Phone))
-                .ForMember(des => des.Address, act => act.MapFrom(src => src.Address))
-                .ForMember(des => des.FirstName, act => act.MapFrom(src => src.FirstName))
-                .ForMember(des => des.LastName, act => act.MapFrom(src => src.LastName))
-                .ForMember(des => des.Role.RoleName, act => act.MapFrom(src => src.RoleName));
+                .ForPath(des => des.Email, act => act.MapFrom(src => src.Email))
+                .ForPath(des => des.Phone, act => act.MapFrom(src => src.Phone))
+                .ForPath(des => des.Address, act => act.MapFrom(src => src.Address))
+                .ForPath(des => des.FirstName, act => act.MapFrom(src => src.FirstName))
+                .ForPath(des => des.LastName, act => act.MapFrom(src => src.LastName))
+                .ForPath(des => des.Role.RoleName, act => act.MapFrom(src => src.RoleName));
 
             CreateMap<Guid, string>().ConstructUsing(x => x.ToString());
             CreateMap<string, Guid>().ConstructUsing(x => new Guid(x));

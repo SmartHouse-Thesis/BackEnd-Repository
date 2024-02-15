@@ -25,9 +25,10 @@ namespace Infrastructure.Mapper
                 .ForMember(des => des.DeviceName, act => act.MapFrom(src => src.DeviceName))
                 .ForMember(des => des.Price, act => act.MapFrom(src => src.Price))
                 .ForMember(des => des.DeviceType, act => act.MapFrom(src => src.DeviceType))
-                .ForMember(des => des.Manufacturer.Name, act => act.MapFrom(src => src.ManufactureName))
-                .ForMember(des => des.Images.First().Data, act => act.Condition(src => src.ImageData != null));
+                .ForPath(des => des.Manufacturer.Name, act => act.MapFrom(src => src.ManufactureName != null))
+                .ForPath(des => des.Images, act => act.MapFrom(src => src.ImageData != null));
 
+                //.ForPath(des => des.Images.FirstOrDefault().Data, act => act.MapFrom(src => src.cond != null));
             CreateMap<Guid, string>().ConstructUsing(x => x.ToString());
             CreateMap<string, Guid>().ConstructUsing(x => new Guid(x));
 

@@ -20,6 +20,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             _requestService = requestService;
             _mapper = mapper;
         }
+
         // GET: api/<RequestController>
         [Authorize(Roles = "Teller")]
         [HttpGet("GetAllRequest")]
