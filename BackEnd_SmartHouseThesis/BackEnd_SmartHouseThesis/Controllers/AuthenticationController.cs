@@ -2,6 +2,7 @@
 using Domain.Constants;
 using Domain.DTOs.Request.Post;
 using Domain.DTOs.Response;
+using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -16,121 +17,57 @@ namespace BackEnd_SmartHouseThesis.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class AuthenticationController : ControllerBase
-    {/*
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly IConfiguration _configuration;
-
-        public AuthenticationController(
-            UserManager<IdentityUser> userManager,
-            RoleManager<IdentityRole> roleManager,
-            IConfiguration configuration)
+    {
+        public AuthenticationController()
         {
-            _userManager = userManager;
-            _roleManager = roleManager;
-            _configuration = configuration;
         }
 
-        [HttpPost]
-        [Route("login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequest model)
+        [HttpGet("get-info")]
+        [Authorize]
+        public async Task<IActionResult> getAccountInformation()
         {
-            var user = await _userManager.FindByNameAsync(model.Email);
-            if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
-            {
-                var userRoles = await _userManager.GetRolesAsync(user);
+            // Lấy token từ header ủy quyền
+            var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
 
-                var authClaims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, user.UserName),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                };
+            // Giải mã token
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(token);
 
-                foreach (var userRole in userRoles)
-                {
-                    authClaims.Add(new Claim(ClaimTypes.Role, userRole));
-                }
-
-                var token = GetToken(authClaims);
-
-                return Ok(new
-                {
-                    token = new JwtSecurityTokenHandler().WriteToken(token),
-                    expiration = token.ValidTo
-                });
-            }
-            return Unauthorized();
+            // Lấy giá trị NameIdentifier
+            var nameIdentifier = jwtToken.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            var firtName = jwtToken.Claims.First(c => c.Type == ClaimTypes.Name).Value;
+            var LastName = jwtToken.Claims.First(c => c.Type == ClaimTypes.GivenName).Value;
+            var email = jwtToken.Claims.First(c => c.Type == ClaimTypes.Email).Value;
+            var role = jwtToken.Claims.First(c => c.Type == ClaimTypes.Role).Value;
+            var address = jwtToken.Claims.First(c => c.Type == ClaimTypes.StreetAddress).Value;
+            //var Phone = jwtToken.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            return Ok(new AccountInfoResponse{
+                Id = nameIdentifier, 
+                Email = email,
+                FirstName = firtName,
+                LastName = LastName, 
+                Address = address,
+                RoleName = role
+            });
         }
-
-        [HttpPost]
-        [Route("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterRequest model)
+/*
+        [HttpPost("revoke-token")]
+        [Authorize]
+        public async Task<IActionResult> RevokeToken()
         {
-            var userExists = await _userManager.FindByNameAsync(model.Email);
-            if (userExists != null)
-                return StatusCode(StatusCodes.Status500InternalServerError, new AuthenResponse { Status = "Error", Message = "Account already exists!" });
+            // Trích xuất ID người dùng từ yêu cầu được ủy quyền:
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            IdentityUser user = new()
-            {
-                Email = model.Email,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = model.Email
-            };
-            var result = await _userManager.CreateAsync(user, model.Password);
-            if (!result.Succeeded)
-                return StatusCode(StatusCodes.Status500InternalServerError, new AuthenResponse { Status = "Error", Message = "Account creation failed! Please check user details and try again." });
+            // Truy vấn mã thông báo làm mới từ ngữ cảnh/lưu trữ người dùng (nếu có liên quan):
+            // var refreshToken = ...
 
-            return Ok(new AuthenResponse { Status = "Success", Message = "Account created successfully!" });
+            // Hủy hiệu lực mã thông báo của người dùng trong danh sách đen:
+            await RevokeUserTokens(userId, refreshToken);
+
+            return Ok(new { Message = "Mã thông báo đã được hủy thành công" });
         }
+*/
 
-        [HttpPost]
-        [Route("register-owner")]
-        public async Task<IActionResult> RegisterOwner([FromBody] RegisterRequest model)
-        {
-            var userExists = await _userManager.FindByNameAsync(model.Email);
-            if (userExists != null)
-                return StatusCode(StatusCodes.Status500InternalServerError, new AuthenResponse { Status = "Error", Message = "Account already exists!" });
-
-            IdentityUser user = new()
-            {
-                Email = model.Email,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = model.Email
-            };
-            var result = await _userManager.CreateAsync(user, model.Password);
-            if (!result.Succeeded)
-                return StatusCode(StatusCodes.Status500InternalServerError, new AuthenResponse { Status = "Error", Message = "Account creation failed! Please check user details and try again." });
-
-            if (!await _roleManager.RoleExistsAsync(AccountRole.Owner))
-                await _roleManager.CreateAsync(new IdentityRole(AccountRole.Owner));
-            if (!await _roleManager.RoleExistsAsync(AccountRole.Customer))
-                await _roleManager.CreateAsync(new IdentityRole(AccountRole.Customer));
-
-            if (await _roleManager.RoleExistsAsync(AccountRole.Owner))
-            {
-                await _userManager.AddToRoleAsync(user, AccountRole.Owner);
-            }
-            if (await _roleManager.RoleExistsAsync(AccountRole.Owner))
-            {
-                await _userManager.AddToRoleAsync(user, AccountRole.Owner);
-            }
-            return Ok(new AuthenResponse { Status = "Success", Message = "Account created successfully!" });
-        }
-
-        private JwtSecurityToken GetToken(List<Claim> authClaims)
-        {
-            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
-
-            var token = new JwtSecurityToken(
-                issuer: _configuration["JWT:ValidIssuer"],
-                audience: _configuration["JWT:ValidAudience"],
-                expires: DateTime.Now.AddHours(3),
-                claims: authClaims,
-                signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-                );
-
-            return token;
-        }*/
     }
 }
 

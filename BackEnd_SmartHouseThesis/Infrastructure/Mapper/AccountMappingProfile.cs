@@ -26,6 +26,15 @@ namespace Infrastructure.Mapper
              .ForMember(des => des.LastName, act => act.MapFrom(src => src.LastName))
              .ReverseMap();
 
+           /* CreateMap<AccountInfoResponse, Account>()
+                .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
+                .ForMember(des => des.Email, act => act.MapFrom(src => src.Email))
+                .ForMember(des => des.Address, act => act.MapFrom(src => src.Address))
+                .ForMember(des => des.FirstName, act => act.MapFrom(src => src.FirstName))
+                .ForMember(des => des.LastName, act => act.MapFrom(src => src.LastName))
+                .ForPath(des => des.Role.RoleName, act => act.MapFrom(src => src.RoleName))
+                .ReverseMap();*/
+
             CreateMap<AccountResponse, Account>()
                 .ForMember(des => des.Email, act => act.MapFrom(src => src.Email))
                 //.ForMember(des => des.Phone, act => act.MapFrom(src => src.Phone))
