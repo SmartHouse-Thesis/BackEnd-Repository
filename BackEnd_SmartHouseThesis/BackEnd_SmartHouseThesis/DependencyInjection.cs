@@ -80,6 +80,7 @@ namespace BackEnd_SmartHouseThesis
             services.AddAutoMapper(typeof(DeviceMapping));
             services.AddAutoMapper(typeof(PackageMapping));
             services.AddAutoMapper(typeof(PolicyMapping));
+            services.AddAutoMapper(typeof(ManufacturerMappingProfile));
         }
 
 

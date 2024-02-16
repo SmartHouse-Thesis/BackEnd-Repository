@@ -131,35 +131,47 @@ namespace BackEnd_SmartHouseThesis.Controllers
         [Authorize(Roles ="Owner")]
         // GET: api/<AccountController>/GettAllAccount
         [HttpGet("get-all-account")]
-        [ProducesResponseType(typeof(Account), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AccountResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(AuthenResponse), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(AuthenResponse), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GettAllAccount()
         {
             try
             {
                 var account = await _accountService.GetAll();
+                var listAccount = new List<AccountResponse>();
+                foreach(var item in account)
+                {
+                    var _account = _mapper.Map<AccountResponse>(item);
+                    listAccount.Add(_account);
+                }
                 //var _account = _mapper.Map<ListStaffResponse>(account);
-                return Ok(account);
+                return Ok(listAccount);
             } catch (Exception ex)
             {
                 _logger.LogError(ex, "Error in GettAllAccount");
-                return StatusCode(403, "Forbiden ");
+                return StatusCode(403, new AuthenResponse{
+                   Message =" FORBIDDEN - You don't have permission"
+                });
             }
         }
 
         [Authorize(Roles = "Owner")]
         [HttpGet("get-all-staff-account")]
+        [ProducesResponseType(typeof(StaffResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AuthenResponse), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(AuthenResponse), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetAllStaffAccount()
         {
             try
             {
                 var accounts = await _accountService.GetAll();
                 var liststaff = new List<StaffResponse>();
-                foreach (Account account in accounts)
+                foreach (var item in accounts)
                 {
-                    if(account.Role.RoleName != "Owner" && account.Role.RoleName != "Customer")
+                    if(item.Role.RoleName != "Owner" && item.Role.RoleName != "Customer")
                     {
-                        var staff = _mapper.Map<StaffResponse>(account);
+                        var staff = _mapper.Map<StaffResponse>(item);
                         liststaff.Add(staff);
                     }
                 }
@@ -168,7 +180,10 @@ namespace BackEnd_SmartHouseThesis.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error in GettAllAccount");
-                return StatusCode(500, "Internal Server Error");
+                return StatusCode(403, new AuthenResponse
+                {
+                    Message = " FORBIDDEN - You don't have permission"
+                });
             }
         }
 
@@ -192,7 +207,10 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(403, "forbiden");
+                return StatusCode(403, new AuthenResponse
+                {
+                    Message = " FORBIDDEN - You don't have permission"
+                });
             }
            
         }

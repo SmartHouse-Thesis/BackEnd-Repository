@@ -28,7 +28,6 @@ namespace BackEnd_SmartHouseThesis.Controllers
         {
             // Lấy token từ header ủy quyền
             var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-
             // Giải mã token
             var handler = new JwtSecurityTokenHandler();
             var jwtToken = handler.ReadJwtToken(token);
@@ -50,6 +49,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
                 RoleName = role
             });
         }
+
 /*
         [HttpPost("revoke-token")]
         [Authorize]

@@ -25,5 +25,7 @@ namespace Application.Services
         public async Task<IQueryable<Manufacturer>> GetAll() => await _manufacture.FindAllAsync();
 
         public async Task<Manufacturer> GetManufacture(Guid id) => await _manufacture.GetAsync(id);
+
+        public async Task<Manufacturer> GetManufacturerByName(string name) => await _manufacture.GetManufacturerByName(name);
     }
 }

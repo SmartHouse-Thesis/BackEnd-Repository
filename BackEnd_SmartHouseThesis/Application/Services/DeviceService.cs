@@ -14,10 +14,12 @@ namespace Application.Services
     public class DeviceService 
     {
         private readonly DeviceRepository _deviceRepository;
+        private readonly ManufacturerService _manufacturerService;
        
-        public DeviceService(DeviceRepository deviceRepository)
+        public DeviceService(DeviceRepository deviceRepository, ManufacturerService manufacturerService)
         {
             _deviceRepository = deviceRepository;
+            _manufacturerService = manufacturerService;
         }
 
         public async Task CreateDevice(Device device) => await _deviceRepository.AddAsync(device);
@@ -29,6 +31,10 @@ namespace Application.Services
 
         public async Task<Device> GetDevice(Guid id)=> await _deviceRepository.GetAsync(id);
 
-        public async Task<List<Device>> GetListDeviceByManufacturer(string manuName) => await _deviceRepository.GetListDeviceByManufacturer(manuName);
+        public async Task<List<Device>> GetListDeviceByManufacturer(string manuName)
+        {
+            
+           return  await _deviceRepository.GetListDeviceByManufacturer(manuName);
+        }
     }
 }
