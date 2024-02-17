@@ -1,6 +1,7 @@
 ﻿using Application.Services;
 using AutoMapper;
 using Domain.DTOs.Request.Post;
+using Domain.DTOs.Request.Put;
 using Domain.DTOs.Response;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -24,62 +25,92 @@ namespace BackEnd_SmartHouseThesis.Controllers
             _ownerService = ownerService;
             _mapper = mapper;
         }
+
         [Authorize(Roles = "Owner, Customer, Teller, Staff")]
         // GET: api/<PromotionController>/GetAllPromotion
-        [HttpGet("GetAllPromotion")]
+        [HttpGet("get-all-promotions")]
+        [ProducesResponseType(typeof(PromotionResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AuthenResponse), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(AuthenResponse), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetAllPromotion()
         {
-            var promotions = await _promotionServices.GetAll();
-            var listpromo = new List<PromotionResponse>();
-            foreach(Promotion promotion in promotions)
+            try
             {
-                var promo = _mapper.Map<PromotionResponse>(promotion);
-                listpromo.Add(promo);
+                var promotions = await _promotionServices.GetAll();
+                var listpromo = new List<PromotionResponse>();
+                foreach (var promotion in promotions)
+                {
+                    var promo = _mapper.Map<PromotionResponse>(promotion);
+                    listpromo.Add(promo);
+                }
+                return Ok(listpromo);
+            } catch (Exception ex)
+            {
+                return StatusCode(500, new AuthenResponse { Message = "lỗi get-all-promotions controller !! " });
             }
-            return Ok(listpromo);
+            
         }
         [Authorize(Roles = "Owner, Customer, Teller, Staff")]
         // GET api/<DevicesController>/GetPromotion/5
-        [HttpGet("GetPromotion/{id}")]
+        [HttpGet("get-promotion/{id}")]
+        [ProducesResponseType(typeof(PromotionResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AuthenResponse), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(AuthenResponse), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetPromotion(Guid id)
         {
-            var promo = await _promotionServices.GetPromotion(id);
-            if (promo == null)
+            try
             {
-                return NotFound();
+                var promo = await _promotionServices.GetPromotion(id);
+                if (promo == null)
+                {
+                    return NotFound("khuyến mãi không tồn tại");
+                }
+                var _promo = _mapper.Map<PromotionResponse>(promo);
+                return Ok(_promo);
+            } catch (Exception ex)
+            {
+                return StatusCode(500, new AuthenResponse { Message = "lỗi get-promotion controller !! " });
             }
-            return Ok(promo);
+            
         }
+
         [Authorize(Roles = "Owner")]
         // POST api/<PromotionController>/CreateDevice/
-        [HttpPost("CreatePromotion/{ownerId}")]
+        [HttpPost("create-promotion/{ownerId}")]
         public async Task<IActionResult> CreatePromotion(Guid ownerId,[FromBody] PromotionRequest promotion)
         {
-            var owner = await _ownerService.GetOwner(ownerId);
-            if(owner != null)
+            try
             {
-                var _promotion = _mapper.Map<Promotion>(promotion);
-                _promotion.CreationDate = DateTime.Now;
-                _promotion.CreatedBy= owner.Id;
-                await _promotionServices.CreatePromotion(_promotion);
-                return Ok(_promotion);
-            }
-            else
+                var owner = await _ownerService.GetOwner(ownerId);
+                if (owner != null)
+                {
+                    var _promotion = _mapper.Map<Promotion>(promotion);
+                    _promotion.CreationDate = DateTime.Now;
+                    _promotion.CreatedBy = owner.Id;
+                    await _promotionServices.CreatePromotion(_promotion);
+                    return Ok(_promotion);
+                }
+                else
+                {
+                    return BadRequest("Tài Khoản không phải Owner");
+                }
+            } catch (Exception ex)
             {
-                return BadRequest("Owner is not exist!! ");
-            }                   
+                return StatusCode(500, new AuthenResponse { Message = "lỗi get-promotion controller !! " });
+            }                       
         }
 
         [Authorize(Roles = "Owner")]
         // PUT api/<PromotionController>/UpdateDevice/5
-        [HttpPut("UpdateDevice/{id}")]
-        public async Task<IActionResult> UpdatePromotion(Guid id, Guid ownerId, [FromBody] PromotionRequest promotion)
+        [HttpPut("update-promotion/{id}")]
+        public async Task<IActionResult> UpdatePromotion(Guid ownerId, [FromBody] PromotionUpdate promotion)
         {
 
             var owner = await _ownerService.GetOwner(ownerId);
             if (owner != null)
             {
-                var _promo = _promotionServices.GetPromotion(id);
+                
+                var _promo = _promotionServices.GetPromotion(promotion.Id);
                 if(_promo!= null)
                 {
                     var _promotion = _mapper.Map<Promotion>(promotion);
@@ -89,12 +120,12 @@ namespace BackEnd_SmartHouseThesis.Controllers
                     return Ok(_promotion);
                 }else
                 {
-                    return BadRequest("Promotion is not exist!! ");
+                    return NotFound("khuyến mãi không tồn tại!! ");
                 }                
             }
             else
             {
-                return BadRequest("Owner is not exist!! ");
+                return BadRequest("Tài khoản không phải Owner");
             }
         }
         [Authorize(Roles = "Owner")]
@@ -105,12 +136,13 @@ namespace BackEnd_SmartHouseThesis.Controllers
             var promo = await _promotionServices.GetPromotion(id);
             if (promo != null)
             {
-                await _promotionServices.DeletePromotion(promo);
+                promo.IsDelete = false;
+                await _promotionServices.UpdatePromotion(promo);
                 return Ok(promo);
             }
             else
             {
-                return BadRequest("Promotion can't do it right now!! ");
+                return NotFound("khuyến mãi không tồn tại!! ");
             }
         }
     }

@@ -26,16 +26,18 @@ namespace Infrastructure.Mapper
              .ForMember(des => des.LastName, act => act.MapFrom(src => src.LastName))
              .ReverseMap();
 
-           /* CreateMap<AccountInfoResponse, Account>()
+            CreateMap<AccountInfoResponse, Account>()
                 .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
                 .ForMember(des => des.Email, act => act.MapFrom(src => src.Email))
                 .ForMember(des => des.Address, act => act.MapFrom(src => src.Address))
                 .ForMember(des => des.FirstName, act => act.MapFrom(src => src.FirstName))
                 .ForMember(des => des.LastName, act => act.MapFrom(src => src.LastName))
                 .ForPath(des => des.Role.RoleName, act => act.MapFrom(src => src.RoleName))
-                .ReverseMap();*/
+                .ReverseMap();
+
 
             CreateMap<AccountResponse, Account>()
+                .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
                 .ForMember(des => des.Email, act => act.MapFrom(src => src.Email))
                 //.ForMember(des => des.Phone, act => act.MapFrom(src => src.Phone))
                 .ForMember(des => des.Address, act => act.MapFrom(src => src.Address))
@@ -44,6 +46,7 @@ namespace Infrastructure.Mapper
                 .ReverseMap();
 
             CreateMap<StaffResponse, Account>()
+                .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
                 .ForMember(des => des.Email, act => act.MapFrom(src => src.Email))
                 .ForMember(des => des.Phone, act => act.MapFrom(src => src.Phone !=null))
                 .ForMember(des => des.Address, act => act.MapFrom(src => src.Address))
@@ -51,32 +54,34 @@ namespace Infrastructure.Mapper
                 .ForMember(des => des.LastName, act => act.MapFrom(src => src.LastName))
                 .ForPath(des => des.Role.RoleName, act => act.MapFrom(src => src.RoleName !=null))
                 .ReverseMap();
+            CreateMap<StaffResponse, Staff>()
+                .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
+                .ForPath(des => des.RoleName, act => act.MapFrom(src => src.RoleName != null))
+                .ReverseMap();
+
 
             CreateMap<LoginRequest, Account>()
                 .ForMember(des => des.Email, act => act.MapFrom(src => src.Email))
                 .ForMember(des => des.Password, act => act.MapFrom(src => src.Password))
                 .ReverseMap();
 
-
             CreateMap<Account, Owner>()
                 .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
                 .ForMember(des => des.RoleName, act => act.MapFrom(src => src.Role.RoleName))
                 .ReverseMap();
-
             CreateMap<Account, Customer>()
                .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
                .ForMember(des => des.RoleName, act => act.MapFrom(src => src.Role.RoleName))
                .ReverseMap();
-
             CreateMap<Account, Staff>()
               .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
               .ForMember(des => des.RoleName, act => act.MapFrom(src => src.Role.RoleName))
               .ReverseMap();
-
             CreateMap<Account, Teller>()
               .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
               .ForMember(des => des.RoleName, act => act.MapFrom(src => src.Role.RoleName))
               .ReverseMap();
+
 
             CreateMap<AccountUpdate, Account>()
                 .ForMember(des => des.Email, act => act.MapFrom(src => src.Email))

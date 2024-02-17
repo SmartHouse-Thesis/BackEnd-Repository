@@ -44,5 +44,25 @@ namespace Infrastructure.Repositories
             }
         }
 
+        public async Task<List<Request>> GetRequestByTellerId(Guid tellerId)
+        {
+            try
+            {
+                List<Request> requests = new List<Request>();
+                List<Survey> surveys = await _surveyRepository.GetSurveysByTeller(tellerId);
+                foreach (var survey in surveys)
+                {
+                    var request = await _dbContext.Requests.Where(r => r.Survey.RequestId == survey.RequestId).FirstOrDefaultAsync();
+                    if (request != null) { requests.Add(request); }
+                }
+                return requests;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "{Repo} GetRequestByStaffId function error", typeof(BaseRepo<Contract>));
+                return null;
+            }
+        }
+
     }
 }

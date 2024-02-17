@@ -1,5 +1,7 @@
 ﻿using Application.Services;
 using AutoMapper;
+using Domain.DTOs.Request.Get;
+using Domain.DTOs.Response;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,42 +25,98 @@ namespace BackEnd_SmartHouseThesis.Controllers
             _accountService = accountService;
             _roleService = roleService;
         }
-        [Authorize(Roles = "Owner")]
+        [Authorize(Roles = "Owner, Teller, Staff")]
         // GET: api/<StaffController>/GetAllStaff
-        [HttpGet("GetAllStaff")]
+        [HttpGet("get-all-staff")]
         public async Task<IActionResult> GetAllStaff()
         {
-            var staff = await _staffService.GetAll();
-            return Ok(staff);
+            try
+            {
+                var staffs = await _staffService.GetAll();
+                    var liststaff = new List<StaffResponse>();
+                    foreach (var item in staffs)
+                    {
+                        var staffMap = _mapper.Map<StaffResponse>(item);
+                        liststaff.Add(staffMap);
+                    }
+                    return Ok(liststaff);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new AuthenResponse { Message = "get-all-staff controller !! " });
+            }
         }
 
         [Authorize(Roles = "Owner, Teller")]
-        [HttpGet("GetAllStaffFree/{startdate}/{enddate}")]
-        public async Task<IActionResult> GetAllStaffFree(DateTime startdate, DateTime enddate)
+        [HttpGet("get-all-staff-free/")]
+        public async Task<IActionResult> GetAllStaffFree([FromBody]GetAllStaffFree staff)
         {
-            var staffFree = await _staffService.GetListStaffFree(startdate, enddate);
-            return Ok(staffFree);
+            try
+            {
+                var staffFree = await _staffService.GetListStaffFree(staff.StartDate, staff.EndDate);
+                if(staffFree != null)
+                {
+                    var liststaff = new List<StaffResponse>();
+                    foreach (var item in staffFree)
+                    {                       
+                            var staffMap = _mapper.Map<StaffResponse>(item);
+                            liststaff.Add(staffMap);                 
+                    }
+                    return Ok(staffFree);
+                }
+                return Ok("Không có nhân viên rảnh !!");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new AuthenResponse { Message = "lỗi get-all-staff-free controller !! " });
+            }
+            
         }
 
         [Authorize(Roles = "Owner, Teller")]
-        [HttpGet("GetStaffForSurvey/{requestDate}")]
+        [HttpGet("get-staff-for-survey/{requestDate}")]
         public async Task<IActionResult> GetStaffForSurvey(DateTime requestDate)
         {
-            var staffFree = await _staffService.GetListStaffFreeSurvey(requestDate);
-            return Ok(staffFree);
+            try
+            {
+                var staffFree = await _staffService.GetListStaffFreeSurvey(requestDate);
+                if (staffFree != null)
+                {
+                    var liststaff = new List<StaffResponse>();
+                    foreach (var item in staffFree)
+                    {
+                        var staffMap = _mapper.Map<StaffResponse>(item);
+                        liststaff.Add(staffMap);
+                    }
+                    return Ok(staffFree);
+                }
+                return Ok("Không có nhân viên rảnh");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new AuthenResponse { Message = "lỗi get-staff-for-survey controller !! " });
+            }
+            
+            
         }
 
         [Authorize(Roles = "Owner, Teller")]
         // GET api/<StaffController>/GetStaff/5
-        [HttpGet("GetStaff/{id}")]
+        [HttpGet("get-staff/{id}")]
         public async Task<IActionResult> GetStaff(Guid id)
         {
             var staff = await _staffService.GetStaff(id);
-            if (staff == null)
+            if (staff != null)
             {
-                return NotFound();
+                var accountStaff = _accountService.GetAccount(staff.Id);
+                if (accountStaff != null)
+                {
+                    var staffAccount = _mapper.Map<StaffResponse>(accountStaff);
+                    return Ok(staffAccount);
+                }
+                return NotFound("Không tìm thấy tài khoản nhân viên");
             }
-            return Ok(staff);
+            return NotFound("Nhân Viên không tồn tại ");
         }
 
 /*        [Authorize(Roles = "Owner")]

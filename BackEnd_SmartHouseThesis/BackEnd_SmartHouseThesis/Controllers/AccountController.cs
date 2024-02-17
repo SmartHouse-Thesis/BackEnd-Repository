@@ -76,6 +76,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
 
                     return Ok(new AuthenResponse { Token = token, Message = "Login Success" });
                 }
+
             } catch (Exception ex) {
                 return BadRequest( new AuthenResponse { Message="Error Login!! "});
             }            
@@ -142,6 +143,12 @@ namespace BackEnd_SmartHouseThesis.Controllers
                 var listAccount = new List<AccountResponse>();
                 foreach(var item in account)
                 {
+                    /*if (item.IsDelete == true)
+                    {
+                        var staff = _mapper.Map<StaffResponse>(item);
+                        listAccount.Add(staff);
+                    }*/
+
                     var _account = _mapper.Map<AccountResponse>(item);
                     listAccount.Add(_account);
                 }
@@ -151,7 +158,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             {
                 _logger.LogError(ex, "Error in GettAllAccount");
                 return StatusCode(403, new AuthenResponse{
-                   Message =" FORBIDDEN - You don't have permission"
+                   Message =" FORBIDDEN - tài khoản không có quyền hạn !!"
                 });
             }
         }
@@ -226,7 +233,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             var _account = await _accountService.GetAccountByEmail(account.Email);
             if (_account != null)
             {
-                return BadRequest("Account is exist!! ");
+                return BadRequest("Tài Khoản đã tồn tại!! ");
             }
             else
             {
@@ -236,11 +243,12 @@ namespace BackEnd_SmartHouseThesis.Controllers
                 var Role = await _roleService.getRoleByRoleName("Customer");
                 _account.Role = Role;
                 _account.RoleId = Role.Id;
+                _account.IsDelete = true;
                 await _customerService.CreateCustomer(_account);
 
                 return Ok(new RegisterResponse
                 {
-                    Message ="Create Customer Success",
+                    Message ="Tạo Tài Khoản Thành Công",
                     Id = _account.Id
                 });
             }
@@ -256,7 +264,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             var _account = await _accountService.GetAccountByEmail(account.Email);
             if (_account != null)
             {
-                return BadRequest("Account is exist!! ");
+                return BadRequest("Tài Khoản đã tồn tại!! ");
             }
             else
             {
@@ -266,11 +274,12 @@ namespace BackEnd_SmartHouseThesis.Controllers
                 var Role = await _roleService.getRoleByRoleName("Staff");
                 _account.Role = Role;
                 _account.RoleId = Role.Id;
+                _account.IsDelete = true;
                 await _staffService.CreateStaff(_account);
 
                 return Ok(new RegisterResponse
                 {
-                    Message = "Create Staff Success",
+                    Message = "Tạo Nhân Viên Thành Công",
                     Id = _account.Id
                 });
             }
@@ -286,7 +295,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             var _account = await _accountService.GetAccountByEmail(account.Email);
             if (_account != null)
             {
-                return BadRequest("Account is exist!! ");
+                return BadRequest("Tài Khoản đã tồn tại!! ");
             }
             else
             {
@@ -296,11 +305,12 @@ namespace BackEnd_SmartHouseThesis.Controllers
                 var Role = await _roleService.getRoleByRoleName("Teller");
                 _account.Role = Role;
                 _account.RoleId = Role.Id;
+                _account.IsDelete = true;
                 await _tellerService.CreateTeller(_account);
 
                 return Ok(new RegisterResponse
                 {
-                    Message = "Create Teller Success",
+                    Message = "Tạo Teller Thành Công",
                     Id = _account.Id
                 });
             }
@@ -316,7 +326,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             var _account = await _accountService.GetAccountByEmail(account.Email);
             if (_account != null)
             {
-                return BadRequest("Account is exist!! ");
+                return BadRequest("Tài Khoản đã tồn tại!! ");
             }
             else
             {
@@ -326,11 +336,12 @@ namespace BackEnd_SmartHouseThesis.Controllers
                 var Role = await _roleService.getRoleByRoleName("Owner");
                 _account.Role = Role;
                 _account.RoleId = Role.Id;
+                _account.IsDelete = true;
                 await _ownerService.CreateOwner(_account);
 
                 return Ok(new RegisterResponse
                 {
-                    Message = "Create Teller Success",
+                    Message = "Tạo Owner Thành công !!",
                     Id = _account.Id
                 });
             }
@@ -350,7 +361,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
             else
             {
-                return NotFound("Account Doesnt Exist !!");
+                return NotFound("Không tìm thấy tài khoản !!");
             }
         }
 
@@ -365,13 +376,13 @@ namespace BackEnd_SmartHouseThesis.Controllers
                 var _account = await _accountService.GetAccount(id);
                 if (_account != null)
                 {
-                    _account.IsDelete = true;
+                    _account.IsDelete = false;
                     await _accountService.UpdateAccount(_account);
-                    return Ok("Remove Success");
+                    return Ok("Xóa Thành Công");
                 }
                 else
                 {
-                    return NotFound("Account Doesnt Exist !!");
+                    return NotFound("Không tìm thấy tài khoản !!");
                 }
             } catch (Exception ex)
             {

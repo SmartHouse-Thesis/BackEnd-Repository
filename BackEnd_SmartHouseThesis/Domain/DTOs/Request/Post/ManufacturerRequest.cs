@@ -8,5 +8,6 @@ namespace Domain.DTOs.Request.Post
 {
     public class ManufacturerRequest
     {
+        public string Name { get; set; }
     }
 }

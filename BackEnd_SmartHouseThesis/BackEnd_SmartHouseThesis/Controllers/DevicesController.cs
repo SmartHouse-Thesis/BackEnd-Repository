@@ -48,26 +48,46 @@ namespace BackEnd_SmartHouseThesis.Controllers
         }
 
 
-
         [Authorize(Roles = "Owner, Customer, Teller")]
         [HttpGet("get-devices-by-manufacturer/{manuName}")]
         public async Task<IActionResult> GetDevicesByManu(string manuName)
         {
             var devices = await _deviceService.GetListDeviceByManufacturer(manuName);
-            return Ok(devices);
+            if(devices != null)
+            {
+                var listDevice = new List<DeviceResponse>();
+                foreach (var item in devices)
+                {
+                    var deviceMap = _mapper.Map<DeviceResponse>(item);
+                    listDevice.Add(deviceMap);
+                }
+                return Ok(devices);
+            }
+            return NotFound("Nhà Sản Xuất không tồn tại !!");
         }
 
         // GET api/<DevicesController>/GetDevice/5
         [HttpGet("get-device/{id}")]
         [Authorize(Roles = "Owner, Customer, Staff, Teller")]
+        [ProducesResponseType(typeof(DeviceResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AuthenResponse), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(AuthenResponse), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetDevice(Guid id)
         {
-            var device = await _deviceService.GetDevice(id);
-            if (device == null)
+            try
             {
-                return NotFound();
+                var device = await _deviceService.GetDevice(id);
+                if (device == null)
+                {
+                    return NotFound("không tìm thấy thiết bị");
+                }
+                var deviceMap = _mapper.Map<DeviceResponse>(device);
+                return Ok(deviceMap);
             }
-            return Ok(device);
+            catch (Exception ex)
+            {
+                return StatusCode(500, new AuthenResponse { Message = "lỗi get-device controller !! " } );
+            }          
         }
 
         [Authorize(Roles = "Owner")]
@@ -92,12 +112,12 @@ namespace BackEnd_SmartHouseThesis.Controllers
                     return Ok(_device);
                 }else
                 {
-                    return BadRequest("Manufacturer doesn't exist !!");
+                    return NotFound("Nhà Sản Xuất không tồn tại!!");
                 }               
             }
             else
             {
-                return BadRequest("Owner is not exist!! ");
+                return BadRequest("Tài khoản không phải Onwer!!");
             }
         }
 
@@ -112,22 +132,33 @@ namespace BackEnd_SmartHouseThesis.Controllers
                 var _devi = _deviceService.GetDevice(id);
                 if (_devi != null)
                 {
-                    var _device = _mapper.Map<Device>(device);
-                    _device.ModificationDate = DateTime.Now;
-                    _device.ModificationBy = ownerId;
-                    await _deviceService.UpdateDevice(_device);
-                    return Ok(_device);
+                    var manufacturer = _manufacturerService.GetManufacturerByName(device.ManufacturerName);
+                    if (manufacturer != null)
+                    {
+                        var _device = _mapper.Map<Device>(device);
+                        _device.ModificationDate = DateTime.Now;
+                        _device.ModificationBy = ownerId;
+                        _device.ManufacturerId = manufacturer.Result.Id;
+                        _device.Manufacturer = manufacturer.Result;
+                        await _deviceService.UpdateDevice(_device);
+                        return Ok(_device);
+                    }
+                    else
+                    {
+                        return NotFound("Nhà Sản Xuất không tồn tại!!");
+                    }
                 }
                 else
                 {
-                    return BadRequest("Device is not exist!! ");
+                    return BadRequest("Thiết Bị Không tồn tại!! ");
                 }
             }
             else
             {
-                return BadRequest("Owner is not exist!! ");
+                return BadRequest("Tài khoản không phải Onwer!! ");
             }
         }
+
         [Authorize(Roles = "Owner")]
         // DELETE api/<DevicesController>/Delete/5
         [HttpDelete("delete-device/{id}")]
@@ -136,12 +167,13 @@ namespace BackEnd_SmartHouseThesis.Controllers
             var _device = await _deviceService.GetDevice(id);
             if (_device != null)
             {
+                _device.IsDelete = false;
                 await _deviceService.UpdateDevice(_device);
                 return Ok(_device);
             }
             else
             {
-                return BadRequest("Devices can't do it right now!! ");
+                return NotFound("Thiết Bị Không tồn tại !! ");
             }
         }
 

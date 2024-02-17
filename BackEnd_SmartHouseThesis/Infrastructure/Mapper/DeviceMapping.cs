@@ -26,6 +26,7 @@ namespace Infrastructure.Mapper
              
 
             CreateMap<DeviceResponse, Device>()
+                .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
                 .ForMember(des => des.DeviceName, act => act.MapFrom(src => src.DeviceName))
                 .ForMember(des => des.Price, act => act.MapFrom(src => src.Price))
                 .ForMember(des => des.DeviceType, act => act.MapFrom(src => src.DeviceType))

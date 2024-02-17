@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,5 +13,6 @@ namespace Domain.DTOs.Request.Post
         public string Description { get; set; }
         public decimal Price { get; set; }
         public decimal PromotionPrice { get; set; }
+        public ICollection<Device> Devices { get; set; }
     }
 }

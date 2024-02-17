@@ -23,50 +23,27 @@ namespace BackEnd_SmartHouseThesis.Controllers
             _accountService = accountService;
             _roleService = roleService;
         }
-        [Authorize (Roles = "Owner")]
+        [Authorize (Roles = "Owner, Teller, Customer, Staff")]
         // GET: api/<TellerController>/GetAllTeller
-        [HttpGet("GetAllTeller")]
+        [HttpGet("get-all-teller")]
         public async Task<IActionResult> GetAllTeller()
         {
             var teller = await _tellerServices.GetAll();
             return Ok(teller);
         }
-        [Authorize(Roles = "Owner")]
+
+        [Authorize(Roles = "Owner, Teller, Customer, Staff")]
         // GET api/<TellerController>/GetTeller/5
-        [HttpGet("GetTeller/{id}")]
+        [HttpGet("get-teller/{id}")]
         public async Task<IActionResult> GetTeller(Guid id)
         {
             var teller = await _tellerServices.GetTeller(id);
             if (teller == null)
             {
-                return NotFound();
+                return NotFound("không tìm thấy tài khoản ");
             }
             return Ok(teller);
         }
-/*
-        // POST api/<TellerController>/CreateTeller/{accountId}
-        [HttpPost("CreateTeller/{accountId}")]
-        public async Task<IActionResult> CreateTeller(Guid accountId)
-        {
-            var _account = await _accountService.GetAccount(accountId);
-            if (_account != null)
-            {
-                var role = await _roleService.GetRole(_account.RoleId);
-                if (role.Id == _account.RoleId)
-                {
-                    var teller = _mapper.Map<Teller>(_account);
-                    await _tellerServices.CreateTeller(teller);
-                    return Ok(teller);
-                }
-                else
-                {
-                    return BadRequest("Can't do this right now");
-                }
-            }
-            else
-            {
-                return BadRequest("Account doesn't exist!!");
-            }
-        }*/
+
     }
 }

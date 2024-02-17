@@ -1,9 +1,12 @@
 ﻿using Application.Services;
 using AutoMapper;
+using Domain.DTOs.Request.Post;
+using Domain.DTOs.Request.Put;
 using Domain.DTOs.Response;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -14,11 +17,13 @@ namespace BackEnd_SmartHouseThesis.Controllers
     public class ManufacturerController : ControllerBase
     {
         private readonly ManufacturerService _manufacturer;
+        private readonly OwnerService _ownerService;
         private readonly IMapper _mapper;
-        public ManufacturerController(ManufacturerService manufacture, IMapper mapper)
+        public ManufacturerController(ManufacturerService manufacture,OwnerService ownerService ,IMapper mapper)
         {
             _manufacturer = manufacture;
             _mapper = mapper;
+            _ownerService = ownerService;
         }
 
         [Authorize(Roles = "Owner, Customer, Teller, Staff")]
@@ -49,61 +54,107 @@ namespace BackEnd_SmartHouseThesis.Controllers
         [ProducesResponseType(typeof(AuthenResponse), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetManufacture(Guid id)
         {
-            var manu = await _manufacturer.GetManufacture(id);
-            if (manu == null)
+            try
             {
-                return NotFound();
+                var manu = await _manufacturer.GetManufacture(id);
+                if (manu == null)
+                {
+                    return NotFound("nhà sản xuất không tồn tại! ");
+                }
+                var manuMap = _mapper.Map<ManufactureResponse>(manu);
+                return Ok(manuMap);
+            } catch (Exception ex)
+            {
+                return StatusCode(500, new AuthenResponse { Message = "lỗi get-manufacture controller !! " });
             }
-            return Ok(manu);
+            
         }
 
         [Authorize(Roles = "Owner")]
         // POST api/<ManufacturerController>/CreateManufacture/
-        [HttpPost("create-manufacture")]
-        public async Task<IActionResult> CreateManufacture([FromBody] Manufacturer manufacture)
+        [HttpPost("create-manufacture/{ownerId}")]
+        public async Task<IActionResult> CreateManufacture(Guid ownerId, [FromBody] ManufacturerRequest manufacture)
         {
-            var manu = await _manufacturer.GetManufacture(manufacture.Id);
-            if (manu != null)
+            try
             {
-                return BadRequest("Manufacturer is exist!!");
-            }
-            else
+                var owner = await _ownerService.GetOwner(ownerId);
+                if (owner != null)
+                {
+                    var manu = await _manufacturer.GetManufacturerByName(manufacture.Name);
+                    if (manu != null)
+                    {
+                        return BadRequest("nhà sản xuất đã tồn tại!!");
+                    }
+                    else
+                    {
+                        var manuMap = _mapper.Map<Manufacturer>(_manufacturer);
+                        manuMap.IsDelete = true;
+                        manuMap.CreationDate = DateTime.Now;
+                        manuMap.CreatedBy = ownerId;
+                        await _manufacturer.CreateManufacture(manuMap);
+                        return Ok(manuMap);
+                    }
+                } else
+                {
+                    return BadRequest("Tài khoản không phải Owner");
+                }
+            } catch (Exception ex)
             {
-                await _manufacturer.CreateManufacture(manu);
-                return Ok();
-            }
+                return StatusCode(500, new AuthenResponse { Message = "lỗi create-manufacture controller !! " });
+            }           
         }
 
         [Authorize(Roles = "Owner")]
         // PUT api/<ManufacturerController>/UpdateManufacture/5
-        [HttpPut("UpdateManufacture/{id}")]
-        public async Task<IActionResult> UpdateManufacture(Guid id, [FromBody] Manufacturer manufacture)
+        [HttpPut("update-manufacturer/{ownerId}")]
+        public async Task<IActionResult> UpdateManufacture(Guid ownerId, [FromBody] ManufacturerUpdate manufacture)
         {
-            var manu = await _manufacturer.GetManufacture(id);
-            if (manu != null)
+
+            try
             {
-                await _manufacturer.UpdateManufacture(manufacture);
-                return Ok(manu);
+                var owner = await _ownerService.GetOwner(ownerId);
+                if (owner != null)
+                {
+                    var manu = await _manufacturer.GetManufacture(manufacture.Id);
+                    if (manu != null)
+                    {
+                        var manuMap = _mapper.Map<Manufacturer>(manufacture);
+                        await _manufacturer.UpdateManufacture(manuMap);
+                        return Ok(manu);
+                    }
+                    else
+                    {
+                        return NotFound("Nhà Sản Xuất không tồn tại !!");
+                    }
+                }
+                else
+                {
+                    return BadRequest("Tài khoản không phải Owner");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return BadRequest("Manufacturer can't do it right now!! ");
+                return StatusCode(500, new AuthenResponse { Message = "lỗi update-manufacturer controller !! " });
             }
+
+            
         }
+
         [Authorize(Roles = "Owner")]
         // DELETE api/<ManufacturerController>/Delete/5
-        [HttpDelete("Delete/{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var manu = await _manufacturer.GetManufacture(id);
             if (manu != null)
             {
-                await _manufacturer.DeleteFacture(manu);
+                manu.IsDelete = false;
+                await _manufacturer.UpdateManufacture(manu);
                 return Ok(manu);
             }
             else
             {
-                return BadRequest("Manufacturer can't do it right now!! ");
+                return NotFound("Nhà Sản Xuất không tồn tại !!");
             }
         }
     }

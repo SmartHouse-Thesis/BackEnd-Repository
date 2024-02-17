@@ -2,7 +2,9 @@
 using Application.UseCase;
 using AutoMapper;
 using Domain.DTOs.Request.Post;
+using Domain.DTOs.Response;
 using Domain.Entities;
+using Domain.Enum;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,60 +19,97 @@ namespace BackEnd_SmartHouseThesis.Controllers
         private readonly ContractService _contractService;
         private readonly TellerService _tellerService;
         private readonly CustomerService _customerService;
+        private readonly SurveyService _surveyService;
         private readonly IMapper _mapper;
-        public ContractController(ContractService contractService, TellerService tellerService,CustomerService customerService ,IMapper mapper)
+        public ContractController(ContractService contractService, TellerService tellerService,CustomerService customerService,SurveyService surveyService ,IMapper mapper)
         {
             _contractService = contractService;
             _tellerService = tellerService;
             _mapper = mapper;
             _customerService = customerService;
+            _surveyService = surveyService;
         }
-        [Authorize(Roles = "Owner")]
-        [HttpGet("GetAllContracts")]
+        [Authorize(Roles = "Owner ")]
+        [HttpGet("get-all-contracts")]
         public async Task<IActionResult> GetAllContract()
         {
             var contracts = await _contractService.GetAll();
-            return Ok(contracts);
+            var listContracts = new List<ContractResponse>();
+            foreach (var item in contracts)
+            {
+                var contractmap = _mapper.Map<ContractResponse>(item);
+                listContracts.Add(contractmap);
+            }
+            return Ok(listContracts);
         }
+
         [Authorize(Roles = "Customer, Teller, Staff, Owner")]
-        [HttpGet("GetContract/{id}")]
+        [HttpGet("get-contract/{id}")]
         public async Task<IActionResult> GetContract(Guid id)
         {
             var contract = await _contractService.GetContract(id);
             if (contract == null)
             {
-                return NotFound();
+                return NotFound(" không tìm thấy hợp đồng");
             }
-            return Ok(contract);
+            var contractMap = _mapper.Map<ContractResponse>(contract);
+            return Ok(contractMap);
         }
+
         [Authorize(Roles = "Teller")]
-        [HttpPost("CreateContract")]
-        public async Task<IActionResult> CreateContract(Guid tellerId, Guid customerId,[FromBody] ContractRequest contract)
+        [HttpPost("create-contracts/{surveyId}")]
+        public async Task<IActionResult> CreateContract(Guid surveyId,[FromBody] ContractRequest contract)
         {
-            var teller = await _tellerService.GetTeller(tellerId);
-            var customer = await _customerService.GetCustomer(customerId);
-            if (teller == null)
+            try
             {
-                return BadRequest("Teller is not exist");
-            }
-            if(customer == null)
-            {
-                return BadRequest("Customer is not exist");
-            }
-            if (teller != null && customer !=null)
-            {
-                var _contract = _mapper.Map<Contract>(contract);
-                _contract.CreationDate = DateTime.Now;
-                _contract.CreatedBy = teller.Id;
-                _contract.TellerId = tellerId;
-                _contract.CustomerId = customerId;
-                await _contractService.CreateContract(_contract);
-                return Ok(_contract);
-            }
-            else
-            {
-                return BadRequest("Cant do it right now ");
-            }
+                var survey = await _surveyService.GetSurvey(surveyId);
+                if (survey != null)
+                {
+                    var customer = await _customerService.GetCustomer(survey.Request.CustomerId.Value);
+                    var teller = await _tellerService.GetTeller(survey.CreatedBy.Value);
+                    if(customer != null && teller !=null)
+                    {
+                        var _contract = _mapper.Map<Contract>(contract);
+                        _contract.IsDelete = true;
+                        _contract.CreationDate = DateTime.Now;
+                        _contract.CreatedBy = teller.Id;
+                        _contract.TellerId = teller.Id;
+                        _contract.CustomerId = customer.Id;
+                        _contract.Status = (int) ContractStatus.New;// set contract status byEnum
+                        await _contractService.CreateContract(_contract);
+                        var contractMap = _mapper.Map<ContractResponse>(_contract);
+                        return Ok(contractMap);
+                    }
+                    else
+                    {
+                        return BadRequest("không tim thấy khách hàng hoặc Teller!!");
+                    }
+                } else
+                {
+                    return NotFound("không tìm thấy báo cáo khảo sát");
+                }
+                /*
+                var teller = await _tellerService.GetTeller(contract.TellerId);
+                var customer = await _customerService.GetCustomer(contract.CustomerId);
+                if (teller == null)
+                {
+                    return BadRequest("Tài khoản Teller không tồn tại");
+                }
+                if (customer == null)
+                {
+                    return BadRequest("Tài khoản Khách hàng không tồn tại");
+                }
+                if (teller != null && customer != null)
+                {
+                    
+                }
+                else
+                {
+                    return BadRequest("Cant do it right now ");
+                }*/
+            } catch(Exception ex) {
+                return StatusCode(500, new AuthenResponse { Message = "create-contracts controller !! " });
+            }         
         }
 
         [Authorize(Roles = "Staff, Teller")]
@@ -84,27 +123,37 @@ namespace BackEnd_SmartHouseThesis.Controllers
                 _contract.ModificationBy = personId;
                 _contract.ModificationDate= DateTime.Now;
                 await _contractService.UpdateContract(_contract);
-                return Ok(_contract);
+                var contractMap = _mapper.Map<ContractResponse>(_contract);
+                return Ok(contractMap);
             }
             else
             {
-                return BadRequest("Contract can't do it right now!! ");
+                return NotFound("Không tìm thấy hợp đồng !! ");
             }
         }
 
+        [Authorize(Roles = "Owner, Teller")]
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var _contract = await _contractService.GetContract(id);
-            if (_contract != null)
+            try
             {
-                await _contractService.UpdateContract(_contract);
-                return Ok(_contract);
-            }
-            else
+                var _contract = await _contractService.GetContract(id);
+                if (_contract != null)
+                {
+                    _contract.IsDelete = false;
+                    await _contractService.UpdateContract(_contract);
+                    return Ok();
+                }
+                else
+                {
+                    return NotFound("Không tìm thấy Hợp đồng ");
+                }
+            } catch (Exception ex)
             {
-                return BadRequest("Contract can't do it right now!! ");
+                return StatusCode(500, new AuthenResponse { Message = "Delete contract controller !! " });
             }
+            
         }
 
     }

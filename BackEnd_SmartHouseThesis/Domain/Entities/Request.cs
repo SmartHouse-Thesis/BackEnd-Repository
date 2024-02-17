@@ -11,7 +11,6 @@ namespace Domain.Entities
     {
         public string? Description { get; set; }
         public int? Status { get; set; } //trạng thái của yêu cầu: draft, hủy,đang khảo sát,duyệt 
-
         public DateTime? RequestDate { get; set; } // ngày khách hàng yêu cầu Khảo sát  
 
         [ForeignKey(nameof(CustomerId))]

@@ -27,33 +27,39 @@ namespace BackEnd_SmartHouseThesis.Controllers
         }
         [Authorize(Roles = "Owner, Customer")]
         // GET: api/<PromotionController>/GetAllPolicys
-        [HttpGet("GetAllPolicys")]
+        [HttpGet("get-all-policies")]
         public async Task<IActionResult> GetAllPolicys()
         {
             var policys = await _policyService.GetAll();
-            var listpolicy = new List<PolicyResponse>();
-            foreach(Policy policy in policys)
+            if(policys != null)
             {
-                var _policy = _mapper.Map<PolicyResponse>(policy);
-                listpolicy.Add(_policy);
+                var listpolicy = new List<PolicyResponse>();
+                foreach (var policy in policys)
+                {
+                    var _policy = _mapper.Map<PolicyResponse>(policy);
+                    listpolicy.Add(_policy);
+                }
+                return Ok(listpolicy);
             }
-            return Ok(listpolicy);
+            return NotFound("Chưa có chính sách !!");            
         }
+
         [Authorize(Roles = "Owner, Customer, Teller, Staff")]
         // GET api/<DevicesController>/GetPolicy/5
-        [HttpGet("GetPolicy/{id}")]
+        [HttpGet("get-policy/{id}")]
         public async Task<IActionResult> GetPolicy(Guid id)
         {
             var policy = await _policyService.GetPolicy(id);
             if (policy == null)
             {
-                return NotFound();
+                return NotFound("không tìm thấy chính sách !!");
             }
-            return Ok(policy);
+            var _policy = _mapper.Map<PolicyResponse>(policy);
+            return Ok(_policy);
         }
         [Authorize(Roles = "Owner")]
         // POST api/<PromotionController>/CreatePolicy/
-        [HttpPost("CreatePolicy/{ownerId}")]
+        [HttpPost("create-policy/{ownerId}")]
         public async Task<IActionResult> CreatePolicy(Guid ownerId, [FromBody] PolicyRequest policy)
         {
             var owner = await _ownerService.GetOwner(ownerId);
@@ -67,8 +73,9 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
             else
             {
-                return BadRequest("Not Owner");
+                return BadRequest("Tài khoảng không phải owner !!");
             }
+
         }
 
         [Authorize(Roles = "Owner")]
@@ -90,12 +97,12 @@ namespace BackEnd_SmartHouseThesis.Controllers
                 }
                 else
                 {
-                    return BadRequest("Policy is not exist!! ");
+                    return BadRequest("không tìm thấy chính sách!! ");
                 }
             }
             else
             {
-                return BadRequest("Owner is not exist!! ");
+                return BadRequest("tài khoản không phải owner!! ");
             }
         }
         [Authorize(Roles = "Owner")]
@@ -106,7 +113,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             var poli = await _policyService.GetPolicy(id);
             if (poli != null)
             {
-                await _policyService.DeletePolicy(poli);
+                await _policyService.UpdatePolicy(poli);
                 return Ok(poli);
             }
             else

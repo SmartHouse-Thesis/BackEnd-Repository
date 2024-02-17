@@ -2,6 +2,7 @@
 using AutoMapper;
 using Domain.DTOs.Request;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Principal;
 
@@ -13,11 +14,11 @@ namespace BackEnd_SmartHouseThesis.Controllers
     [ApiController]
     public class OwnerController : ControllerBase
     {
-/*        private readonly OwnerService _OwnerService;
+        private readonly OwnerService _OwnerService;
         private readonly AccountService _accountService;
         private readonly RoleService _roleService;
         private readonly IMapper _mapper;
-        public OwnerController(OwnerService ownerService, AccountService accountService,RoleService roleService,IMapper mapper)
+        public OwnerController(OwnerService ownerService, AccountService accountService, RoleService roleService, IMapper mapper)
         {
             _OwnerService = ownerService;
             _mapper = mapper;
@@ -26,15 +27,17 @@ namespace BackEnd_SmartHouseThesis.Controllers
         }
 
         // GET: api/<OwnerController>/GetAllOwner
-        [HttpGet("GetAllOwner")]
+        [Authorize(Roles = "Owner")]
+        [HttpGet("get-all-owner")]
         public async Task<IActionResult> GetAllOwner()
         {
             var owners = await _OwnerService.GetAll();
             return Ok(owners);
         }
 
+        [Authorize(Roles = "Owner")]
         // GET api/<OwnerController>/GetOwner/5
-        [HttpGet("GetOwner/{id}")]
+        [HttpGet("get-owner/{id}")]
         public async Task<IActionResult> GetOwner(Guid id)
         {
             var owner = await _OwnerService.GetOwner(id);
@@ -44,32 +47,5 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
             return Ok(owner);
         }
-
-
-
-        // POST api/<OwnerController>/CreateOwner/{accountId}
-        [HttpPost("CreateOwner/{accountId}")]
-        public async Task<IActionResult> CreateOwner(Guid accountId)
-        {
-            var _account = await _accountService.GetAccount(accountId);
-            if (_account != null)
-            {
-                var role = await _roleService.GetRole(_account.RoleId);
-                if (role.Id == _account.RoleId)
-                {
-                    var owner = _mapper.Map<Owner>(_account);
-                    await _OwnerService.CreateOwner(owner);
-                    return Ok(owner);
-                }
-                else
-                {
-                    return BadRequest("Can't do this right now");
-                }
-            }
-            else
-            {
-                return BadRequest("Account doesn't exist!!");
-            }
-        }*/
     }
 }

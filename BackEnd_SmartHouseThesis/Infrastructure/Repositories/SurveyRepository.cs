@@ -35,5 +35,19 @@ namespace Infrastructure.Repositories
                 return null;
             }
         }
+
+        public async Task<List<Survey>> GetSurveysByTeller(Guid tellerId)
+        {
+            try
+            {
+                List<Survey> surveys = await _dbContext.Surveys.Where(s => s.CreatedBy == tellerId).ToListAsync();
+                return surveys;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "{Repo} GetSurveysByStaff function error", typeof(BaseRepo<Survey>));
+                return null;
+            }
+        }
     }
 }

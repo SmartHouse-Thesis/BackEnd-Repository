@@ -9,6 +9,7 @@ namespace Domain.DTOs.Response
 {
     public class DeviceResponse
     {
+        public Guid? Id { get; set; }
         public string? DeviceName { get; set; }
         public decimal? Price { get; set; }
         public string? DeviceType { get; set; }

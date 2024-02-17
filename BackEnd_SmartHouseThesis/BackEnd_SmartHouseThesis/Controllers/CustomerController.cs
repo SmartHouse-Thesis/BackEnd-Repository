@@ -3,6 +3,7 @@ using Application.UseCase;
 using AutoMapper;
 using Domain.DTOs.Request.Post;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -26,7 +27,8 @@ namespace BackEnd_SmartHouseThesis.Controllers
         }
 
         // GET: api/<CustomerController>/GetAllCustomer
-        [HttpGet("GetAllCustomer")]
+        [Authorize(Roles = "Owner, Teller, Customer, Staff")]
+        [HttpGet("get-allcustomer")]
         public async Task<IActionResult> GetAllCustomer()
         {
             var customer = await _customerService.GetAll();
@@ -34,7 +36,8 @@ namespace BackEnd_SmartHouseThesis.Controllers
         }
 
         // GET api/<CustomerController>/GetCustomer/5
-        [HttpGet("GetCustomer/{id}")]
+        [Authorize(Roles = "Owner, Teller, Customer, Staff")]
+        [HttpGet("get-customer/{id}")]
         public async Task<IActionResult> GetCustomer(Guid id)
         {
             var owner = await _customerService.GetCustomer(id);

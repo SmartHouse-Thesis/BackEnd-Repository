@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace Domain.DTOs.Response
 {
-    public class RequestResponse
+    public class RequestSurveyResponse
     {
-        public string? Name { get; set; }
+        public Guid? Id { get; set; }
+        public string? CustomerName { get; set; }
         public string? Address { get; set; }
+        public string? Phone { get; set; }
         public DateTime? RequestDate { get; set; }
-        public string? Status { get; set; }
+        public int? Status { get; set; }
     }
 }

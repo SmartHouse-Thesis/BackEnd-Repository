@@ -20,6 +20,7 @@ namespace Infrastructure.Mapper
             .ForMember(des => des.Content, act => act.MapFrom(src => src.Content));
             
             CreateMap<PolicyResponse, Policy>()
+            .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
             .ForMember(des => des.Type, act => act.MapFrom(src => src.Type))
             .ForMember(des => des.Content, act => act.MapFrom(src => src.Content));
 
