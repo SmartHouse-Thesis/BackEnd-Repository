@@ -32,7 +32,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
         {
             try
             {
-                var staffs = await _staffService.GetAll();
+                    var staffs = await _staffService.GetAll();
                     var liststaff = new List<StaffResponse>();
                     foreach (var item in staffs)
                     {

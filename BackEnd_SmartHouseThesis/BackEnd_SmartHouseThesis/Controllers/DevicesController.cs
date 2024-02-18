@@ -100,17 +100,19 @@ namespace BackEnd_SmartHouseThesis.Controllers
             var owner = await _ownerService.GetOwner(ownerId);
             if (owner != null)
             {
-                var manufacturer = _manufacturerService.GetManufacturerByName(device.ManufacturerName);
+                var manufacturer = await _manufacturerService.GetManufacturerByName(device.ManufacturerName);
                 if(manufacturer != null)
                 {
-                    var _device = _mapper.Map<Device>(device);
-                    _device.CreationDate = DateTime.Now;
-                    _device.CreatedBy = owner.Id;
-                    _device.ManufacturerId = manufacturer.Result.Id;
-                    _device.Manufacturer = manufacturer.Result;                   
-                    await _deviceService.CreateDevice(_device);
-                    return Ok(_device);
-                }else
+                    
+                        var _device = _mapper.Map<Device>(device);
+                        _device.CreationDate = DateTime.Now;
+                        _device.CreatedBy = owner.Id;
+                        _device.ManufacturerId = manufacturer.Id;
+                        _device.Manufacturer = manufacturer;
+                        await _deviceService.CreateDevice(_device);
+                        return Ok(_device);
+                }
+                else
                 {
                     return NotFound("Nhà Sản Xuất không tồn tại!!");
                 }               

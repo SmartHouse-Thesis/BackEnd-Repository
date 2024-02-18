@@ -94,40 +94,9 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
             catch
             {
-                throw new Exception("logout Error ");
+                throw new Exception("lỗi logout controller");
             }
         }
-
-       /* ///Hàm gen Token
-        private string GenerateJwtToken(Account account)
-        {
-            if (account == null)
-            {
-                throw new ArgumentNullException(nameof(account));
-            }
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SS590Z/hUu8cjD9w4W51xA==")); // fix cứng chưa verify với construct                             
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            // lấy role từ role Id 
-            var role = _roleService.GetRole(account.RoleId);
-            var claims = new List<Claim>
-     {
-         new Claim(ClaimTypes.Name, account.FirstName), // tên 
-         new Claim(ClaimTypes.GivenName, account.LastName), //tên chính thức 
-         new Claim(ClaimTypes.Email, account.Email), // email
-         new Claim(ClaimTypes.NameIdentifier, account.Id.ToString()), // Thêm ID người dùng vào claim
-         new Claim(ClaimTypes.Role, role.Result.RoleName),// Sử dụng RoleName từ bảng Role
-         new Claim(ClaimTypes.StreetAddress, account.Address)
-     };
-
-            var token = new JwtSecurityToken(
-                issuer: "ISHE",
-                audience: "ISHE",
-                claims: claims,
-                expires: DateTime.Now.AddHours(1),
-                signingCredentials: credentials
-            );
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }*/
 
         [Authorize(Roles ="Owner")]
         // GET: api/<AccountController>/GettAllAccount
@@ -187,9 +156,9 @@ namespace BackEnd_SmartHouseThesis.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error in GettAllAccount");
-                return StatusCode(403, new AuthenResponse
+                return StatusCode(500, new AuthenResponse
                 {
-                    Message = " FORBIDDEN - You don't have permission"
+                    Message = "lỗi get-all-staff-account controller"
                 });
             }
         }

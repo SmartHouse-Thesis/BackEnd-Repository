@@ -1,5 +1,6 @@
 ﻿using Application.Services;
 using AutoMapper;
+using Domain.DTOs.Response;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,6 +31,20 @@ namespace BackEnd_SmartHouseThesis.Controllers
         {
             var teller = await _tellerServices.GetAll();
             return Ok(teller);
+            /*var tellers = await _tellerServices.GetAll();
+            var listTeller = new List<StaffResponse>();
+            foreach (var item in tellers)
+            {
+                var accountTeller = _accountService.GetAccount(item.Id);
+                if (accountTeller != null)
+                {
+                    var _accountTeller = _mapper.Map<StaffResponse>(accountTeller);
+                    listTeller.Add(_accountTeller);
+                }
+                *//*var tellerMap = _mapper.Map<StaffResponse>(item);
+                listTeller.Add(tellerMap);*//*
+            }
+            return Ok(listTeller);*/
         }
 
         [Authorize(Roles = "Owner, Teller, Customer, Staff")]

@@ -37,18 +37,7 @@ dotnet add package Microsoft.VisualStudio.Web.CodeGeneration.Design
 
 dotnet add package Microsoft.Extensions.Configuration –version 5.0.0  6.0.1
 dotnet add package Microsoft.Extensions.Configuration.Json –version 5.0.0 6.0.1
-
-
-{
-  "email": "account@example.com",
-  "phone": "0909723662",
-  "password": "testthupassword123",
-  "roleName": "Owner",
-  "address": "truong daihoc FPT ",
-  "firstName": "beo",
-  "lastName": "testAccount"
-}
-
+//////////////////// customer////////////////////////
 {
   "email": "customer1@gmail.com",
   "phone": "0909753624",
@@ -61,4 +50,33 @@ dotnet add package Microsoft.Extensions.Configuration.Json –version 5.0.0 6.0.1
 {
   "email": "customer1@gmail.com",
   "password": "customerpass123"
+}
+//////////////////// owner////////////////////////
+{
+  "email": "owner1@gmail.com",
+  "phone": "0909123456",
+  "password": "ownerpass123",
+  "address": "owner address 1",
+  "firstName": "owner test ",
+  "lastName": "owner"
+}
+
+{
+  "email": "owner1@gmail.com",
+  "password": "ownerpass123"
+}
+
+//////////////////// teller////////////////////////
+{
+  "email": "teller1@gmail.com",
+  "phone": "0909456321",
+  "password": "tellerpass123",
+  "address": "teller address 1",
+  "firstName": "teller test ",
+  "lastName": "teller 1"
+}
+
+{
+  "email": "teller1@gmail.com",
+  "password": "tellerpass123"
 }

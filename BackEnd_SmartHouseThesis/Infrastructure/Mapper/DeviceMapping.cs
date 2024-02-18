@@ -30,8 +30,8 @@ namespace Infrastructure.Mapper
                 .ForMember(des => des.DeviceName, act => act.MapFrom(src => src.DeviceName))
                 .ForMember(des => des.Price, act => act.MapFrom(src => src.Price))
                 .ForMember(des => des.DeviceType, act => act.MapFrom(src => src.DeviceType))
-                .ForPath(des => des.Manufacturer.Name, act => act.MapFrom(src => src.ManufactureName != null))
-                .ForPath(des => des.Images, act => act.MapFrom(src => src.ImageData != null))
+                .ForPath(des => des.Manufacturer.Name, act => act.MapFrom(src => src.ManufactureName))
+                .ForPath(des => des.Images, act => act.MapFrom(src => src.ImageData))
                 .ReverseMap();
                 
 
