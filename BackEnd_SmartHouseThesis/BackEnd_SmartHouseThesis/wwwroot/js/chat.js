@@ -2,16 +2,23 @@
 
 var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
-//Disable the send button until connection is established.
+// Disable the send button until connection is established.
 document.getElementById("sendButton").disabled = true;
 
-connection.on("ReceiveMessage", function (user, message) {
+connection.on("ReceiveMessage", function (senderName, message) {
     var li = document.createElement("li");
-    document.getElementById("messagesList").appendChild(li);
-    // We can assign user-supplied strings to an element's textContent because it
-    // is not interpreted as markup. If you're assigning in any other way, you 
-    // should be aware of possible script injection concerns.
-    li.textContent = `${user} says ${message}`;
+    var chatWindow = document.getElementById("chatWindow");
+    chatWindow.appendChild(li);
+    li.textContent = `${senderName}: ${message}`;
+});
+
+connection.on("ReceiveChatHistory", function (chatHistory) {
+    chatHistory.forEach(function (log) {
+        var li = document.createElement("li");
+        var chatHistoryElement = document.getElementById("chatHistory");
+        chatHistoryElement.appendChild(li);
+        li.textContent = `${log.senderName}: ${log.message}`;
+    });
 });
 
 connection.start().then(function () {
@@ -21,9 +28,19 @@ connection.start().then(function () {
 });
 
 document.getElementById("sendButton").addEventListener("click", function (event) {
-    var user = document.getElementById("userInput").value;
+    var senderId = document.getElementById("senderId").value;
+    var receiverId = document.getElementById("receiverId").value;
     var message = document.getElementById("messageInput").value;
-    connection.invoke("SendMessage", user, message).catch(function (err) {
+    connection.invoke("SendMessage", senderId, receiverId, message).catch(function (err) {
+        return console.error(err.toString());
+    });
+    event.preventDefault();
+});
+
+document.getElementById("getHistoryButton").addEventListener("click", function (event) {
+    var senderId = document.getElementById("senderId").value;
+    var receiverId = document.getElementById("receiverId").value;
+    connection.invoke("GetChatHistory", senderId, receiverId).catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();

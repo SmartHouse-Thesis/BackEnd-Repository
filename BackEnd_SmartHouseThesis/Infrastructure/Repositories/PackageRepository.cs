@@ -34,5 +34,19 @@ namespace Infrastructure.Repositories
                 return null;
             }
         }
+
+        public async Task<List<Package>> SearchPackageByName(string name)
+        {
+            try
+            {
+                List<Package> packages = await _dbContext.Packages.Where(x => x.PackageName.Equals(name)).ToListAsync();
+                return packages;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "{Repo} SearchPackageByName function error", typeof(BaseRepo<Package>));
+                return null;
+            }
+        }
     }
 }

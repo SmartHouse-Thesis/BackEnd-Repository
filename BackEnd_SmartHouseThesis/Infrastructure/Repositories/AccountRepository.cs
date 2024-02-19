@@ -104,21 +104,35 @@ namespace Infrastructure.Repositories
                 return null;
             }
         }
-/*
-        private string generateJwtToken(Account user)
+
+        public async Task<List<Account>> SearchAccountByName(string name)
         {
-            // generate token that is valid for 7 days
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF32.GetBytes();
-            var tokenDescriptor = new SecurityTokenDescriptor
+            try
             {
-                Subject = new ClaimsIdentity(new[] { new Claim("id", user.Id.ToString()) }),
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
-        }*/
+                List<Account> accounts = await _dbContext.Accounts.Where(x => x.LastName.Equals(name) || x.FirstName.Equals(name)).ToListAsync();
+                return accounts;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "{Repo} SearchAccountByName function error", typeof(BaseRepo<Account>));
+                return null;
+            }
+        }
+        /*
+                private string generateJwtToken(Account user)
+                {
+                    // generate token that is valid for 7 days
+                    var tokenHandler = new JwtSecurityTokenHandler();
+                    var key = Encoding.UTF32.GetBytes();
+                    var tokenDescriptor = new SecurityTokenDescriptor
+                    {
+                        Subject = new ClaimsIdentity(new[] { new Claim("id", user.Id.ToString()) }),
+                        Expires = DateTime.UtcNow.AddDays(7),
+                        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                    };
+                    var token = tokenHandler.CreateToken(tokenDescriptor);
+                    return tokenHandler.WriteToken(token);
+                }*/
 
 
 

@@ -58,5 +58,7 @@ namespace Application.Services
         public async Task<Account> GetAccountByEmail(string email) => await _accountRepository.GetAccountByEmail(email);
 
         public async Task<IQueryable<Account>> GetAccountStaffandTeller() => await _accountRepository.GetAccountStaffandTeller();
+
+        public async Task<List<Account>> SearchAccountByName(string name) => await _accountRepository.SearchAccountByName(name);
     }
 }

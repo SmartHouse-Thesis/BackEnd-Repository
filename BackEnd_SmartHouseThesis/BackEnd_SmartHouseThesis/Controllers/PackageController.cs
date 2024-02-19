@@ -50,6 +50,30 @@ namespace BackEnd_SmartHouseThesis.Controllers
             return Ok("Chưa Có Gói !!");
         }
 
+        [Authorize(Roles = "Owner, Customer, Teller, Customer")]
+        // GET: api/<PackageController>/GetAllPack
+        [HttpGet("search-package-by-name/{packName}")]
+        [ProducesResponseType(typeof(PackageOwnerResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AuthenResponse), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(AuthenResponse), StatusCodes.Status403Forbidden)]
+        public async Task<IActionResult> SearchPackageByName(string packName)
+        {
+            var packages = await _packageService.SearchPackageByName(packName);
+            var _packages = new List<PackageOwnerResponse>();
+            if (packages == null) { return NotFound(); }
+            foreach (var package in packages)
+            {
+                var _pack = _mapper.Map<PackageOwnerResponse>(package);
+                _packages.Add(_pack);
+                /*if (package.IsDelete == false)
+                {
+                    var _pack = _mapper.Map<PackageOwnerResponse>(package);
+                    _packages.Add(_pack);
+                }*/
+            }
+            return Ok(_packages);
+        }
+
         [Authorize(Roles = "Owner, Customer, Teller, Staff")]
         [HttpGet("get-package-by-manufacturer/{manuName}")]
         [ProducesResponseType(typeof(PackageOwnerResponse), StatusCodes.Status200OK)]
@@ -99,6 +123,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
                 if (owner != null)
                 {
                     var _package = _mapper.Map<Package>(package);
+                    _package.IsDelete = true;
                     _package.CreationDate = DateTime.Now;
                     _package.CreatedBy = owner.Id;
                     await _packageService.CreatePackage(_package);

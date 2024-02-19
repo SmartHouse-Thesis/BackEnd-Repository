@@ -98,6 +98,25 @@ namespace BackEnd_SmartHouseThesis.Controllers
             }
         }
 
+        //Tú//
+        [Authorize(Roles = "Owner, Teller")]
+        [HttpGet("search-account-by-name/{name}")]
+        public async Task<IActionResult> SearchAccountByName(string name)
+        {
+            var accounts = await _accountService.SearchAccountByName(name);
+            var _accounts = new List<StaffResponse>();
+            if (accounts == null) { return NotFound(); }
+            foreach (var account in accounts)
+            {
+                if (account.IsDelete == true)
+                {
+                    var _account = _mapper.Map<StaffResponse>(account);
+                    _accounts.Add(_account);
+                }
+            }
+            return Ok(_accounts);
+        }
+
         [Authorize(Roles ="Owner")]
         // GET: api/<AccountController>/GettAllAccount
         [HttpGet("get-all-account")]

@@ -47,6 +47,24 @@ namespace BackEnd_SmartHouseThesis.Controllers
             return Ok(listDevice);
         }
 
+        [Authorize(Roles = "Owner, Customer, Teller, Staff")]
+        [HttpGet("search-device-by-name/{deviceName}")]
+        public async Task<IActionResult> SearchDeviceByName(string deviceName)
+        {
+            var devices = await _deviceService.SearchDeviceByName(deviceName);
+            var _devices = new List<DeviceResponse>();
+            if (devices == null) { return NotFound(); }
+            foreach (var device in devices)
+            {
+                if (device.IsDelete == true)
+                {
+                    var _device = _mapper.Map<DeviceResponse>(device);
+                    _devices.Add(_device);
+                }
+            }
+            return Ok(_devices);
+        }
+
 
         [Authorize(Roles = "Owner, Customer, Teller")]
         [HttpGet("get-devices-by-manufacturer/{manuName}")]
@@ -105,6 +123,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
                 {
                     
                         var _device = _mapper.Map<Device>(device);
+                        _device.IsDelete = true;
                         _device.CreationDate = DateTime.Now;
                         _device.CreatedBy = owner.Id;
                         _device.ManufacturerId = manufacturer.Id;

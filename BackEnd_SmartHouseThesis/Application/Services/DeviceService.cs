@@ -36,5 +36,7 @@ namespace Application.Services
             
            return  await _deviceRepository.GetListDeviceByManufacturer(manuName);
         }
+        public async Task<List<Device>> SearchDeviceByName(string name) => await _deviceRepository.SearchDeviceByName(name);
+
     }
 }

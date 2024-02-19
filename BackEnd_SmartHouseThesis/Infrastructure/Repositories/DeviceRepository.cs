@@ -36,5 +36,20 @@ namespace Infrastructure.Repositories
                 return null;
             }
         }
+
+        public async Task<List<Device>> SearchDeviceByName(string name)
+        {
+            try
+            {
+                List<Device> devices = await _dbContext.Device.Where(x => x.DeviceName.Equals(name)).ToListAsync();
+                return devices;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "{Repo} SearchDeviceByName function error", typeof(BaseRepo<Device>));
+                return null;
+            }
+        }
+
     }
 }
