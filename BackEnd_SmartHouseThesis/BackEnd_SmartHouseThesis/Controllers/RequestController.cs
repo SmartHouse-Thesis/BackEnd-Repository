@@ -38,6 +38,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
                 foreach (var request in requests)
                 {
                     var _request = _mapper.Map<RequestSurveyResponse>(request);
+                    _request.CustomerName = request.Customer.Account.LastName + request.Customer.Account.FirstName;
                     listrequest.Add(_request);
                 }
                 return Ok(listrequest);
@@ -60,6 +61,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
                     return NotFound("Yêu Cầu Khảo Sát không tồn tại");
                 }
                 var _request = _mapper.Map<RequestSurveyResponse>(request);
+                _request.CustomerName = request.Customer.Account.LastName + request.Customer.Account.FirstName;
                 return Ok(_request);
             }
             catch (Exception ex)
@@ -84,6 +86,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
                     foreach (var item in requests)
                     {
                         var requestMap = _mapper.Map<RequestSurveyResponse>(item);
+                        requestMap.CustomerName = item.Customer.Account.LastName + item.Customer.Account.FirstName;
                         listRequest.Add(requestMap);
                     }
                     return Ok(listRequest);
@@ -112,6 +115,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
                     foreach (var item in requests)
                     {
                         var requestMap = _mapper.Map<RequestSurveyResponse>(item);
+                        requestMap.CustomerName = item.Customer.Account.LastName + item.Customer.Account.FirstName;
                         listRequest.Add(requestMap);
                     }
                     return Ok(listRequest);
@@ -121,6 +125,25 @@ namespace BackEnd_SmartHouseThesis.Controllers
             {
                 return StatusCode(500, new AuthenResponse { Message = "lỗi get-request-by-staff controller !! " });
             }          
+        }
+
+        [Authorize(Roles = "Owner, Teller")]
+        [HttpGet("search-request-by-customer-name/{custName}")]
+        [ProducesResponseType(typeof(RequestSurveyResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AuthenResponse), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(AuthenResponse), StatusCodes.Status403Forbidden)]
+        public async Task<IActionResult> SearchRequestByCustomerName(string custName)
+        {
+            var requests = await _requestService.SearchRequestByCustomerName(custName);
+            var _requests = new List<RequestSurveyResponse>();
+            if (requests == null) { return NotFound(); }
+            foreach (var request in requests)
+            {
+                var _request = _mapper.Map<RequestSurveyResponse>(request);
+                _request.CustomerName = request.Customer.Account.LastName + request.Customer.Account.FirstName;
+                _requests.Add(_request);
+            }
+            return Ok(_requests);
         }
 
         [Authorize(Roles = "Customer")]

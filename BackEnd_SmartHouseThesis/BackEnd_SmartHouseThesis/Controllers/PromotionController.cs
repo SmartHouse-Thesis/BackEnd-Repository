@@ -74,6 +74,27 @@ namespace BackEnd_SmartHouseThesis.Controllers
             
         }
 
+        [Authorize(Roles = "Owner, Customer, Teller, Customer")]
+        [HttpGet("search-promotion-by-name/{packName}")]
+        [ProducesResponseType(typeof(PackageOwnerResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AuthenResponse), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(AuthenResponse), StatusCodes.Status403Forbidden)]
+        public async Task<IActionResult> SearchPromotionByName(string promoName)
+        {
+            var promotions = await _promotionServices.SearchPromotionByName(promoName);
+            var _promotions = new List<PromotionResponse>();
+            if (promotions == null) { return NotFound(); }
+            foreach (var promotion in promotions)
+            {
+                if (promotion.IsDelete == true)
+                {
+                    var _promo = _mapper.Map<PromotionResponse>(promotion);
+                    _promotions.Add(_promo);
+                }
+            }
+            return Ok(_promotions);
+        }
+
         [Authorize(Roles = "Owner")]
         // POST api/<PromotionController>/CreateDevice/
         [HttpPost("create-promotion/{ownerId}")]
@@ -85,6 +106,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
                 if (owner != null)
                 {
                     var _promotion = _mapper.Map<Promotion>(promotion);
+                    _promotion.IsDelete = true;
                     _promotion.CreationDate = DateTime.Now;
                     _promotion.CreatedBy = owner.Id;
                     await _promotionServices.CreatePromotion(_promotion);

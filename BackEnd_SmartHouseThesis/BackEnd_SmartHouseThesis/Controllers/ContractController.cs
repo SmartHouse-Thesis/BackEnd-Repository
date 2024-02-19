@@ -29,7 +29,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             _customerService = customerService;
             _surveyService = surveyService;
         }
-        [Authorize(Roles = "Owner ")]
+        [Authorize(Roles = "Owner, Teller")]
         [HttpGet("get-all-contracts")]
         public async Task<IActionResult> GetAllContract()
         {
@@ -38,6 +38,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             foreach (var item in contracts)
             {
                 var contractmap = _mapper.Map<ContractResponse>(item);
+                contractmap.CustomerName = item.Customer.Account.LastName + item.Customer.Account.FirstName;
                 listContracts.Add(contractmap);
             }
             return Ok(listContracts);
@@ -53,7 +54,27 @@ namespace BackEnd_SmartHouseThesis.Controllers
                 return NotFound(" không tìm thấy hợp đồng");
             }
             var contractMap = _mapper.Map<ContractResponse>(contract);
+            contractMap.CustomerName = contract.Customer.Account.LastName + contract.Customer.Account.FirstName;
             return Ok(contractMap);
+        }
+
+        [Authorize(Roles = "Owner, Teller")]
+        [HttpGet("search-contract-by-customer-name/{custName}")]
+        [ProducesResponseType(typeof(ContractResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AuthenResponse), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(AuthenResponse), StatusCodes.Status403Forbidden)]
+        public async Task<IActionResult> SearchContractByCustomerName(string custName)
+        {
+            var contracts = await _contractService.SearchContractByCustomerName(custName);
+            var _contracts = new List<ContractResponse>();
+            if (contracts == null) { return NotFound(); }
+            foreach (var contract in contracts)
+            {
+                var _contract = _mapper.Map<ContractResponse>(contract);
+                _contract.CustomerName = contract.Customer.Account.LastName + contract.Customer.Account.FirstName;
+                _contracts.Add(_contract);
+            }
+            return Ok(_contracts);
         }
 
         [Authorize(Roles = "Teller")]
@@ -119,7 +140,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             var _contract = await _contractService.GetContract(id);
             if (_contract != null)
             {
-                _contract = _mapper.Map<Contract>(contract);
+                _contract = _mapper.Map<Domain.Entities.Contract>(contract);
                 _contract.ModificationBy = personId;
                 _contract.ModificationDate= DateTime.Now;
                 await _contractService.UpdateContract(_contract);

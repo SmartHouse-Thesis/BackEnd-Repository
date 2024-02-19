@@ -19,10 +19,14 @@ namespace Infrastructure.Mapper
             .ForMember(des => des.Discount, act => act.MapFrom(src => src.Discount))
             .ForMember(des => des.StartDate, act => act.MapFrom(src => src.StartDate))
             .ForMember(des => des.EndDate, act => act.MapFrom(src => src.EndDate))
+            .ForMember(des => des.Name, act => act.MapFrom(src => src.Name))
+            .ForMember(des => des.Description, act => act.MapFrom(src => src.Description))
             .ReverseMap();
 
             CreateMap<PromotionResponse, Promotion>()
             .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
+            .ForMember(des => des.Name, act => act.MapFrom(src => src.Name))
+            .ForMember(des => des.Description, act => act.MapFrom(src => src.Description))
             .ForMember(des => des.Discount, act => act.MapFrom(src => src.Discount))
             .ForMember(des => des.StartDate, act => act.MapFrom(src => src.StartDate))
             .ForMember(des => des.EndDate, act => act.MapFrom(src => src.EndDate))

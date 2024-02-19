@@ -25,5 +25,7 @@ namespace Application.Services
         public async Task<IQueryable<Contract>> GetAll() => await _contractRepository.FindAllAsync();
 
         public async Task<Contract> GetContract(Guid id) => await _contractRepository.GetAsync(id);
+
+        public async Task<List<Contract>> SearchContractByCustomerName(string name) => await _contractRepository.SearchContractByCustomerName(name);
     }
 }

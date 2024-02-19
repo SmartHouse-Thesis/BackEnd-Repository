@@ -35,5 +35,28 @@ namespace Infrastructure.Repositories
                 return null;
             }
         }
+        public async Task<List<Contract>> SearchContractByCustomerName(string name)
+        {
+            try
+            {
+                var customers = await _dbContext.Customers.Where(c => c.Account.FirstName.Contains(name) || c.Account.LastName.Contains(name)).ToListAsync();
+                var _contracts = new List<Contract>();
+                foreach (var customer in customers)
+                {
+                    var contracts = await _dbContext.Contracts.Where(c => c.CustomerId == customer.Id).ToListAsync();
+                    _contracts.AddRange(contracts);
+                }
+                if (_contracts != null)
+                {
+                    return _contracts;
+                }
+                return null;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "{Repo} SearchContractByCustomerName function error", typeof(BaseRepo<Contract>));
+                return null;
+            }
+        }
     }
 }

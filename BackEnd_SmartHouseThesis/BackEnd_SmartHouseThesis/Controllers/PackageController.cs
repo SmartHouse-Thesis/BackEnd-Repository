@@ -63,13 +63,11 @@ namespace BackEnd_SmartHouseThesis.Controllers
             if (packages == null) { return NotFound(); }
             foreach (var package in packages)
             {
-                var _pack = _mapper.Map<PackageOwnerResponse>(package);
-                _packages.Add(_pack);
-                /*if (package.IsDelete == false)
+                if (package.IsDelete == true)
                 {
                     var _pack = _mapper.Map<PackageOwnerResponse>(package);
                     _packages.Add(_pack);
-                }*/
+                }
             }
             return Ok(_packages);
         }

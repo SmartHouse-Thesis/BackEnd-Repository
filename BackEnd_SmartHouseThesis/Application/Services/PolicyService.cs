@@ -25,5 +25,7 @@ namespace Application.Services
         public async Task<IQueryable<Policy>> GetAll() => await _policyRepository.FindAllAsync();
 
         public async Task<Policy> GetPolicy(Guid id) => await _policyRepository.GetAsync(id);
+
+        public async Task<List<Policy>> SearchPolicyByType(string type) => await _policyRepository.SearchPolicyByType(type);
     }
 }

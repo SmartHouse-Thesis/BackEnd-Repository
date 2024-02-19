@@ -44,6 +44,27 @@ namespace BackEnd_SmartHouseThesis.Controllers
             return NotFound("Chưa có chính sách !!");            
         }
 
+        [Authorize(Roles = "Owner, Customer, Teller, Customer")]
+        [HttpGet("search-policy-by-type/{type}")]
+        [ProducesResponseType(typeof(PolicyResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AuthenResponse), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(AuthenResponse), StatusCodes.Status403Forbidden)]
+        public async Task<IActionResult> SearchPolicyByType(string type)
+        {
+            var policies = await _policyService.SearchPolicyByType(type);
+            var _policies = new List<PolicyResponse>();
+            if (policies == null) { return NotFound(); }
+            foreach (var policy in policies)
+            {
+                if (policy.IsDelete == true)
+                {
+                    var _policy = _mapper.Map<PolicyResponse>(policy);
+                    _policies.Add(_policy);
+                }
+            }
+            return Ok(_policies);
+        }
+
         [Authorize(Roles = "Owner, Customer, Teller, Staff")]
         // GET api/<DevicesController>/GetPolicy/5
         [HttpGet("get-policy/{id}")]
@@ -66,6 +87,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             if (owner != null)
             {
                 var _policy = _mapper.Map<Policy>(policy);
+                _policy.IsDelete = true;
                 _policy.CreationDate = DateTime.Now;
                 _policy.CreatedBy = owner.Id;
                 await _policyService.CreatePolicy(_policy);
@@ -113,6 +135,7 @@ namespace BackEnd_SmartHouseThesis.Controllers
             var poli = await _policyService.GetPolicy(id);
             if (poli != null)
             {
+                poli.IsDelete = false;
                 await _policyService.UpdatePolicy(poli);
                 return Ok(poli);
             }

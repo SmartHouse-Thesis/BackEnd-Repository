@@ -25,5 +25,7 @@ namespace Application.Services
         public async Task<IQueryable<Promotion>> GetAll() => await _pomotionRepository.FindAllAsync();
 
         public async Task<Promotion> GetPromotion(Guid id) => await _pomotionRepository.GetAsync(id);
+
+        public async Task<List<Promotion>> SearchPromotionByName(string name) => await _pomotionRepository.SearchPromotionByName(name);
     }
 }

@@ -64,5 +64,29 @@ namespace Infrastructure.Repositories
             }
         }
 
+        public async Task<List<Request>> SearchRequestByCustomerName(string name)
+        {
+            try
+            {
+                var customers = await _dbContext.Customers.Where(c => c.Account.FirstName.Contains(name) || c.Account.LastName.Contains(name)).ToListAsync();
+                var _requests = new List<Request>();
+                foreach (var customer in customers)
+                {
+                    var requests = await _dbContext.Requests.Where(r => r.CustomerId == customer.Id).ToListAsync();
+                    _requests.AddRange(requests);
+                }
+                if(_requests != null)
+                {
+                    return _requests;
+                }
+                return null;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "{Repo} SearchRequestByCustomerName function error", typeof(BaseRepo<Request>));
+                return null;
+            }
+        }
+
     }
 }
