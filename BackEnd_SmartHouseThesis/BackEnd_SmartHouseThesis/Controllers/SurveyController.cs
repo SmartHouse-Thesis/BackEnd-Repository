@@ -36,19 +36,41 @@ namespace BackEnd_SmartHouseThesis.Controllers
         [HttpGet("GetAllSurveys/{staffId}")]
         public async Task<IActionResult> GetAllSurveys(Guid staffId)
         {
-            var staffLead = await _staffService.GetStaff(staffId);
-            if (staffLead != null)
+            var staff = await _staffService.GetStaff(staffId);
+            var teller = await _tellerService.GetTeller(staffId);
+            var _surveys = new List<SurveyResponse>();
+            if (staff != null && teller == null)
             {
-                if (staffLead.isLeader == true)
+                if (staff.isLeader == true)
                 {
                     var surveys = await _surveyService.GetAll();
-                    return Ok(surveys);
+                    foreach(var survey in surveys)
+                    {
+                        var _survey = _mapper.Map<SurveyResponse>(survey);
+                        _surveys.Add(_survey);
+                    }
+                    return Ok(_surveys);
                 }
                 else
                 {
                     var surveys = await _surveyService.GetSurveysByStaff(staffId);
-                    return Ok(surveys);
+                    foreach (var survey in surveys)
+                    {
+                        var _survey = _mapper.Map<SurveyResponse>(survey);
+                        _surveys.Add(_survey);
+                    }
+                    return Ok(_surveys);
                 }
+            }
+            else if(teller != null && staff == null)
+            {
+                var surveys = await _surveyService.GetAll();
+                foreach (var survey in surveys)
+                {
+                    var _survey = _mapper.Map<SurveyResponse>(survey);
+                    _surveys.Add(_survey);
+                }
+                return Ok(_surveys);
             }
             else { return BadRequest("Staff is not found"); }
         }

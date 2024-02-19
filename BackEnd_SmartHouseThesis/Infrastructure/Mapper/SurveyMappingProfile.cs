@@ -30,6 +30,12 @@ namespace Infrastructure.Mapper
                .ForPath(des => des.StaffId, act => act.MapFrom(src => src.StaffId))
                .ReverseMap();
 
+            CreateMap<SurveyResponse, Survey>()
+                .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
+                .ForMember(des => des.Description, act => act.MapFrom(src => src.Description))
+                .ForMember(des => des.CreationDate, act => act.MapFrom(src => src.CreationDate))
+                .ReverseMap();
+
             CreateMap<Guid, string>().ConstructUsing(x => x.ToString());
             CreateMap<string, Guid>().ConstructUsing(x => new Guid(x));
 
