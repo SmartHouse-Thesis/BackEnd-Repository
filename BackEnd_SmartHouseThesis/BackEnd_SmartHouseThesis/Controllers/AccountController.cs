@@ -141,17 +141,46 @@ namespace BackEnd_SmartHouseThesis.Controllers
         {
             try
             {
-                var accounts = await _accountService.GetAll();
-                var liststaff = new List<StaffResponse>();
-                foreach (var item in accounts)
+                var accounts = await _accountService.GetAccountStaffandTeller();
+                if (accounts != null)
                 {
-                    if(item.Role.RoleName != "Owner" && item.Role.RoleName != "Customer")
+                    var liststaff = new List<StaffResponse>();
+                    foreach (var item in accounts)
                     {
                         var staff = _mapper.Map<StaffResponse>(item);
                         liststaff.Add(staff);
                     }
+                    return Ok(liststaff);
                 }
-                return Ok(liststaff);
+                return NotFound("không có tài khoản trong cơ sở dữ liệu");
+                    /*var liststaff = new List<StaffResponse>();
+                    foreach (var item in accounts)
+                    {
+                        var role = await _roleService.GetRole(item.RoleId);
+                        if (role != null)
+                        {
+                            if (role.RoleName == "Staff" || role.RoleName == "Teller")
+                            {
+                                var staff = _mapper.Map<StaffResponse>(item);
+                                liststaff.Add(staff);
+                            }
+                        }
+                        else
+                        {
+                            return NotFound("không tìm thấy quyền của tài khoản");
+                        }
+                        {
+                        *//*var itemStaff = await _staffService.GetStaff(item.Id);
+                        var itemTeller = await _tellerService.GetTeller(item.Id);
+                        if (itemStaff != null || itemTeller != null)
+                        {
+                            var staff = _mapper.Map<StaffResponse>(item);
+                            liststaff.Add(staff);
+                        }*//*
+                    }
+                    return Ok(liststaff);
+                }
+                return NotFound("không có tài khoản trong cơ sở dữ liệu");*/
             }
             catch (Exception ex)
             {
@@ -162,7 +191,28 @@ namespace BackEnd_SmartHouseThesis.Controllers
                 });
             }
         }
-
+/*        [Authorize(Roles = "Owner")]
+        [HttpGet("get-role/{id}")]
+        public async Task<IActionResult> GetRole(Guid id)
+        {
+            try
+            {
+                var account = await _roleService.GetRole(id);
+                if (account == null)
+                {
+                    return NotFound(new AuthenResponse { Message = "Account Does Exist" });
+                }
+                //var _account = _mapper.Map<AccountResponse>(account);
+                return Ok(account);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(403, new AuthenResponse
+                {
+                    Message = " FORBIDDEN - You don't have permission"
+                });
+            }
+        }*/
         [Authorize(Roles = "Owner, Teller, Customer, Staff")]
         // GET api/<AccountController>/GetAccout/5
         [HttpGet("get-account/{id}")]

@@ -17,11 +17,11 @@ namespace Application.Services
     {
         private readonly AccountRepository _accountRepository;
         private readonly PasswordHash _passwordHash;
-
-        public AccountService(AccountRepository accountRepository, PasswordHash passwordHash)
+        private readonly RoleService _roleService;
+        public AccountService(AccountRepository accountRepository, PasswordHash passwordHash, RoleService roleService)
         {
             _accountRepository = accountRepository;
-
+            _roleService = roleService;
             _passwordHash = passwordHash;
         }
         public async Task CreateAccountAsync(Account account) => await _accountRepository.AddAsync(account);
@@ -57,5 +57,6 @@ namespace Application.Services
 
         public async Task<Account> GetAccountByEmail(string email) => await _accountRepository.GetAccountByEmail(email);
 
+        public async Task<IQueryable<Account>> GetAccountStaffandTeller() => await _accountRepository.GetAccountStaffandTeller();
     }
 }

@@ -50,6 +50,25 @@ namespace Infrastructure.Repositories
                     
         }*/
 
+        public async Task<IQueryable<Account>> GetAccountStaffandTeller()
+        {
+            try
+            {
+                var role = await _dbContext.Set<Role>().Where(rn => rn.RoleName == "Staff" || rn.RoleName == "Teller").ToListAsync();
+                IQueryable<Account> accounts = _dbContext.Set<Account>().Where(a => role.Select(r => r.Id).Contains(a.RoleId));
+                if (accounts != null)
+                {
+                    return accounts;
+                }
+                return null;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "{Repo} GetAccountStaffandTeller function error", typeof(BaseRepo<Account>));
+                return null;
+            }
+        }
+
         public async Task<Account> CreateAccount(Account account)
         {
             try

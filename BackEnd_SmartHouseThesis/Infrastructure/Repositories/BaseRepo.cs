@@ -31,8 +31,7 @@ namespace Infrastructure.Repositories
         {
             try
             {
-                IQueryable<T> items =  _dbContext.Set<T>().AsNoTracking();
-
+                IQueryable<T> items = _dbContext.Set<T>().AsNoTracking();
                 if (includes != null && includes.Any())
                 {
                     foreach (var include in includes.Where(i => i != null))
@@ -40,7 +39,6 @@ namespace Infrastructure.Repositories
                         items = items.Include(include);
                     }
                 }
-
                 return items;
             }
             catch (Exception e)
@@ -55,7 +53,11 @@ namespace Infrastructure.Repositories
             try
             {
                 T item = await _dbContext.Set<T>().FindAsync(id);
-                return item;
+                if(item != null)
+                {
+                    return item;
+                }
+                return null;
             }
             catch (Exception e)
             {
