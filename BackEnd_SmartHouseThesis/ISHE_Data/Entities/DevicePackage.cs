@@ -12,6 +12,7 @@ namespace ISHE_Data.Entities
             Images = new HashSet<Image>();
             Policies = new HashSet<Policy>();
             Surveys = new HashSet<Survey>();
+            SmartDevices = new HashSet<SmartDevice>();
         }
 
         public Guid Id { get; set; }
@@ -31,5 +32,7 @@ namespace ISHE_Data.Entities
         public virtual ICollection<Image> Images { get; set; }
         public virtual ICollection<Policy> Policies { get; set; }
         public virtual ICollection<Survey> Surveys { get; set; }
+
+        public virtual ICollection<SmartDevice> SmartDevices { get; set; }
     }
 }

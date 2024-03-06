@@ -14,6 +14,7 @@ namespace ISHE_API.Configurations
             services.AddScoped<IOwnerService, OwnerService>();
             services.AddScoped<ICloudStorageService, CloudStorageService>();
             services.AddScoped<ICustomerService, CustomerService>();
+            services.AddScoped<IDevicePackageService, DevicePackageService>();
 
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();
