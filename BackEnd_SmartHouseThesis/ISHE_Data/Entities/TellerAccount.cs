@@ -7,8 +7,7 @@ namespace ISHE_Data.Entities
     {
         public TellerAccount()
         {
-            ConstructionContracts = new HashSet<ConstructionContract>();
-            Orders = new HashSet<Order>();
+            Contracts = new HashSet<Contract>();
         }
 
         public Guid AccountId { get; set; }
@@ -17,7 +16,6 @@ namespace ISHE_Data.Entities
         public string? Avatar { get; set; }
 
         public virtual Account Account { get; set; } = null!;
-        public virtual ICollection<ConstructionContract> ConstructionContracts { get; set; }
-        public virtual ICollection<Order> Orders { get; set; }
+        public virtual ICollection<Contract> Contracts { get; set; }
     }
 }

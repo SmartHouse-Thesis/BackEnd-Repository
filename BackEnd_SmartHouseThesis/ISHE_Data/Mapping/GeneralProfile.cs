@@ -1,11 +1,6 @@
 ﻿using AutoMapper;
 using ISHE_Data.Entities;
 using ISHE_Data.Models.Views;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ISHE_Data.Mapping
 {
@@ -42,6 +37,14 @@ namespace ISHE_Data.Mapping
                 .ForMember(dest => dest.Status, otp => otp.MapFrom(acc => acc.Account.Status))
                 .ForMember(dest => dest.CreateAt, otp => otp.MapFrom(acc => acc.Account.CreateAt));
 
+            CreateMap<StaffAccount, StaffGroupViewModel>()
+                .ForMember(dest => dest.LeadAccountId, opt => opt.MapFrom(src => src.AccountId))
+                .ForMember(dest => dest.LeadFullName, opt => opt.MapFrom(src => src.FullName))
+                .ForMember(dest => dest.LeadEmail, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.LeadAvatar, opt => opt.MapFrom(src => src.Avatar))
+                .ForMember(dest => dest.LeadIsLead, opt => opt.MapFrom(src => src.IsLead))
+                .ForMember(dest => dest.StaffMembers, opt => opt.MapFrom(src => src.InverseStaffLead));
+
             CreateMap<CustomerAccount, CustomerViewModel>()
                 .ForMember(dest => dest.PhoneNumber, otp => otp.MapFrom(acc => acc.Account.PhoneNumber))
                 .ForMember(dest => dest.RoleName, otp => otp.MapFrom(acc => acc.Account.Role.RoleName))
@@ -57,7 +60,8 @@ namespace ISHE_Data.Mapping
             CreateMap<Promotion, PromotionDetailViewModel>();
             CreateMap<DevicePackage, DevicePackageViewModel>();
             CreateMap<DevicePackage, DevicePackageDetailViewModel>();
-            CreateMap<Policy, PolicyViewModel>();
+            CreateMap<SurveyRequest, SurveyRequestViewModel>();
+            CreateMap<Survey, SurveyViewModel>();
         }
     }
 }

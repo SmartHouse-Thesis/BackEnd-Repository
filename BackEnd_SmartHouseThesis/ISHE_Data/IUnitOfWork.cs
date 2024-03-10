@@ -12,7 +12,7 @@ namespace ISHE_Data
     {
         public IAcceptanceRepository Acceptance { get; }
         public IAccountRepository Account { get; }
-        public IConstructionContractRepository ConstructionContract { get; }
+        public IContractRepository ConstructionContract { get; }
         public ICustomerAccountRepository CustomerAccount { get; }
         public IOwnerAccountRepository OwnerAccount { get; }
         public IRoleRepository Role { get; }
@@ -23,7 +23,8 @@ namespace ISHE_Data
         public IManufacturerRepository Manufacturer { get; }
         public IPromotionRepository Promotion { get; }
         public IDevicePackageRepository DevicePackage { get; }
-        public IPolicyRepository Policy { get; }
+        public ISurveyRequestRepository SurveyRequest { get; }
+        public ISurveyRepository Survey { get; }
 
         Task<int> SaveChanges();
         IDbContextTransaction Transaction();

@@ -7,8 +7,7 @@ namespace ISHE_Data.Entities
     {
         public CustomerAccount()
         {
-            Acceptances = new HashSet<Acceptance>();
-            ConstructionContracts = new HashSet<ConstructionContract>();
+            Contracts = new HashSet<Contract>();
             FeedbackDevicePackages = new HashSet<FeedbackDevicePackage>();
             SurveyRequests = new HashSet<SurveyRequest>();
         }
@@ -21,8 +20,7 @@ namespace ISHE_Data.Entities
         public string? Otp { get; set; }
 
         public virtual Account Account { get; set; } = null!;
-        public virtual ICollection<Acceptance> Acceptances { get; set; }
-        public virtual ICollection<ConstructionContract> ConstructionContracts { get; set; }
+        public virtual ICollection<Contract> Contracts { get; set; }
         public virtual ICollection<FeedbackDevicePackage> FeedbackDevicePackages { get; set; }
         public virtual ICollection<SurveyRequest> SurveyRequests { get; set; }
     }

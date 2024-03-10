@@ -3,23 +3,26 @@ using System.Collections.Generic;
 
 namespace ISHE_Data.Entities
 {
-    public partial class ConstructionContract
+    public partial class Contract
     {
-        public ConstructionContract()
+        public Contract()
         {
-            ContractAssignments = new HashSet<ContractAssignment>();
+            ContractDetails = new HashSet<ContractDetail>();
+            DevicePackageUsages = new HashSet<DevicePackageUsage>();
             Payments = new HashSet<Payment>();
-            Revenues = new HashSet<Revenue>();
         }
 
         public string Id { get; set; } = null!;
-        public Guid DevicePackageId { get; set; }
+        public Guid SurveyId { get; set; }
+        public Guid StaffId { get; set; }
         public Guid TellerId { get; set; }
         public Guid CustomerId { get; set; }
         public string Title { get; set; } = null!;
         public string Description { get; set; } = null!;
-        public DateTime? StartPlanDate { get; set; }
-        public DateTime? EndPlanDate { get; set; }
+        public DateTime StartPlanDate { get; set; }
+        public DateTime EndPlanDate { get; set; }
+        public DateTime? ActualStartDate { get; set; }
+        public DateTime? ActualEndDate { get; set; }
         public int TotalAmount { get; set; }
         public string ImageUrl { get; set; } = null!;
         public int Deposit { get; set; }
@@ -27,11 +30,12 @@ namespace ISHE_Data.Entities
         public DateTime CreateAt { get; set; }
 
         public virtual CustomerAccount Customer { get; set; } = null!;
-        public virtual DevicePackage DevicePackage { get; set; } = null!;
+        public virtual StaffAccount Staff { get; set; } = null!;
+        public virtual Survey Survey { get; set; } = null!;
         public virtual TellerAccount Teller { get; set; } = null!;
         public virtual Acceptance? Acceptance { get; set; }
-        public virtual ICollection<ContractAssignment> ContractAssignments { get; set; }
+        public virtual ICollection<ContractDetail> ContractDetails { get; set; }
+        public virtual ICollection<DevicePackageUsage> DevicePackageUsages { get; set; }
         public virtual ICollection<Payment> Payments { get; set; }
-        public virtual ICollection<Revenue> Revenues { get; set; }
     }
 }

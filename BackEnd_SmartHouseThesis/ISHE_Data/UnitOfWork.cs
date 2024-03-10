@@ -16,7 +16,7 @@ namespace ISHE_Data
 
         private IAcceptanceRepository _acceptance = null!;
         private IAccountRepository _account = null!;
-        private IConstructionContractRepository _constructionContract = null!;
+        private IContractRepository _constructionContract = null!;
         private ICustomerAccountRepository _customerAccount = null!;
         private IOwnerAccountRepository _ownerAccount = null!;
         private IRoleRepository _role = null!;
@@ -27,7 +27,8 @@ namespace ISHE_Data
         private IManufacturerRepository _manufacturer = null!;
         private IPromotionRepository _promotion = null!;
         private IDevicePackageRepository _devicePackage = null!;
-        private IPolicyRepository _policy = null!;
+        private ISurveyRequestRepository _surveyRequest = null!;
+        private ISurveyRepository _survey = null!;
 
         public UnitOfWork(SMART_HOME_DBContext context)
         {
@@ -44,9 +45,9 @@ namespace ISHE_Data
             get { return _account ??= new AccountRepository(_context); }
         }
 
-        public IConstructionContractRepository ConstructionContract
+        public IContractRepository ConstructionContract
         {
-            get { return _constructionContract ??= new ConstructionContractRepository(_context); }
+            get { return _constructionContract ??= new ContractRepository(_context); }
         }
 
         public ICustomerAccountRepository CustomerAccount
@@ -97,10 +98,17 @@ namespace ISHE_Data
         {
             get { return _devicePackage ??= new DevicePackageRepository(_context); }
         }
-        public IPolicyRepository Policy
+
+        public ISurveyRequestRepository SurveyRequest
         {
-            get { return _policy ??= new PolicyRepository(_context); }
+            get { return _surveyRequest ??= new SurveyRequestRepository(_context); }
         }
+
+        public ISurveyRepository Survey
+        {
+            get { return _survey ??= new SurveyRepository(_context); }
+        }
+
         public async Task<int> SaveChanges()
         {
             return await _context.SaveChangesAsync();
