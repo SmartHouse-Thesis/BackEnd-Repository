@@ -2,7 +2,7 @@
 
 namespace ISHE_Data.Repositories.Interfaces
 {
-    public interface IPolicyRepository : IRepository<Policy>
+    public interface ISurveyRepository : IRepository<Survey>
     {
     }
 }

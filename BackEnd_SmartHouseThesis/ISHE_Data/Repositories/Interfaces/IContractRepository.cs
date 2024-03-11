@@ -2,7 +2,7 @@
 
 namespace ISHE_Data.Repositories.Interfaces
 {
-    public interface IConstructionContractRepository : IRepository<ConstructionContract>
+    public interface IContractRepository : IRepository<Contract>
     {
     }
 }

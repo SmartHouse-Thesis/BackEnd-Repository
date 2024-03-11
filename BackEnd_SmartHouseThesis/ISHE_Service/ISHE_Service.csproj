@@ -16,9 +16,4 @@
     <ProjectReference Include="..\ISHE_Data\ISHE_Data.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Interfaces\" />
-    <Folder Include="Implementations\" />
-  </ItemGroup>
-
 </Project>

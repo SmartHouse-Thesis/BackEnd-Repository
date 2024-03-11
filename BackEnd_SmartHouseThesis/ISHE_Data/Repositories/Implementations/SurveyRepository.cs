@@ -3,9 +3,9 @@ using ISHE_Data.Repositories.Interfaces;
 
 namespace ISHE_Data.Repositories.Implementations
 {
-    public class PolicyRepository : Repository<Policy>, IPolicyRepository
+    public class SurveyRepository : Repository<Survey>, ISurveyRepository
     {
-        public PolicyRepository(SMART_HOME_DBContext context) : base(context)
+        public SurveyRepository(SMART_HOME_DBContext context) : base(context)
         {
         }
     }
