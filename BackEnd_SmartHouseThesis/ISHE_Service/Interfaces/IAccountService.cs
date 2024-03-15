@@ -19,6 +19,7 @@ namespace ISHE_Service.Interfaces
 
         //--
         Task<ListViewModel<AccountViewModel>> GetAccounts(AccountFilterModel filter, PaginationRequestModel pagination);
+        Task<AccountViewModel> GetAccount(Guid id);
         Task<Guid> CreateAccount(string phoneNumber, string password, string role);
     }
 }

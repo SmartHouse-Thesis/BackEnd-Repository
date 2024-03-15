@@ -13,8 +13,15 @@ namespace ISHE_API.Configurations
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IOwnerService, OwnerService>();
             services.AddScoped<ICloudStorageService, CloudStorageService>();
+            services.AddScoped<IStaffService, StaffService>();
             services.AddScoped<ICustomerService, CustomerService>();
+            services.AddScoped<IManufacturerService, ManufacturerService>();
+            services.AddScoped<ISmartDeviceService, SmartDeviceService>();
+            services.AddScoped<IPromotionService, PromotionService>();
             services.AddScoped<IDevicePackageService, DevicePackageService>();
+            services.AddScoped<ISurveyRequestService, SurveyRequestService>();
+            services.AddScoped<ITellerService, TellerService>();
+            services.AddScoped<ISurveyService, SurveyService>();
 
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();
