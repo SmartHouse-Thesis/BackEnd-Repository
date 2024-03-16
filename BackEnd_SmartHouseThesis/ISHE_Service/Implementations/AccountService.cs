@@ -163,6 +163,13 @@ namespace ISHE_Service.Implementations
             };
         }
 
+        public async Task<AccountViewModel> GetAccount(Guid id)
+        {
+            return await _accountRepository.GetMany(account => account.Id.Equals(id))
+                .ProjectTo<AccountViewModel>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync() ?? throw new NotFoundException($"Không tìm thấy account with id: {id}");
+        }
+
         public async Task<Guid> CreateAccount(string phoneNumber, string password, string role)
         {
             //Check phone number
