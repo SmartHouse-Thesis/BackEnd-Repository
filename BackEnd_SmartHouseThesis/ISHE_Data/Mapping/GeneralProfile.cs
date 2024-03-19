@@ -55,13 +55,34 @@ namespace ISHE_Data.Mapping
             CreateMap<Manufacturer, ManufacturerViewModel>();
             CreateMap<SmartDevice, SmartDeviceDetailViewModel>();
             CreateMap<SmartDevice, SmartDeviceViewModel>()
-                .ForMember(dest => dest.Image, otp => otp.MapFrom(src => src.Images.FirstOrDefault()!.Url));
+                .ForMember(dest => dest.Image, otp => otp.MapFrom(src => src.Images.FirstOrDefault()!.Url))
+                .ForMember(dest => dest.Manufacturer, otp => otp.MapFrom(src => src.Manufacturer.Name));
             CreateMap<Promotion, PromotionViewModel>();
             CreateMap<Promotion, PromotionDetailViewModel>();
             CreateMap<DevicePackage, DevicePackageViewModel>();
             CreateMap<DevicePackage, DevicePackageDetailViewModel>();
             CreateMap<SurveyRequest, SurveyRequestViewModel>();
             CreateMap<Survey, SurveyViewModel>();
+            CreateMap<Contract, PartialContractViewModel>();
+            CreateMap<Contract, ContractViewModel>();
+            CreateMap<ContractDetail, ContractDetailViewModel>()
+                .ForMember(dest => dest.Image, otp => otp.MapFrom(src => src.SmartDevice.Images.FirstOrDefault()!.Url))
+                .ForMember(dest => dest.Manufacturer, otp => otp.MapFrom(src => src.SmartDevice.Manufacturer.Name));
+            CreateMap<DevicePackageUsage, DevicePackageUsageViewModel>()
+                .ForMember(dest => dest.Name, otp => otp.MapFrom(src => src.DevicePackage.Name))
+                .ForMember(dest => dest.Manufacturer, otp => otp.MapFrom(src => src.DevicePackage.Manufacturer.Name))
+                .ForMember(dest => dest.Image, otp => otp.MapFrom(src => src.DevicePackage.Images.FirstOrDefault()!.Url));
+            CreateMap<Payment, PaymentViewModel>();
+            CreateMap<SmartDevicePackage, SmartDevicePackageViewModel>();
+            CreateMap<TellerAccount, TellerViewModel>()
+                .ForMember(dest => dest.PhoneNumber, otp => otp.MapFrom(src => src.Account.PhoneNumber))
+                .ForMember(dest => dest.RoleName, otp => otp.MapFrom(src => src.Account.Role.RoleName))
+                .ForMember(dest => dest.Status, otp => otp.MapFrom(src => src.Account.Status));
+            CreateMap<CustomerAccount, PartialCustomerViewModel>()
+                .ForMember(dest => dest.PhoneNumber, otp => otp.MapFrom(src => src.Account.PhoneNumber));
+            CreateMap<Acceptance, AcceptanceViewModel>();
+            CreateMap<FeedbackDevicePackage, FeedbackDevicePackageViewModel>();
+            CreateMap<Survey, PartialSurveyViewModel>();
         }
     }
 }

@@ -2,6 +2,7 @@
 using ISHE_Data;
 using ISHE_Service.Implementations;
 using ISHE_Service.Interfaces;
+using ISHE_Utility.Settings;
 using Microsoft.OpenApi.Models;
 
 namespace ISHE_API.Configurations
@@ -22,8 +23,9 @@ namespace ISHE_API.Configurations
             services.AddScoped<ISurveyRequestService, SurveyRequestService>();
             services.AddScoped<ITellerService, TellerService>();
             services.AddScoped<ISurveyService, SurveyService>();
-
-
+            services.AddScoped<IContractService, ContractService>();
+            services.AddScoped<IFeedbackDevicePackageService, FeedbackDevicePackageService>();
+            services.AddScoped<IPaymentService, PaymentService>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
         }
 

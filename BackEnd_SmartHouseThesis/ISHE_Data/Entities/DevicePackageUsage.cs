@@ -9,9 +9,10 @@ namespace ISHE_Data.Entities
         public string ContractId { get; set; } = null!;
         public Guid DevicePackageId { get; set; }
         public int? DiscountAmount { get; set; }
-        public int? WarrantyDuration { get; set; }
         public int Price { get; set; }
-        public string Status { get; set; } = null!;
+        public int? WarrantyDuration { get; set; }
+        public DateTime? StartWarranty { get; set; }
+        public DateTime? EndWarranty { get; set; }
         public DateTime CreateAt { get; set; }
 
         public virtual Contract Contract { get; set; } = null!;

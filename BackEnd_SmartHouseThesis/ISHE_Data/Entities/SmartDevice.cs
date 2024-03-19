@@ -9,7 +9,7 @@ namespace ISHE_Data.Entities
         {
             ContractDetails = new HashSet<ContractDetail>();
             Images = new HashSet<Image>();
-            DevicePackages = new HashSet<DevicePackage>();
+            SmartDevicePackages = new HashSet<SmartDevicePackage>();
         }
 
         public Guid Id { get; set; }
@@ -25,7 +25,6 @@ namespace ISHE_Data.Entities
         public virtual Manufacturer Manufacturer { get; set; } = null!;
         public virtual ICollection<ContractDetail> ContractDetails { get; set; }
         public virtual ICollection<Image> Images { get; set; }
-
-        public virtual ICollection<DevicePackage> DevicePackages { get; set; }
+        public virtual ICollection<SmartDevicePackage> SmartDevicePackages { get; set; }
     }
 }

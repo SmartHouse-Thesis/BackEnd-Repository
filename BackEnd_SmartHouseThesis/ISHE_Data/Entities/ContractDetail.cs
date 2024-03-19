@@ -10,6 +10,8 @@ namespace ISHE_Data.Entities
         public Guid SmartDeviceId { get; set; }
         public string Name { get; set; } = null!;
         public string Type { get; set; } = null!;
+        public bool IsInstallation { get; set; }
+        public int InstallationPrice { get; set; }
         public int Price { get; set; }
         public int Quantity { get; set; }
         public DateTime CreateAt { get; set; }
