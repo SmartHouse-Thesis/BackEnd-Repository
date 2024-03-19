@@ -10,8 +10,8 @@ namespace ISHE_Data.Entities
             DevicePackageUsages = new HashSet<DevicePackageUsage>();
             FeedbackDevicePackages = new HashSet<FeedbackDevicePackage>();
             Images = new HashSet<Image>();
+            SmartDevicePackages = new HashSet<SmartDevicePackage>();
             Surveys = new HashSet<Survey>();
-            SmartDevices = new HashSet<SmartDevice>();
         }
 
         public Guid Id { get; set; }
@@ -30,8 +30,7 @@ namespace ISHE_Data.Entities
         public virtual ICollection<DevicePackageUsage> DevicePackageUsages { get; set; }
         public virtual ICollection<FeedbackDevicePackage> FeedbackDevicePackages { get; set; }
         public virtual ICollection<Image> Images { get; set; }
+        public virtual ICollection<SmartDevicePackage> SmartDevicePackages { get; set; }
         public virtual ICollection<Survey> Surveys { get; set; }
-
-        public virtual ICollection<SmartDevice> SmartDevices { get; set; }
     }
 }

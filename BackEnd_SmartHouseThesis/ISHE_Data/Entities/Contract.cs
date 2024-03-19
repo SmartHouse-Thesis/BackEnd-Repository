@@ -24,7 +24,7 @@ namespace ISHE_Data.Entities
         public DateTime? ActualStartDate { get; set; }
         public DateTime? ActualEndDate { get; set; }
         public int TotalAmount { get; set; }
-        public string ImageUrl { get; set; } = null!;
+        public string? ImageUrl { get; set; }
         public int Deposit { get; set; }
         public string Status { get; set; } = null!;
         public DateTime CreateAt { get; set; }
