@@ -1,0 +1,15 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/BackEnd_SmartHouseThesis/.vs/BackEnd_SmartHouseThesis
+/BackEnd_SmartHouseThesis/ISHE_API/obj
+/BackEnd_SmartHouseThesis/ISHE_Data/obj
+/BackEnd_SmartHouseThesis/ISHE_Service/obj
+/BackEnd_SmartHouseThesis/ISHE_Utility/obj
+/BackEnd_SmartHouseThesis/.vs/ProjectEvaluation
+/BackEnd_SmartHouseThesis/ISHE_Utility/bin/Debug/net6.0
+/BackEnd_SmartHouseThesis/ISHE_Data/bin/Debug/net6.0
+/BackEnd_SmartHouseThesis/ISHE_API/bin/Debug/net6.0
+/BackEnd_SmartHouseThesis/ISHE_Service/bin/Debug/net6.0
