@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ISHE_Data.Entities;
 using ISHE_Data.Models.Views;
+using ISHE_Utility.Enum;
 
 namespace ISHE_Data.Mapping
 {
@@ -39,6 +40,7 @@ namespace ISHE_Data.Mapping
 
             CreateMap<StaffAccount, StaffGroupViewModel>()
                 .ForMember(dest => dest.LeadAccountId, opt => opt.MapFrom(src => src.AccountId))
+                .ForMember(dest => dest.LeadPhoneNumber, opt => opt.MapFrom(src => src.Account.PhoneNumber))
                 .ForMember(dest => dest.LeadFullName, opt => opt.MapFrom(src => src.FullName))
                 .ForMember(dest => dest.LeadEmail, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.LeadAvatar, opt => opt.MapFrom(src => src.Avatar))
@@ -59,8 +61,11 @@ namespace ISHE_Data.Mapping
                 .ForMember(dest => dest.Manufacturer, otp => otp.MapFrom(src => src.Manufacturer.Name));
             CreateMap<Promotion, PromotionViewModel>();
             CreateMap<Promotion, PromotionDetailViewModel>();
-            CreateMap<DevicePackage, DevicePackageViewModel>();
-            CreateMap<DevicePackage, DevicePackageDetailViewModel>();
+            CreateMap<DevicePackage, DevicePackageViewModel>()
+                .ForMember(dest => dest.Promotions, otp => otp.MapFrom(src => src.Promotions.Where(p => p.Status == PromotionStatus.Active.ToString())));
+            CreateMap<DevicePackage, DevicePackageDetailViewModel>()
+                .ForMember(dest => dest.Promotions, otp => otp.MapFrom(src => src.Promotions.Where(p => p.Status == PromotionStatus.Active.ToString())))
+                .ForMember(dest => dest.SmartDevicePackages, otp => otp.MapFrom(src => src.SmartDevicePackages.Where(p => p.SmartDevice.Status == SmartDeviceStatus.Active.ToString())));
             CreateMap<SurveyRequest, SurveyRequestViewModel>();
             CreateMap<Survey, SurveyViewModel>();
             CreateMap<Contract, PartialContractViewModel>();
@@ -77,12 +82,27 @@ namespace ISHE_Data.Mapping
             CreateMap<TellerAccount, TellerViewModel>()
                 .ForMember(dest => dest.PhoneNumber, otp => otp.MapFrom(src => src.Account.PhoneNumber))
                 .ForMember(dest => dest.RoleName, otp => otp.MapFrom(src => src.Account.Role.RoleName))
-                .ForMember(dest => dest.Status, otp => otp.MapFrom(src => src.Account.Status));
+                .ForMember(dest => dest.Status, otp => otp.MapFrom(src => src.Account.Status))
+                .ForMember(dest => dest.CreateAt, otp => otp.MapFrom(acc => acc.Account.CreateAt));
             CreateMap<CustomerAccount, PartialCustomerViewModel>()
                 .ForMember(dest => dest.PhoneNumber, otp => otp.MapFrom(src => src.Account.PhoneNumber));
             CreateMap<Acceptance, AcceptanceViewModel>();
             CreateMap<FeedbackDevicePackage, FeedbackDevicePackageViewModel>();
             CreateMap<Survey, PartialSurveyViewModel>();
+            CreateMap<Notification, NotificationViewModel>()
+                .ForMember(notificationVM => notificationVM.Data, config => config.MapFrom(notification => new NotificationDataViewModel
+                {
+                    CreateAt = notification.CreateAt,
+                    IsRead = notification.IsRead,
+                    Link = notification.Link,
+                    Type = notification.Type
+                }));
+            CreateMap<ContractModificationRequest, ContractModificationViewModel>()
+                //.ForMember(dest => dest.Customer, otp => otp.MapFrom(src => src.Contract.Customer));
+                .ForMember(dest => dest.CustomerId, otp => otp.MapFrom(src => src.Contract.CustomerId));
+
+            CreateMap<DevicePackage, PatialDevicePackageViewModel>()
+                .ForMember(dest => dest.Images, otp => otp.MapFrom(src => src.Images.FirstOrDefault()!.Url));
         }
     }
 }

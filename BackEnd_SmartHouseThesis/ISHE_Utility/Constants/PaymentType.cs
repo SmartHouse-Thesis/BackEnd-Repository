@@ -2,7 +2,7 @@
 {
     public class PaymentType
     {
-        public const string Deposit = "DEPOSIT";
-        public const string Completion = "COMPLETION";
+        public const string Deposit = "Deposit";
+        public const string Completion = "Completion";
     }
 }

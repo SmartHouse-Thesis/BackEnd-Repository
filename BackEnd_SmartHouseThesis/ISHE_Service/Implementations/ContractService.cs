@@ -7,13 +7,18 @@ using ISHE_Data.Models.Requests.Get;
 using ISHE_Data.Models.Requests.Post;
 using ISHE_Data.Models.Requests.Put;
 using ISHE_Data.Models.Views;
+using ISHE_Data.Repositories.Implementations;
 using ISHE_Data.Repositories.Interfaces;
 using ISHE_Service.Interfaces;
 using ISHE_Utility.Constants;
 using ISHE_Utility.Enum;
 using ISHE_Utility.Exceptions;
 using ISHE_Utility.Helpers.Utils;
+using ISHE_Utility.Settings;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Org.BouncyCastle.Asn1.Ocsp;
 using static ISHE_Utility.Helpers.FormatDate.FormatDate;
 
 namespace ISHE_Service.Implementations
@@ -27,12 +32,20 @@ namespace ISHE_Service.Implementations
         private readonly ISmartDeviceRepository _smartDevice;
         private readonly IDevicePackageRepository _devicePackage;
         private readonly IStaffAccountRepository _staffAccount;
+        private readonly ICustomerAccountRepository _customerAccount;
+
         private readonly ISurveyRequestRepository _surveyRequest;
         private readonly ISurveyRepository _survey;
+        private readonly ICloudStorageService _cloudStorageService;
+        private readonly IAcceptanceRepository _acceptance;
+        private readonly ITellerAccountRepository _teller;
 
+        private readonly INotificationService _notificationService;
         private readonly IPaymentService _paymentService;
+        private readonly AppSetting _appSetting;
+        private readonly ISendMailService _sendMailService;
 
-        public ContractService(IUnitOfWork unitOfWork, IMapper mapper, IPaymentService paymentService) : base(unitOfWork, mapper)
+        public ContractService(IUnitOfWork unitOfWork, IMapper mapper, IPaymentService paymentService, ICloudStorageService cloudStorageService, IOptions<AppSetting> appSettings, INotificationService notificationService, ISendMailService sendMailService) : base(unitOfWork, mapper)
         {
             _contract = unitOfWork.Contract;
             _contractDetail = unitOfWork.ContractDetail;
@@ -43,7 +56,14 @@ namespace ISHE_Service.Implementations
             _staffAccount = unitOfWork.StaffAccount;
             _surveyRequest = unitOfWork.SurveyRequest;
             _survey = unitOfWork.Survey;
+            _acceptance = unitOfWork.Acceptance;
+            _teller = unitOfWork.TellerAccount;
+            _customerAccount = unitOfWork.CustomerAccount;
             _paymentService = paymentService;
+            _cloudStorageService = cloudStorageService;
+            _appSetting = appSettings.Value;
+            _notificationService = notificationService;
+            _sendMailService = sendMailService;
         }
 
 
@@ -53,7 +73,8 @@ namespace ISHE_Service.Implementations
 
             if (filter.StaffId.HasValue)
             {
-                query = query.Where(contract => contract.StaffId.Equals(filter.StaffId.Value));
+                query = query.Where(contract => contract.StaffId.Equals(filter.StaffId.Value)
+                                    || contract.Staff.InverseStaffLead.Any(staff => staff.AccountId == filter.StaffId));
             }
 
             if (filter.CustomerId.HasValue)
@@ -95,6 +116,7 @@ namespace ISHE_Service.Implementations
                 .FirstOrDefaultAsync() ?? throw new NotFoundException("Không tìm thấy contract");
         }
 
+        
         public async Task<ContractViewModel> CreateContract(CreateContractModel model)
         {
             var result = 0;
@@ -103,14 +125,15 @@ namespace ISHE_Service.Implementations
             {
                 try
                 {
-                    await CheckStaff(model.StaffId);
-                    var customerId = await GetCustomer(model.SurveyId);
+                    await checkInputId(model.TellerId, model.StaffId);
+                    var customer = await GetCustomer(model.SurveyId);
                     contractId = GenerateContractId();
                     var priceOfDevice = await CreateContractDetail(contractId, model.ContractDetails, false);
-                    var (priceOfPackage, totalMonth) = await CreateDevicePackageUsage(contractId, model.DevicePackages, false);
-                    
+                    var (priceOfPackage, totalDay) = await CreateDevicePackageUsage(contractId, model.DevicePackages, false);
+
                     var startPlanDate = CheckFormatDate(model.StartPlanDate.ToString());
-                    var endPlanDate = startPlanDate.AddMonths(totalMonth);
+                    var endPlanDate = startPlanDate.AddDays(totalDay);
+                    await CheckStaff(model.StaffId, startPlanDate, endPlanDate);
 
                     var contract = new Contract
                     {
@@ -118,10 +141,10 @@ namespace ISHE_Service.Implementations
                         SurveyId = model.SurveyId,
                         StaffId = model.StaffId,
                         TellerId = model.TellerId,
-                        CustomerId = customerId,
+                        CustomerId = customer.AccountId,
                         Title = model.Title,
                         Description = model.Description,
-                        Deposit = model.Deposit,
+                        Deposit = _appSetting.ContractDeposited,
                         StartPlanDate = startPlanDate,
                         EndPlanDate = endPlanDate,
                         Status = ContractStatus.PendingDeposit.ToString(),
@@ -130,6 +153,9 @@ namespace ISHE_Service.Implementations
                     _contract.Add(contract);
 
                     result = await _unitOfWork.SaveChanges();
+
+                    await SendNotificationToStaff(contractId, model.StaffId, customer.FullName);
+
                     transaction.Commit();
                 }
                 catch (Exception)
@@ -141,6 +167,13 @@ namespace ISHE_Service.Implementations
             return result > 0 ? await GetContract(contractId) : null!;
         }
 
+        private async Task checkInputId(Guid tellerId, Guid staffId)
+        {
+            var flag1 = await _teller.GetMany(t => t.AccountId == tellerId).FirstOrDefaultAsync() ?? throw new NotFoundException("Không tìm thấy teller");
+            var flag2 = await _staffAccount.GetMany(t => t.AccountId == staffId).FirstOrDefaultAsync() ?? throw new NotFoundException("Không tìm thấy staff");
+
+        }
+
         public async Task<ContractViewModel> UpdateContract(string id, UpdateContractModel model)
         {
             var contract = await _contract.GetMany(con => con.Id.Equals(id))
@@ -148,39 +181,28 @@ namespace ISHE_Service.Implementations
                 .Include(contract => contract.DevicePackageUsages)
                 .FirstOrDefaultAsync() ?? throw new NotFoundException("Không tìm thấy contract");
 
-            var totalPackagePrice = (int)contract.DevicePackageUsages.Sum(usage => usage.DiscountAmount.HasValue ? usage.Price * (1 - (usage.DiscountAmount/100)) : usage.Price)!;
+            
+
+            if (!string.IsNullOrEmpty(model.Status))
+            {
+                UpdateContractStatus(contract, model.Status);
+            }
+
+
+            contract.Title = model.Title ?? contract.Title;
+            contract.Description = model.Description ?? contract.Description;
+
+
+            var totalPackagePrice = (int)contract.DevicePackageUsages.Sum(usage => usage.DiscountAmount.HasValue ? usage.Price * (100 - usage.DiscountAmount) / 100 : usage.Price)!;
             var totalDevicePrice = contract.ContractDetails
                 .Where(detail => detail.Type.Equals(ContractDetailType.Purchase))
                 .Sum(detail => (detail.Price + detail.InstallationPrice) * detail.Quantity);
 
-            if (model.StaffId.HasValue)
+            if (model.StaffId.HasValue && model.StaffId.Value != contract.StaffId)
             {
-                await CheckStaff(model.StaffId.Value);
-                contract.StaffId = model.StaffId.Value;
+                await CheckStaff(model.StaffId.Value, contract.StartPlanDate, contract.EndPlanDate);
+                contract.StaffId = model.StaffId.Value;   
             }
-
-            if (!string.IsNullOrEmpty(model.Status))
-            {
-                var flag = IsValidStatusTransition(contract.Status, model.Status);
-                
-                if (flag)
-                {
-                    contract.Status = model.Status;
-                }
-                else
-                {
-                    throw new BadRequestException($"Không thể cập nhật trạng thái từ {contract.Status} thành {model.Status}");
-                }
-                await CheckToCreatePayment(id, contract.Status);
-            }
-
-            contract.Title = model.Title ?? contract.Title;
-            contract.Description = model.Description ?? contract.Description;
-            contract.Deposit = model.Deposit ?? contract.Deposit;
-            contract.StartPlanDate = model.StartPlanDate ?? contract.StartPlanDate;
-            contract.ActualStartDate = model.ActualStartDate ?? contract.ActualStartDate;
-            contract.ActualEndDate = model.ActualEndDate ?? contract.ActualEndDate;
-
 
             if (model.ContractDetails != null && model.ContractDetails.Count > 0)
             {
@@ -195,7 +217,7 @@ namespace ISHE_Service.Implementations
                 totalPackagePrice = totalPrice;
             }
 
-            
+
             contract.TotalAmount = totalPackagePrice + totalDevicePrice;
 
             _contract.Update(contract);
@@ -203,8 +225,55 @@ namespace ISHE_Service.Implementations
             return result > 0 ? await GetContract(id) : null!;
         }
 
+        public async Task<ContractViewModel> UploadContractImage(string contractId, IFormFile image)
+        {
+            var contract = await _contract.GetMany(ct => ct.Id.Equals(contractId)).FirstOrDefaultAsync() ?? throw new NotFoundException("Không tìm thấy contract");
+
+            if(contract.ImageUrl != null)
+            {
+                await _cloudStorageService.DeleteContract(contractId);
+            }
+
+            var url = await _cloudStorageService.UploadContract(contractId, image.ContentType, image.OpenReadStream());
+            contract.ImageUrl = url;
+
+            _contract.Update(contract);
+
+            var result = await _unitOfWork.SaveChanges();
+            return result > 0 ? await GetContract(contractId) : null!;
+        }
+
+        public async Task<ContractViewModel> UploadContractAcceptance(string contractId, IFormFile image)
+        {
+            var contract = await _contract.GetMany(ct => ct.Id.Equals(contractId))
+                .Include(ct => ct.Acceptance)
+                .FirstOrDefaultAsync() ?? throw new NotFoundException("Không tìm thấy contract");
+            
+            if(contract.Acceptance == null)
+            {
+                throw new BadRequestException("Hợp đồng thi công chưa hoàn thành");
+            }
+
+            if(contract.Acceptance.ImageUrl != null)
+            {
+                await _cloudStorageService.DeleteContract(contract.Acceptance.Id.ToString());
+            }
+
+            var url = await _cloudStorageService.UploadContract(contract.Acceptance.Id.ToString(), image.ContentType, image.OpenReadStream());
+
+            contract.Acceptance.ImageUrl = url;
+            _contract.Update(contract);
+            var result = await _unitOfWork.SaveChanges();
+
+            //send noti
+            await SendNotificationToCustomer(contractId, contract.CustomerId);
+
+            return result > 0 ? await GetContract(contractId) : null!;
+        }
+
         //PRIVATE METHOD
-        private async Task CheckStaff(Guid staffId)
+
+        private async Task CheckStaff(Guid staffId, DateTime startDate, DateTime endDate)
         {
             var staff = await _staffAccount.GetMany(s => s.AccountId.Equals(staffId))
                 .FirstOrDefaultAsync() ?? throw new BadRequestException("Không tìm thấy staff");
@@ -212,7 +281,15 @@ namespace ISHE_Service.Implementations
             {
                 throw new BadRequestException("Staff được chọn chưa phù hợp");
             }
-            //
+
+            var overlappingContracts = await _contract.GetMany(c => c.StaffId == staffId &&
+                                                    c.StartPlanDate.Date <= endDate.Date && c.EndPlanDate.Date >= startDate.Date
+                                                    && (c.Status != ContractStatus.Completed.ToString() && c.Status != ContractStatus.Cancelled.ToString()))
+                                                        .ToListAsync();
+            if (overlappingContracts.Any())
+            {
+                throw new BadRequestException($"Staff đã được giao hợp đồng trong khoảng thời gian {startDate.ToString("dd/MM/yyyy")} - {endDate.ToString("dd/MM/yyyy")} này");
+            }
         }
 
         private async Task CheckToCreatePayment(string contractId, string contractStatus)
@@ -222,7 +299,7 @@ namespace ISHE_Service.Implementations
                 ContractId = contractId,
                 TypePayment = PaymentType.Deposit
             };
-            
+
             if (contractStatus == ContractStatus.DepositPaid.ToString())
             {
                 await _paymentService.ProcessCashPayment(createPayment);
@@ -234,61 +311,66 @@ namespace ISHE_Service.Implementations
             }
         }
 
-        private async Task<Guid> GetCustomer(Guid surveyId)
+        private async Task<CustomerAccount> GetCustomer(Guid surveyId)
         {
             var survey = await _survey.GetMany(sur => sur.Id.Equals(surveyId))
                 .Include(sur => sur.SurveyRequest)
+                    .ThenInclude(sv => sv.Customer)
                 .FirstOrDefaultAsync() ?? throw new NotFoundException("Không tìm thấy survey");
+
+            if(survey.Status == SurveyStatus.Completed.ToString() || survey.Status == SurveyStatus.Rejected.ToString())
+            {
+                throw new BadRequestException($"Survey status: {survey.Status}");
+            }
 
             survey.Status = SurveyStatus.Completed.ToString();
             _survey.Update(survey);
-            
-            return survey.SurveyRequest.CustomerId;
+
+            return survey.SurveyRequest.Customer;
         }
 
-        private async Task<int> CreateContractDetail(string contractId, List<CreateContractDetailModel> details, bool IsUpdate)
+        private async Task<int> CreateContractDetail(string contractId, List<SmartDevices> details, bool IsUpdate)
         {
             var totalAmount = 0;
 
             if (IsUpdate)
             {
-                var existingDetails = await _contractDetail.GetMany(detail => detail.ContractId.Equals(contractId) 
+                var existingDetails = await _contractDetail.GetMany(detail => detail.ContractId.Equals(contractId)
                                                                     && detail.Type.Equals(ContractDetailType.Purchase))
                                                             .ToListAsync();
                 _contractDetail.RemoveRange(existingDetails);
             }
             //PURCHASE
+            var uniqueIds = new HashSet<Guid>();
+
             foreach (var item in details)
             {
-                var device = await _smartDevice.GetMany(device => device.Id.Equals(item.SmartDeviceId))
+                if (uniqueIds.Add(item.SmartDeviceId))
+                {
+                    var device = await _smartDevice.GetMany(device => device.Id.Equals(item.SmartDeviceId))
                     .FirstOrDefaultAsync() ?? throw new NotFoundException($"Không tìm thấy smart device với id: {item.SmartDeviceId}");
 
-                var quantity = item.Quantity.GetValidOrDefault(1);
-                var instPrice = 0;
-                var totalPrice = device.Price * quantity;
+                    var quantity = item.Quantity.GetValidOrDefault(1);
+                    var totalPrice = (device.Price + device.InstallationPrice) * quantity;
 
-                if (item.IsInstallation)
-                {
-                    instPrice = device.InstallationPrice * quantity;
+                    var detail = new ContractDetail
+                    {
+                        Id = Guid.NewGuid(),
+                        ContractId = contractId,
+                        SmartDeviceId = item.SmartDeviceId,
+                        Name = device.Name,
+                        Type = ContractDetailType.Purchase,
+                        Price = device.Price,
+                        InstallationPrice = device.InstallationPrice,
+                        Quantity = quantity,
+                        IsInstallation = true,
+                    };
 
-                    totalPrice += instPrice;
+                    _contractDetail.Add(detail);
+
+                    totalAmount += totalPrice;
                 }
-
-                var detail = new ContractDetail
-                {
-                    Id = Guid.NewGuid(),
-                    ContractId = contractId,
-                    SmartDeviceId = item.SmartDeviceId,
-                    Name = device.Name,
-                    Type = ContractDetailType.Purchase,
-                    Price = device.Price,
-                    Quantity = quantity,
-                    IsInstallation = item.IsInstallation,
-                };
-
-                _contractDetail.Add(detail);
-
-                totalAmount += totalPrice;
+                
             }
 
             return totalAmount;
@@ -297,9 +379,9 @@ namespace ISHE_Service.Implementations
         private async Task<(int, int)> CreateDevicePackageUsage(string contractId, List<Guid> devicePackageIds, bool IsUpdate)
         {
             var totalAmount = 0;
-            var totalMonthToCompleted = 0;
+            var totalDayToCompleted = 0;
 
-            if(IsUpdate)
+            if (IsUpdate)
             {
                 var existingPackage = await _devicePackageUsage.GetMany(package => package.ContractId.Equals(contractId)).ToListAsync();
                 _devicePackageUsage.RemoveRange(existingPackage);
@@ -310,74 +392,151 @@ namespace ISHE_Service.Implementations
                 _contractDetail.RemoveRange(existingDevice);
             }
 
+            // Dictionary to track the quantities of each smart device in the contract details
+            var deviceQuantities = new Dictionary<Guid, ContractDetail>();
+
             foreach (var devicePackageId in devicePackageIds)
             {
                 var package = await _devicePackage.GetMany(pac => pac.Id.Equals(devicePackageId))
-                    .Include(pac => pac.Promotion)
+                    .Include(pac => pac.Promotions)
                     .Include(pac => pac.SmartDevicePackages)
                         .ThenInclude(smart => smart.SmartDevice)
                     .FirstOrDefaultAsync() ?? throw new NotFoundException($"Không tìm thấy device package với id: {devicePackageId}");
 
-                totalAmount += package.Price;
-                var discountAmount = package.Promotion?.DiscountAmount;
-                if (discountAmount.HasValue)
+                if (package.Status == DevicePackageStatus.InActive.ToString())
                 {
-                    totalAmount *= (100 - discountAmount.Value) / 100;
+                    throw new BadRequestException("Device package không còn hỗ trợ trên hệ thống");
                 }
 
-                totalMonthToCompleted += package.CompletionTime;
+                int packageAmount = package.Price;
+                //totalAmount += package.Price;
+
+                var totalDiscount = package.Promotions != null && package.Promotions.Any()
+                                    ? package.Promotions
+                                                .Where(p => p.Status == PromotionStatus.Active.ToString())
+                                                .Sum(p => p.DiscountAmount)
+                                    : null;
+
+                if (totalDiscount.HasValue)
+                {
+                    packageAmount -= packageAmount * totalDiscount.Value / 100;
+                }
+                totalAmount += packageAmount; 
+                totalDayToCompleted += package.CompletionTime;
 
                 var devicePackageUsage = new DevicePackageUsage
                 {
                     Id = Guid.NewGuid(),
                     ContractId = contractId,
                     DevicePackageId = devicePackageId,
-                    DiscountAmount = discountAmount,
+                    DiscountAmount = totalDiscount,
                     Price = package.Price,
                     WarrantyDuration = package.WarrantyDuration
                 };
                 _devicePackageUsage.Add(devicePackageUsage);
 
-                
-
                 foreach (var device in package.SmartDevicePackages)
                 {
-                    var detail = new ContractDetail
+                    if (deviceQuantities.ContainsKey(device.SmartDeviceId))
                     {
-                        Id = Guid.NewGuid(),
-                        ContractId = contractId,
-                        SmartDeviceId = device.SmartDeviceId,
-                        Name = device.SmartDevice.Name,
-                        Type = ContractDetailType.Package,
-                        Price = device.SmartDevice.Price,
-                        Quantity = device.SmartDeviceQuantity,
-                        IsInstallation = true
-                    };
-                    _contractDetail.Add(detail);
+                        deviceQuantities[device.SmartDeviceId].Quantity += device.SmartDeviceQuantity;
+                    }
+                    else
+                    {
+                        var detail = new ContractDetail
+                        {
+                            Id = Guid.NewGuid(),
+                            ContractId = contractId,
+                            SmartDeviceId = device.SmartDeviceId,
+                            Name = device.SmartDevice.Name,
+                            Type = ContractDetailType.Package,
+                            Price = device.SmartDevice.Price,
+                            Quantity = device.SmartDeviceQuantity,
+                            IsInstallation = true
+                        };
+                        deviceQuantities.Add(device.SmartDeviceId, detail);
+                    }
                 }
             }
 
-            return (totalAmount, totalMonthToCompleted);
+            // Add all the aggregated contract details to the database context
+            foreach (var detail in deviceQuantities.Values)
+            {
+                _contractDetail.Add(detail);
+            }
+
+            return (totalAmount, totalDayToCompleted);
         }
 
-        private bool IsValidStatusTransition(string currentStatus, string newStatus)
+
+        private void UpdateContractStatus(Contract contract, string newStatus)
         {
-            switch (currentStatus)
+            switch (contract.Status)
             {
                 case nameof(ContractStatus.PendingDeposit):
-                    return newStatus == nameof(ContractStatus.DepositPaid);
+                    if (newStatus == nameof(ContractStatus.Cancelled))
+                    {
+                        contract.Status = ContractStatus.Cancelled.ToString();
+                    }
+                    else
+                    {
+                        throw new BadRequestException($"Không thể cập nhật trạng thái từ {contract.Status} thành {newStatus}");
+                    }
+                    break;
                 case nameof(ContractStatus.DepositPaid):
-                    return newStatus == nameof(ContractStatus.InProgress);
+                    if (newStatus == nameof(ContractStatus.InProgress))
+                    {
+                        contract.Status = ContractStatus.InProgress.ToString();
+                        contract.ActualStartDate = DateTime.Now;
+                    }else if(newStatus == nameof(ContractStatus.Cancelled))
+                    {
+                        contract.Status= ContractStatus.Cancelled.ToString();
+                    }
+                    else
+                    {
+                        throw new BadRequestException($"Không thể cập nhật trạng thái từ {contract.Status} thành {newStatus}");
+                    }
+
+                    break;
                 case nameof(ContractStatus.InProgress):
-                    return newStatus == nameof(ContractStatus.WaitForPaid) || newStatus == nameof(ContractStatus.Cancelled);
+                    if (newStatus == nameof(ContractStatus.WaitForPaid))
+                    {
+                        contract.Status = ContractStatus.WaitForPaid.ToString();
+                        contract.ActualEndDate = DateTime.Now;
+                        contract.Acceptance = CreateAcceptance(contract.Id);
+                    }
+                    else
+                    {
+                        throw new BadRequestException($"Không thể cập nhật trạng thái từ {contract.Status} thành {newStatus}");
+                    }
+                    break;
                 case nameof(ContractStatus.WaitForPaid):
-                    return newStatus == nameof(ContractStatus.Completed) || newStatus == nameof(ContractStatus.Cancelled);
                 case nameof(ContractStatus.Completed):
                 case nameof(ContractStatus.Cancelled):
-                    return false; // No further transitions allowed from these states
+                    if(newStatus == nameof(ContractStatus.WaitForPaid) || newStatus == nameof(ContractStatus.Completed) || newStatus == nameof(ContractStatus.Cancelled))
+                    {
+                        contract.Status = newStatus;
+
+                    }
+                    else
+                    {
+                        throw new BadRequestException($"Không thể cập nhật trạng thái từ {contract.Status} thành {newStatus}");
+                    }
+                    break;
                 default:
-                    return false; // Handle any other cases
+                    throw new BadRequestException($"Không thể cập nhật trạng thái từ {contract.Status} thành {newStatus}");
             }
+        }
+
+        private Acceptance CreateAcceptance(string contractId)
+        {
+            var acceptance = new Acceptance
+            {
+                Id = Guid.NewGuid(),
+                ContractId = contractId
+            };
+
+            return acceptance;
         }
 
         private static string GenerateContractId()
@@ -389,6 +548,52 @@ namespace ISHE_Service.Implementations
             string id = "HD" + hashString;
 
             return id;
+        }
+
+        private async Task SendNotificationToStaff(string contractId, Guid staffId, string customerName)
+        {
+            var message = new CreateNotificationModel
+            {
+                Title = $"Hợp đồng mới",
+                Body = $"Có một hợp đồng mới từ khách hàng {customerName} đã được bàn giao cho bạn. Vui lòng kiểm tra và xử lý hợp đồng này.",
+                Data = new NotificationDataViewModel
+                {
+                    CreateAt = DateTime.Now,
+                    Type = NotificationType.Contract,
+                    Link = contractId
+                }
+            };
+
+            await _notificationService.SendNotification(new List<Guid> { staffId }, message);
+            var email = await _staffAccount.GetMany(s => s.AccountId == staffId).Select(e => e.Email).FirstOrDefaultAsync();
+            if(email != null)
+            {
+                await _sendMailService.SendEmail(email, message.Title, message.Body);
+            }
+        }
+
+        private async Task SendNotificationToCustomer(string contractId, Guid customerId)
+        {
+            var message = new CreateNotificationModel
+            {
+                Title = $"Hợp đồng số {contractId} đã hoàn thành",
+                Body = $"Hợp đồng của bạn đã hoàn thành ký nghiệm thu. Vui lòng tiến hành thanh toán số tiền còn lại của hợp đồng.",
+                Data = new NotificationDataViewModel
+                {
+                    CreateAt = DateTime.Now,
+                    Type = NotificationType.Contract,
+                    Link = contractId
+                }
+            };
+
+
+            await _notificationService.SendNotification(new List<Guid> { customerId }, message);
+
+            var email = await _customerAccount.GetMany(s => s.AccountId == customerId).Select(e => e.Email).FirstOrDefaultAsync();
+            if (email != null)
+            {
+                await _sendMailService.SendEmail(email, message.Title, message.Body);
+            }
         }
     }
 }

@@ -2,11 +2,6 @@
 using ISHE_Data.Repositories.Implementations;
 using ISHE_Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore.Storage;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ISHE_Data
 {
@@ -16,7 +11,6 @@ namespace ISHE_Data
 
         private IAcceptanceRepository _acceptance = null!;
         private IAccountRepository _account = null!;
-        private IContractRepository _constructionContract = null!;
         private ICustomerAccountRepository _customerAccount = null!;
         private IOwnerAccountRepository _ownerAccount = null!;
         private IRoleRepository _role = null!;
@@ -29,6 +23,15 @@ namespace ISHE_Data
         private IDevicePackageRepository _devicePackage = null!;
         private ISurveyRequestRepository _surveyRequest = null!;
         private ISurveyRepository _survey = null!;
+        private IContractRepository _contract = null!;
+        private IContractDetailRepository _contractDetail = null!;
+        private IDevicePackageUsageRepository _devicePackageUsage = null!;
+        private IPaymentRepository _payment = null!;
+        private ISmartDevicePackageRepository _smartDevicePackage = null!;
+        private IFeedbackDevicePackageRepository _feedbackDevicePackage = null!;
+        private INotificationRepository _notification = null!;
+        private IDeviceTokenRepository _deviceToken = null!;
+        private IContractModificationRepository _contractModification = null!;
 
         public UnitOfWork(SMART_HOME_DBContext context)
         {
@@ -43,11 +46,6 @@ namespace ISHE_Data
         public IAccountRepository Account
         {
             get { return _account ??= new AccountRepository(_context); }
-        }
-
-        public IContractRepository ConstructionContract
-        {
-            get { return _constructionContract ??= new ContractRepository(_context); }
         }
 
         public ICustomerAccountRepository CustomerAccount
@@ -107,6 +105,48 @@ namespace ISHE_Data
         public ISurveyRepository Survey
         {
             get { return _survey ??= new SurveyRepository(_context); }
+        }
+
+        public IContractRepository Contract
+        {
+            get { return _contract ??= new ContractRepository(_context); }
+        }
+        public IContractDetailRepository ContractDetail
+        {
+            get { return _contractDetail ??= new ContractDetailRepository(_context); }
+        }
+        public IDevicePackageUsageRepository DevicePackageUsage
+        {
+            get { return _devicePackageUsage ??= new DevicePackageUsageRepository(_context); }
+        }
+        public IPaymentRepository Payment
+        {
+            get { return _payment ??= new PaymentRepository(_context); }
+        }
+
+        public ISmartDevicePackageRepository SmartDevicePackage
+        {
+            get { return _smartDevicePackage ??= new SmartDevicePackageRepository(_context); }
+        }
+
+        public IFeedbackDevicePackageRepository FeedbackDevicePackage
+        {
+            get { return _feedbackDevicePackage ??= new FeedbackDevicePackageRepository(_context); }
+        }
+
+        public INotificationRepository Notification
+        {
+            get { return _notification ??= new NotificationRepository(_context); }
+        }
+
+        public IDeviceTokenRepository DeviceToken
+        {
+            get { return _deviceToken ??= new DeviceTokenRepository(_context); }
+        }
+
+        public IContractModificationRepository ContractModification
+        {
+            get { return _contractModification ??= new ContractModificationRepository(_context); }
         }
 
         public async Task<int> SaveChanges()

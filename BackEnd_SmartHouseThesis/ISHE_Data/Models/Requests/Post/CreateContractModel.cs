@@ -7,10 +7,9 @@
         public Guid StaffId { get; set; }
         public string Title { get; set; } = null!;
         public string Description { get; set; } = null!;
-        public int Deposit { get; set; }
         public string StartPlanDate { get; set; } = null!;
         
         public List<Guid> DevicePackages { get; set; } = new List<Guid>();
-        public List<CreateContractDetailModel> ContractDetails { get; set; } = new List<CreateContractDetailModel>();
+        public List<SmartDevices> ContractDetails { get; set; } = new List<SmartDevices>();
     }
 }

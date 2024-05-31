@@ -20,6 +20,7 @@ namespace ISHE_Data.Entities
         public virtual DbSet<Account> Accounts { get; set; } = null!;
         public virtual DbSet<Contract> Contracts { get; set; } = null!;
         public virtual DbSet<ContractDetail> ContractDetails { get; set; } = null!;
+        public virtual DbSet<ContractModificationRequest> ContractModificationRequests { get; set; } = null!;
         public virtual DbSet<CustomerAccount> CustomerAccounts { get; set; } = null!;
         public virtual DbSet<DevicePackage> DevicePackages { get; set; } = null!;
         public virtual DbSet<DevicePackageUsage> DevicePackageUsages { get; set; } = null!;
@@ -43,8 +44,8 @@ namespace ISHE_Data.Entities
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=localhost;Uid=sa;Pwd=12345;Database=SMART_HOME_DB;Persist Security Info=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;");
+//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+//                optionsBuilder.UseSqlServer("Server=TAN-TRUNG\\HAMMER;Database=SMART_HOME_DB;Persist Security Info=False;User ID=sa;Password=123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;");
             }
         }
 
@@ -54,7 +55,7 @@ namespace ISHE_Data.Entities
             {
                 entity.ToTable("Acceptance");
 
-                entity.HasIndex(e => e.ContractId, "UQ__Acceptan__C90D3468042A5A84")
+                entity.HasIndex(e => e.ContractId, "UQ__Acceptan__C90D34682F3D9D9F")
                     .IsUnique();
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
@@ -73,14 +74,14 @@ namespace ISHE_Data.Entities
                     .WithOne(p => p.Acceptance)
                     .HasForeignKey<Acceptance>(d => d.ContractId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Acceptanc__Contr__123EB7A3");
+                    .HasConstraintName("FK__Acceptanc__Contr__2A164134");
             });
 
             modelBuilder.Entity<Account>(entity =>
             {
                 entity.ToTable("Account");
 
-                entity.HasIndex(e => e.PhoneNumber, "UQ__Account__85FB4E38C62B9E9C")
+                entity.HasIndex(e => e.PhoneNumber, "UQ__Account__85FB4E383BCA9102")
                     .IsUnique();
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
@@ -103,14 +104,14 @@ namespace ISHE_Data.Entities
                     .WithMany(p => p.Accounts)
                     .HasForeignKey(d => d.RoleId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Account__RoleId__3A81B327");
+                    .HasConstraintName("FK__Account__RoleId__276EDEB3");
             });
 
             modelBuilder.Entity<Contract>(entity =>
             {
                 entity.ToTable("Contract");
 
-                entity.HasIndex(e => e.SurveyId, "UQ__Contract__A5481F7C14AB4145")
+                entity.HasIndex(e => e.SurveyId, "UQ__Contract__A5481F7C26F2D9F7")
                     .IsUnique();
 
                 entity.Property(e => e.Id)
@@ -139,25 +140,25 @@ namespace ISHE_Data.Entities
                     .WithMany(p => p.Contracts)
                     .HasForeignKey(d => d.CustomerId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Contract__Custom__7E37BEF6");
+                    .HasConstraintName("FK__Contract__Custom__6B24EA82");
 
                 entity.HasOne(d => d.Staff)
                     .WithMany(p => p.Contracts)
                     .HasForeignKey(d => d.StaffId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Contract__StaffI__7C4F7684");
+                    .HasConstraintName("FK__Contract__StaffI__693CA210");
 
                 entity.HasOne(d => d.Survey)
                     .WithOne(p => p.Contract)
                     .HasForeignKey<Contract>(d => d.SurveyId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Contract__Survey__7B5B524B");
+                    .HasConstraintName("FK__Contract__Survey__68487DD7");
 
                 entity.HasOne(d => d.Teller)
                     .WithMany(p => p.Contracts)
                     .HasForeignKey(d => d.TellerId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Contract__Teller__7D439ABD");
+                    .HasConstraintName("FK__Contract__Teller__6A30C649");
             });
 
             modelBuilder.Entity<ContractDetail>(entity =>
@@ -184,19 +185,44 @@ namespace ISHE_Data.Entities
                     .WithMany(p => p.ContractDetails)
                     .HasForeignKey(d => d.ContractId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__ContractD__Contr__06CD04F7");
+                    .HasConstraintName("FK__ContractD__Contr__4F47C5E3");
 
                 entity.HasOne(d => d.SmartDevice)
                     .WithMany(p => p.ContractDetails)
                     .HasForeignKey(d => d.SmartDeviceId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__ContractD__Smart__07C12930");
+                    .HasConstraintName("FK__ContractD__Smart__503BEA1C");
+            });
+
+            modelBuilder.Entity<ContractModificationRequest>(entity =>
+            {
+                entity.ToTable("ContractModificationRequest");
+
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.ContractId)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.CreateAt)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(dateadd(hour,(7),getutcdate()))");
+
+                entity.Property(e => e.Status).HasMaxLength(100);
+
+                entity.Property(e => e.Type).HasMaxLength(100);
+
+                entity.HasOne(d => d.Contract)
+                    .WithMany(p => p.ContractModificationRequests)
+                    .HasForeignKey(d => d.ContractId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__ContractM__Contr__0880433F");
             });
 
             modelBuilder.Entity<CustomerAccount>(entity =>
             {
                 entity.HasKey(e => e.AccountId)
-                    .HasName("PK__Customer__349DA5A63CD5B1D8");
+                    .HasName("PK__Customer__349DA5A6F32AF0DA");
 
                 entity.ToTable("CustomerAccount");
 
@@ -220,7 +246,7 @@ namespace ISHE_Data.Entities
                     .WithOne(p => p.CustomerAccount)
                     .HasForeignKey<CustomerAccount>(d => d.AccountId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__CustomerA__Accou__4CA06362");
+                    .HasConstraintName("FK__CustomerA__Accou__398D8EEE");
             });
 
             modelBuilder.Entity<DevicePackage>(entity =>
@@ -241,12 +267,7 @@ namespace ISHE_Data.Entities
                     .WithMany(p => p.DevicePackages)
                     .HasForeignKey(d => d.ManufacturerId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__DevicePac__Manuf__5DCAEF64");
-
-                entity.HasOne(d => d.Promotion)
-                    .WithMany(p => p.DevicePackages)
-                    .HasForeignKey(d => d.PromotionId)
-                    .HasConstraintName("FK__DevicePac__Promo__5EBF139D");
+                    .HasConstraintName("FK__DevicePac__Manuf__4AB81AF0");
             });
 
             modelBuilder.Entity<DevicePackageUsage>(entity =>
@@ -271,13 +292,13 @@ namespace ISHE_Data.Entities
                     .WithMany(p => p.DevicePackageUsages)
                     .HasForeignKey(d => d.ContractId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__DevicePac__Contr__02084FDA");
+                    .HasConstraintName("FK__DevicePac__Contr__160F4887");
 
                 entity.HasOne(d => d.DevicePackage)
                     .WithMany(p => p.DevicePackageUsages)
                     .HasForeignKey(d => d.DevicePackageId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__DevicePac__Devic__02FC7413");
+                    .HasConstraintName("FK__DevicePac__Devic__17036CC0");
             });
 
             modelBuilder.Entity<DeviceToken>(entity =>
@@ -296,7 +317,7 @@ namespace ISHE_Data.Entities
                     .WithMany(p => p.DeviceTokens)
                     .HasForeignKey(d => d.AccountId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__DeviceTok__Accou__3E52440B");
+                    .HasConstraintName("FK__DeviceTok__Accou__2B3F6F97");
             });
 
             modelBuilder.Entity<FeedbackDevicePackage>(entity =>
@@ -313,13 +334,13 @@ namespace ISHE_Data.Entities
                     .WithMany(p => p.FeedbackDevicePackages)
                     .HasForeignKey(d => d.CustomerId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__FeedbackD__Custo__66603565");
+                    .HasConstraintName("FK__FeedbackD__Custo__534D60F1");
 
                 entity.HasOne(d => d.DevicePackage)
                     .WithMany(p => p.FeedbackDevicePackages)
                     .HasForeignKey(d => d.DevicePackageId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__FeedbackD__Devic__6754599E");
+                    .HasConstraintName("FK__FeedbackD__Devic__5441852A");
             });
 
             modelBuilder.Entity<Image>(entity =>
@@ -337,12 +358,12 @@ namespace ISHE_Data.Entities
                 entity.HasOne(d => d.DevicePackage)
                     .WithMany(p => p.Images)
                     .HasForeignKey(d => d.DevicePackageId)
-                    .HasConstraintName("FK__Image__DevicePac__6B24EA82");
+                    .HasConstraintName("FK__Image__DevicePac__5812160E");
 
                 entity.HasOne(d => d.SmartDevice)
                     .WithMany(p => p.Images)
                     .HasForeignKey(d => d.SmartDeviceId)
-                    .HasConstraintName("FK__Image__SmartDevi__6C190EBB");
+                    .HasConstraintName("FK__Image__SmartDevi__59063A47");
             });
 
             modelBuilder.Entity<Manufacturer>(entity =>
@@ -355,7 +376,11 @@ namespace ISHE_Data.Entities
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(dateadd(hour,(7),getutcdate()))");
 
+                entity.Property(e => e.Image).IsUnicode(false);
+
                 entity.Property(e => e.Name).HasMaxLength(255);
+
+                entity.Property(e => e.Origin).HasMaxLength(255);
             });
 
             modelBuilder.Entity<Notification>(entity =>
@@ -378,13 +403,13 @@ namespace ISHE_Data.Entities
                     .WithMany(p => p.Notifications)
                     .HasForeignKey(d => d.AccountId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Notificat__Accou__4F7CD00D");
+                    .HasConstraintName("FK__Notificat__Accou__3C69FB99");
             });
 
             modelBuilder.Entity<OwnerAccount>(entity =>
             {
                 entity.HasKey(e => e.AccountId)
-                    .HasName("PK__OwnerAcc__349DA5A695CB0868");
+                    .HasName("PK__OwnerAcc__349DA5A66109A6B4");
 
                 entity.ToTable("OwnerAccount");
 
@@ -402,7 +427,7 @@ namespace ISHE_Data.Entities
                     .WithOne(p => p.OwnerAccount)
                     .HasForeignKey<OwnerAccount>(d => d.AccountId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__OwnerAcco__Accou__4222D4EF");
+                    .HasConstraintName("FK__OwnerAcco__Accou__2F10007B");
             });
 
             modelBuilder.Entity<Payment>(entity =>
@@ -431,7 +456,7 @@ namespace ISHE_Data.Entities
                     .WithMany(p => p.Payments)
                     .HasForeignKey(d => d.ContractId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Payment__Contrac__0D7A0286");
+                    .HasConstraintName("FK__Payment__Contrac__787EE5A0");
             });
 
             modelBuilder.Entity<Promotion>(entity =>
@@ -451,6 +476,19 @@ namespace ISHE_Data.Entities
                 entity.Property(e => e.StartDate).HasColumnType("datetime");
 
                 entity.Property(e => e.Status).HasMaxLength(100);
+
+                entity.HasMany(d => d.DevicePackages)
+                    .WithMany(p => p.Promotions)
+                    .UsingEntity<Dictionary<string, object>>(
+                        "SmartDevicePromotion",
+                        l => l.HasOne<DevicePackage>().WithMany().HasForeignKey("DevicePackageId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK__SmartDevi__Devic__214BF109"),
+                        r => r.HasOne<Promotion>().WithMany().HasForeignKey("PromotionId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK__SmartDevi__Promo__2057CCD0"),
+                        j =>
+                        {
+                            j.HasKey("PromotionId", "DevicePackageId").HasName("PK__SmartDev__B890BF4271560E8E");
+
+                            j.ToTable("SmartDevicePromotion");
+                        });
             });
 
             modelBuilder.Entity<Role>(entity =>
@@ -482,13 +520,13 @@ namespace ISHE_Data.Entities
                     .WithMany(p => p.SmartDevices)
                     .HasForeignKey(d => d.ManufacturerId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__SmartDevi__Manuf__59FA5E80");
+                    .HasConstraintName("FK__SmartDevi__Manuf__46E78A0C");
             });
 
             modelBuilder.Entity<SmartDevicePackage>(entity =>
             {
                 entity.HasKey(e => new { e.SmartDeviceId, e.DevicePackageId })
-                    .HasName("PK__SmartDev__BAA2E8EAE9A4AF83");
+                    .HasName("PK__SmartDev__BAA2E8EAE84194B9");
 
                 entity.ToTable("SmartDevicePackage");
 
@@ -496,19 +534,19 @@ namespace ISHE_Data.Entities
                     .WithMany(p => p.SmartDevicePackages)
                     .HasForeignKey(d => d.DevicePackageId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__SmartDevi__Devic__6383C8BA");
+                    .HasConstraintName("FK__SmartDevi__Devic__46B27FE2");
 
                 entity.HasOne(d => d.SmartDevice)
                     .WithMany(p => p.SmartDevicePackages)
                     .HasForeignKey(d => d.SmartDeviceId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__SmartDevi__Smart__628FA481");
+                    .HasConstraintName("FK__SmartDevi__Smart__45BE5BA9");
             });
 
             modelBuilder.Entity<StaffAccount>(entity =>
             {
                 entity.HasKey(e => e.AccountId)
-                    .HasName("PK__StaffAcc__349DA5A643A4A40F");
+                    .HasName("PK__StaffAcc__349DA5A665B61AF1");
 
                 entity.ToTable("StaffAccount");
 
@@ -526,19 +564,19 @@ namespace ISHE_Data.Entities
                     .WithOne(p => p.StaffAccount)
                     .HasForeignKey<StaffAccount>(d => d.AccountId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__StaffAcco__Accou__44FF419A");
+                    .HasConstraintName("FK__StaffAcco__Accou__31EC6D26");
 
                 entity.HasOne(d => d.StaffLead)
                     .WithMany(p => p.InverseStaffLead)
                     .HasForeignKey(d => d.StaffLeadId)
-                    .HasConstraintName("FK__StaffAcco__Staff__45F365D3");
+                    .HasConstraintName("FK__StaffAcco__Staff__32E0915F");
             });
 
             modelBuilder.Entity<Survey>(entity =>
             {
                 entity.ToTable("Survey");
 
-                entity.HasIndex(e => e.SurveyRequestId, "UQ__Survey__07118FED284C509C")
+                entity.HasIndex(e => e.SurveyRequestId, "UQ__Survey__07118FED7CB2BE98")
                     .IsUnique();
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
@@ -556,13 +594,13 @@ namespace ISHE_Data.Entities
                 entity.HasOne(d => d.RecommendDevicePackage)
                     .WithMany(p => p.Surveys)
                     .HasForeignKey(d => d.RecommendDevicePackageId)
-                    .HasConstraintName("FK__Survey__Recommen__76969D2E");
+                    .HasConstraintName("FK__Survey__Recommen__6383C8BA");
 
                 entity.HasOne(d => d.SurveyRequest)
                     .WithOne(p => p.Survey)
                     .HasForeignKey<Survey>(d => d.SurveyRequestId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Survey__SurveyRe__75A278F5");
+                    .HasConstraintName("FK__Survey__SurveyRe__628FA481");
             });
 
             modelBuilder.Entity<SurveyRequest>(entity =>
@@ -583,18 +621,18 @@ namespace ISHE_Data.Entities
                     .WithMany(p => p.SurveyRequests)
                     .HasForeignKey(d => d.CustomerId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__SurveyReq__Custo__6FE99F9F");
+                    .HasConstraintName("FK__SurveyReq__Custo__5CD6CB2B");
 
                 entity.HasOne(d => d.Staff)
                     .WithMany(p => p.SurveyRequests)
                     .HasForeignKey(d => d.StaffId)
-                    .HasConstraintName("FK__SurveyReq__Staff__70DDC3D8");
+                    .HasConstraintName("FK__SurveyReq__Staff__5DCAEF64");
             });
 
             modelBuilder.Entity<TellerAccount>(entity =>
             {
                 entity.HasKey(e => e.AccountId)
-                    .HasName("PK__TellerAc__349DA5A6D4B15E42");
+                    .HasName("PK__TellerAc__349DA5A6128F9128");
 
                 entity.ToTable("TellerAccount");
 
@@ -612,7 +650,7 @@ namespace ISHE_Data.Entities
                     .WithOne(p => p.TellerAccount)
                     .HasForeignKey<TellerAccount>(d => d.AccountId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__TellerAcc__Accou__49C3F6B7");
+                    .HasConstraintName("FK__TellerAcc__Accou__36B12243");
             });
 
             OnModelCreatingPartial(modelBuilder);

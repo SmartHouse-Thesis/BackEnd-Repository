@@ -1,6 +1,6 @@
-﻿using ISHE_Data.Models.Internal;
-using Microsoft.AspNetCore.Mvc.Filters;
+﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
+using ISHE_Data.Models.Internal;
 
 namespace ISHE_API.Configurations.Middleware
 {

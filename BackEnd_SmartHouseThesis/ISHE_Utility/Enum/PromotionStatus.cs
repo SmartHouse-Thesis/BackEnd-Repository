@@ -3,6 +3,7 @@
     public enum PromotionStatus
     {
         Active,
-        InActive
+        InActive,
+        Expired
     }
 }

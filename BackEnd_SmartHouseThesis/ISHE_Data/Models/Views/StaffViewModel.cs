@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ISHE_Data.Models.Views
+﻿namespace ISHE_Data.Models.Views
 {
     public class StaffViewModel
     {
@@ -15,6 +9,8 @@ namespace ISHE_Data.Models.Views
         public string FullName { get; set; } = null!;
         public string? Email { get; set; }
         public string? Avatar { get; set; }
+        public bool IsLead { get; set; }
+
         public string Status { get; set; } = null!;
         public DateTime CreateAt { get; set; }
 

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ISHE_Data.Models.Views
+﻿namespace ISHE_Data.Models.Views
 {
     public class PromotionDetailViewModel
     {
@@ -17,6 +11,25 @@ namespace ISHE_Data.Models.Views
         public string Status { get; set; } = null!;
         public DateTime CreateAt { get; set; }
 
-        public virtual ICollection<DevicePackageViewModel> DevicePackages { get; set; } = new List<DevicePackageViewModel>();
+        public virtual ICollection<PatialDevicePackageViewModel> DevicePackages { get; set; } = new List<PatialDevicePackageViewModel>();
+    }
+
+    public class PatialDevicePackageViewModel
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; } = null!;
+        public int? WarrantyDuration { get; set; }
+        public int CompletionTime { get; set; }
+        public string Description { get; set; } = null!;
+        public int Price { get; set; }
+        public string Status { get; set; } = null!;
+        public DateTime CreateAt { get; set; }
+
+
+        public virtual ManufacturerViewModel Manufacturer { get; set; } = null!;
+        //public virtual ICollection<PromotionViewModel>? Promotions { get; set; }
+        //public virtual ICollection<ConstructionContract> ConstructionContracts { get; set; }
+        // public virtual ICollection<FeedbackDevicePackage> FeedbackDevicePackages { get; set; }
+        public virtual string Images { get; set; } = null!;
     }
 }
