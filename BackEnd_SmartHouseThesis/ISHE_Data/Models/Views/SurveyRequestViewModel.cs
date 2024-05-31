@@ -11,7 +11,7 @@
         public virtual CustomerViewModel Customer { get; set; } = null!;
         public virtual StaffViewModel Staff { get; set; } = null!;
 
-        public virtual SurveyViewModel? Survey { get; set; }
+        //public virtual SurveyViewModel? Survey { get; set; }
 
     }
 }

@@ -4,7 +4,6 @@
     {
         Active,
         InActive,
-        Pending,
-        Busy
+        Pending
     }
 }

@@ -35,6 +35,7 @@ namespace ISHE_Service.Implementations
             _roleRepository = unitOfWork.Role;
             _appSettings = appSettings.Value;
         }
+
         public async Task<AuthViewModel> Authenticated(AuthRequest auth)
         {
             var account = await _accountRepository.GetMany(account => account.PhoneNumber.Equals(auth.PhoneNumber))
@@ -43,7 +44,7 @@ namespace ISHE_Service.Implementations
 
             if (account != null && PasswordHasher.VerifyPassword(auth.Password, account.PasswordHash))
             {
-                if (!account.Status.Equals(AccountStatus.Active.ToString()) && !account.Status.Equals(AccountStatus.Busy.ToString()))
+                if (!account.Status.Equals(AccountStatus.Active.ToString()))
                 {
                     throw new BadRequestException("Tài khoản của bạn đã bị khóa hoặc chưa kích hoạt vui lòng liên hệ admin để mở khóa.");
                 }
@@ -86,7 +87,7 @@ namespace ISHE_Service.Implementations
                 }
                 var userId = Guid.Parse(jwtToken.Claims.First(x => x.Type == "id").Value);
                 var user = await GetAuth(userId);
-
+                
                 return new AuthViewModel
                 {
                     AccessToken = GenerateJwtToken(user!)
@@ -169,7 +170,6 @@ namespace ISHE_Service.Implementations
                 .ProjectTo<AccountViewModel>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync() ?? throw new NotFoundException($"Không tìm thấy account with id: {id}");
         }
-
         public async Task<Guid> CreateAccount(string phoneNumber, string password, string role)
         {
             //Check phone number
@@ -181,7 +181,7 @@ namespace ISHE_Service.Implementations
             }
 
             var accountRole = await _roleRepository.GetMany(ro => ro.RoleName.Equals(role))
-                                                            .FirstOrDefaultAsync() ?? throw new NotFoundException("Không tìm thấy role " + role); ;
+                                                            .FirstOrDefaultAsync() ?? throw new NotFoundException("Không tìm thấy role " + role);
 
             var passwordHash = PasswordHasher.HashPassword(password);
 

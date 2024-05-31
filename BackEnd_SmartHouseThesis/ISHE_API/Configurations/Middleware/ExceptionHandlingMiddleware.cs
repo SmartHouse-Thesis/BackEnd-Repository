@@ -30,7 +30,7 @@ namespace ISHE_API.Configurations.Middleware
             //error response
             var errorResponse = new ErrorModel
             {
-                Message = exception.Message
+                message = exception.Message
             };
 
             if (exception is ConflictException)

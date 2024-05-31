@@ -33,6 +33,24 @@ namespace ISHE_API.Controllers
         }
 
         [HttpGet]
+        [Route("leader")]
+        [ProducesResponseType(typeof(ListViewModel<StaffGroupViewModel>), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Get all staff lead accounts.")]
+        public async Task<ActionResult<ListViewModel<StaffGroupViewModel>>> GetStaffLeads([FromQuery] StaffFilterModel filter, [FromQuery] PaginationRequestModel pagination)
+        {
+            return await _staffService.GetStaffLeads(filter, pagination);
+        }
+
+        [HttpGet]
+        [Route("leader-avaiable")]
+        [ProducesResponseType(typeof(List<StaffViewModel>), StatusCodes.Status200OK)]
+        [SwaggerOperation(Summary = "Get all staff lead for survey.")]
+        public async Task<ActionResult<List<StaffViewModel>>> GetStaffsAvaiableForSurey([FromQuery][Required] StaffLeadRequestModel request)
+        {
+            return await _staffService.GetStaffsAvaiableForSurey(request);
+        }
+
+        [HttpGet]
         [Route("{id}")]
         [ProducesResponseType(typeof(StaffViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
@@ -49,7 +67,6 @@ namespace ISHE_API.Controllers
         public async Task<ActionResult<StaffViewModel>> CreateStaff([FromBody][Required] RegisterStaffModel model)
         {
             var staff = await _staffService.CreateStaff(model);
-            //chuẩn REST
             return CreatedAtAction(nameof(GetStaff), new { id = staff.AccountId }, staff);
         }
 

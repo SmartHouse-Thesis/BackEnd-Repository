@@ -3,7 +3,7 @@
     public enum SmartDeviceStatus
     {
         Active,
-        OutOfStock,
-        Discontinued
+        InActive,
+        OutOfStock
     }
 }

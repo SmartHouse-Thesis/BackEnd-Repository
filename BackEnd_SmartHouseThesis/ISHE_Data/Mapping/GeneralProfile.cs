@@ -77,12 +77,21 @@ namespace ISHE_Data.Mapping
             CreateMap<TellerAccount, TellerViewModel>()
                 .ForMember(dest => dest.PhoneNumber, otp => otp.MapFrom(src => src.Account.PhoneNumber))
                 .ForMember(dest => dest.RoleName, otp => otp.MapFrom(src => src.Account.Role.RoleName))
-                .ForMember(dest => dest.Status, otp => otp.MapFrom(src => src.Account.Status));
+                .ForMember(dest => dest.Status, otp => otp.MapFrom(src => src.Account.Status))
+                .ForMember(dest => dest.CreateAt, otp => otp.MapFrom(acc => acc.Account.CreateAt));
             CreateMap<CustomerAccount, PartialCustomerViewModel>()
                 .ForMember(dest => dest.PhoneNumber, otp => otp.MapFrom(src => src.Account.PhoneNumber));
             CreateMap<Acceptance, AcceptanceViewModel>();
             CreateMap<FeedbackDevicePackage, FeedbackDevicePackageViewModel>();
             CreateMap<Survey, PartialSurveyViewModel>();
+            CreateMap<Notification, NotificationViewModel>()
+                .ForMember(notificationVM => notificationVM.Data, config => config.MapFrom(notification => new NotificationDataViewModel
+                {
+                    CreateAt = notification.CreateAt,
+                    IsRead = notification.IsRead,
+                    Link = notification.Link,
+                    Type = notification.Type
+                }));
         }
     }
 }

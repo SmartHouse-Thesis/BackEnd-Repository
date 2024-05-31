@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ISHE_Data.Models.Requests.Put
+﻿namespace ISHE_Data.Models.Requests.Put
 {
     public class UpdatePromotionModel
     {
@@ -15,5 +9,6 @@ namespace ISHE_Data.Models.Requests.Put
         public string? Description { get; set; }
         public string? Status { get; set; } = null!;
         public List<Guid>? DevicePackageIds { get; set; } = new List<Guid>();
+
     }
 }

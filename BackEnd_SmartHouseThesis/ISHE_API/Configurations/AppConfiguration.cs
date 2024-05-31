@@ -25,7 +25,11 @@ namespace ISHE_API.Configurations
             services.AddScoped<ISurveyService, SurveyService>();
             services.AddScoped<IContractService, ContractService>();
             services.AddScoped<IFeedbackDevicePackageService, FeedbackDevicePackageService>();
+            services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<IDeviceTokenService, DeviceTokenService>();
+
             services.AddScoped<IPaymentService, PaymentService>();
+
             services.AddTransient<IUnitOfWork, UnitOfWork>();
         }
 

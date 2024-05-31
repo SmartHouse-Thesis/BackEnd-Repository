@@ -1,15 +1,10 @@
-﻿using Google.Cloud.Storage.V1;
-using Google;
+﻿using Google;
+using Google.Cloud.Storage.V1;
+using ISHE_Service.Interfaces;
 using ISHE_Utility.Helpers.CloudStorage;
 using ISHE_Utility.Settings;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web;
-using ISHE_Service.Interfaces;
 
 namespace ISHE_Service.Implementations
 {
@@ -68,6 +63,47 @@ namespace ISHE_Service.Implementations
             }
         }
 
+
+        public async Task<string> UploadContract(string id, string contentType, Stream stream)
+        {
+            try
+            {
+                await Storage.UploadObjectAsync(
+                    _settings.Bucket,
+                    $"{_settings.FolderContract}/{id}",
+                    contentType,
+                    stream,
+                    null,
+                    CancellationToken.None);
+                var baseURL = "https://firebasestorage.googleapis.com/v0/b";
+                var filePath = $"{_settings.FolderContract}%2F{id}";
+                var url = $"{baseURL}/{_settings.Bucket}/o/{filePath}?alt=media";
+                return url;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        // Delete an object, IsSuccess if deleted successfully or not found
+        public async Task<string> DeleteContract(string id)
+        {
+            try
+            {
+                await Storage.DeleteObjectAsync(
+                    _settings.Bucket,
+                    $"{_settings.FolderContract}/{id}",
+                    null,
+                    CancellationToken.None
+                    );
+                return "Delete success";
+            }
+            catch (GoogleApiException ex)
+            {
+                return ex.HttpStatusCode.ToString();
+            }
+        }
 
         // Object url
         public string GetMediaLink(Guid id)

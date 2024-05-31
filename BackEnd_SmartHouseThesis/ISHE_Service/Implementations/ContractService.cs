@@ -13,6 +13,7 @@ using ISHE_Utility.Constants;
 using ISHE_Utility.Enum;
 using ISHE_Utility.Exceptions;
 using ISHE_Utility.Helpers.Utils;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using static ISHE_Utility.Helpers.FormatDate.FormatDate;
 
@@ -29,10 +30,11 @@ namespace ISHE_Service.Implementations
         private readonly IStaffAccountRepository _staffAccount;
         private readonly ISurveyRequestRepository _surveyRequest;
         private readonly ISurveyRepository _survey;
+        private readonly ICloudStorageService _cloudStorageService;
 
         private readonly IPaymentService _paymentService;
 
-        public ContractService(IUnitOfWork unitOfWork, IMapper mapper, IPaymentService paymentService) : base(unitOfWork, mapper)
+        public ContractService(IUnitOfWork unitOfWork, IMapper mapper, IPaymentService paymentService, ICloudStorageService cloudStorageService) : base(unitOfWork, mapper)
         {
             _contract = unitOfWork.Contract;
             _contractDetail = unitOfWork.ContractDetail;
@@ -44,6 +46,7 @@ namespace ISHE_Service.Implementations
             _surveyRequest = unitOfWork.SurveyRequest;
             _survey = unitOfWork.Survey;
             _paymentService = paymentService;
+            _cloudStorageService = cloudStorageService;
         }
 
 
@@ -53,7 +56,8 @@ namespace ISHE_Service.Implementations
 
             if (filter.StaffId.HasValue)
             {
-                query = query.Where(contract => contract.StaffId.Equals(filter.StaffId.Value));
+                query = query.Where(contract => contract.StaffId.Equals(filter.StaffId.Value)
+                                    || contract.Staff.InverseStaffLead.Any(staff => staff.AccountId == filter.StaffId));
             }
 
             if (filter.CustomerId.HasValue)
@@ -103,14 +107,15 @@ namespace ISHE_Service.Implementations
             {
                 try
                 {
-                    await CheckStaff(model.StaffId);
+
                     var customerId = await GetCustomer(model.SurveyId);
                     contractId = GenerateContractId();
                     var priceOfDevice = await CreateContractDetail(contractId, model.ContractDetails, false);
                     var (priceOfPackage, totalMonth) = await CreateDevicePackageUsage(contractId, model.DevicePackages, false);
-                    
+
                     var startPlanDate = CheckFormatDate(model.StartPlanDate.ToString());
                     var endPlanDate = startPlanDate.AddMonths(totalMonth);
+                    await CheckStaff(model.StaffId, startPlanDate, endPlanDate);
 
                     var contract = new Contract
                     {
@@ -148,21 +153,12 @@ namespace ISHE_Service.Implementations
                 .Include(contract => contract.DevicePackageUsages)
                 .FirstOrDefaultAsync() ?? throw new NotFoundException("Không tìm thấy contract");
 
-            var totalPackagePrice = (int)contract.DevicePackageUsages.Sum(usage => usage.DiscountAmount.HasValue ? usage.Price * (1 - (usage.DiscountAmount/100)) : usage.Price)!;
-            var totalDevicePrice = contract.ContractDetails
-                .Where(detail => detail.Type.Equals(ContractDetailType.Purchase))
-                .Sum(detail => (detail.Price + detail.InstallationPrice) * detail.Quantity);
-
-            if (model.StaffId.HasValue)
-            {
-                await CheckStaff(model.StaffId.Value);
-                contract.StaffId = model.StaffId.Value;
-            }
+            
 
             if (!string.IsNullOrEmpty(model.Status))
             {
-                var flag = IsValidStatusTransition(contract.Status, model.Status);
-                
+                var flag = IsValidStatus(contract.Status, model.Status);
+
                 if (flag)
                 {
                     contract.Status = model.Status;
@@ -171,16 +167,32 @@ namespace ISHE_Service.Implementations
                 {
                     throw new BadRequestException($"Không thể cập nhật trạng thái từ {contract.Status} thành {model.Status}");
                 }
-                await CheckToCreatePayment(id, contract.Status);
+                //await CheckToCreatePayment(id, contract.Status);
             }
+
+            if(model.Image != null)
+            {
+                contract.ImageUrl = await UploadContractImage(id, model.Image);
+            }
+
+            
 
             contract.Title = model.Title ?? contract.Title;
             contract.Description = model.Description ?? contract.Description;
             contract.Deposit = model.Deposit ?? contract.Deposit;
-            contract.StartPlanDate = model.StartPlanDate ?? contract.StartPlanDate;
             contract.ActualStartDate = model.ActualStartDate ?? contract.ActualStartDate;
             contract.ActualEndDate = model.ActualEndDate ?? contract.ActualEndDate;
 
+            var totalPackagePrice = (int)contract.DevicePackageUsages.Sum(usage => usage.DiscountAmount.HasValue ? usage.Price * (100 - usage.DiscountAmount) / 100 : usage.Price)!;
+            var totalDevicePrice = contract.ContractDetails
+                .Where(detail => detail.Type.Equals(ContractDetailType.Purchase))
+                .Sum(detail => (detail.Price + detail.InstallationPrice) * detail.Quantity);
+
+            if (model.StaffId.HasValue)
+            {
+                await CheckStaff(model.StaffId.Value, contract.StartPlanDate, contract.EndPlanDate);
+                contract.StaffId = model.StaffId.Value;
+            }
 
             if (model.ContractDetails != null && model.ContractDetails.Count > 0)
             {
@@ -195,7 +207,7 @@ namespace ISHE_Service.Implementations
                 totalPackagePrice = totalPrice;
             }
 
-            
+
             contract.TotalAmount = totalPackagePrice + totalDevicePrice;
 
             _contract.Update(contract);
@@ -204,7 +216,20 @@ namespace ISHE_Service.Implementations
         }
 
         //PRIVATE METHOD
-        private async Task CheckStaff(Guid staffId)
+        private async Task<string> UploadContractImage(string contractId, IFormFile image)
+        {
+            if (!image.ContentType.StartsWith("image/"))
+            {
+                throw new BadRequestException("File không phải là hình ảnh");
+            }
+
+            await _cloudStorageService.DeleteContract(contractId);
+
+            var url = await _cloudStorageService.UploadContract(contractId, image.ContentType, image.OpenReadStream());
+            return url;
+        }
+
+        private async Task CheckStaff(Guid staffId, DateTime startDate, DateTime endDate)
         {
             var staff = await _staffAccount.GetMany(s => s.AccountId.Equals(staffId))
                 .FirstOrDefaultAsync() ?? throw new BadRequestException("Không tìm thấy staff");
@@ -212,7 +237,14 @@ namespace ISHE_Service.Implementations
             {
                 throw new BadRequestException("Staff được chọn chưa phù hợp");
             }
-            //
+
+            var overlappingContracts = await _contract.GetMany(c => c.StaffId == staffId &&
+                                                    c.StartPlanDate <= endDate && c.EndPlanDate >= startDate)
+                                                        .ToListAsync();
+            if (overlappingContracts.Any())
+            {
+                throw new BadRequestException("Staff đã được giao hợp đồng trong khoảng thời gian này");
+            }
         }
 
         private async Task CheckToCreatePayment(string contractId, string contractStatus)
@@ -222,7 +254,7 @@ namespace ISHE_Service.Implementations
                 ContractId = contractId,
                 TypePayment = PaymentType.Deposit
             };
-            
+
             if (contractStatus == ContractStatus.DepositPaid.ToString())
             {
                 await _paymentService.ProcessCashPayment(createPayment);
@@ -242,17 +274,17 @@ namespace ISHE_Service.Implementations
 
             survey.Status = SurveyStatus.Completed.ToString();
             _survey.Update(survey);
-            
+
             return survey.SurveyRequest.CustomerId;
         }
 
-        private async Task<int> CreateContractDetail(string contractId, List<CreateContractDetailModel> details, bool IsUpdate)
+        private async Task<int> CreateContractDetail(string contractId, List<SmartDevices> details, bool IsUpdate)
         {
             var totalAmount = 0;
 
             if (IsUpdate)
             {
-                var existingDetails = await _contractDetail.GetMany(detail => detail.ContractId.Equals(contractId) 
+                var existingDetails = await _contractDetail.GetMany(detail => detail.ContractId.Equals(contractId)
                                                                     && detail.Type.Equals(ContractDetailType.Purchase))
                                                             .ToListAsync();
                 _contractDetail.RemoveRange(existingDetails);
@@ -264,15 +296,7 @@ namespace ISHE_Service.Implementations
                     .FirstOrDefaultAsync() ?? throw new NotFoundException($"Không tìm thấy smart device với id: {item.SmartDeviceId}");
 
                 var quantity = item.Quantity.GetValidOrDefault(1);
-                var instPrice = 0;
-                var totalPrice = device.Price * quantity;
-
-                if (item.IsInstallation)
-                {
-                    instPrice = device.InstallationPrice * quantity;
-
-                    totalPrice += instPrice;
-                }
+                var totalPrice = (device.Price + device.InstallationPrice) * quantity;
 
                 var detail = new ContractDetail
                 {
@@ -282,8 +306,9 @@ namespace ISHE_Service.Implementations
                     Name = device.Name,
                     Type = ContractDetailType.Purchase,
                     Price = device.Price,
+                    InstallationPrice = device.InstallationPrice,
                     Quantity = quantity,
-                    IsInstallation = item.IsInstallation,
+                    IsInstallation = true,
                 };
 
                 _contractDetail.Add(detail);
@@ -299,7 +324,7 @@ namespace ISHE_Service.Implementations
             var totalAmount = 0;
             var totalMonthToCompleted = 0;
 
-            if(IsUpdate)
+            if (IsUpdate)
             {
                 var existingPackage = await _devicePackageUsage.GetMany(package => package.ContractId.Equals(contractId)).ToListAsync();
                 _devicePackageUsage.RemoveRange(existingPackage);
@@ -338,7 +363,7 @@ namespace ISHE_Service.Implementations
                 };
                 _devicePackageUsage.Add(devicePackageUsage);
 
-                
+
 
                 foreach (var device in package.SmartDevicePackages)
                 {
@@ -360,23 +385,25 @@ namespace ISHE_Service.Implementations
             return (totalAmount, totalMonthToCompleted);
         }
 
-        private bool IsValidStatusTransition(string currentStatus, string newStatus)
+        private bool IsValidStatus(string currentStatus, string newStatus)
         {
             switch (currentStatus)
             {
                 case nameof(ContractStatus.PendingDeposit):
-                    return newStatus == nameof(ContractStatus.DepositPaid);
+                    return false;
+                    //return newStatus == nameof(ContractStatus.DepositPaid);
                 case nameof(ContractStatus.DepositPaid):
                     return newStatus == nameof(ContractStatus.InProgress);
                 case nameof(ContractStatus.InProgress):
                     return newStatus == nameof(ContractStatus.WaitForPaid) || newStatus == nameof(ContractStatus.Cancelled);
                 case nameof(ContractStatus.WaitForPaid):
-                    return newStatus == nameof(ContractStatus.Completed) || newStatus == nameof(ContractStatus.Cancelled);
+                    return false;
+                    //return newStatus == nameof(ContractStatus.Completed) || newStatus == nameof(ContractStatus.Cancelled);
                 case nameof(ContractStatus.Completed):
                 case nameof(ContractStatus.Cancelled):
-                    return false; // No further transitions allowed from these states
+                    return false;
                 default:
-                    return false; // Handle any other cases
+                    return false;
             }
         }
 

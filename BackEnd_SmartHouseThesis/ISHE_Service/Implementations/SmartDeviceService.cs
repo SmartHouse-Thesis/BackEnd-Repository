@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using ISHE_Data;
 using ISHE_Data.Entities;
 using ISHE_Data.Models.Requests.Filters;
 using ISHE_Data.Models.Requests.Get;
@@ -6,18 +8,11 @@ using ISHE_Data.Models.Requests.Post;
 using ISHE_Data.Models.Requests.Put;
 using ISHE_Data.Models.Views;
 using ISHE_Data.Repositories.Interfaces;
-using ISHE_Data;
 using ISHE_Service.Interfaces;
 using ISHE_Utility.Enum;
 using ISHE_Utility.Exceptions;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using AutoMapper.QueryableExtensions;
 
 namespace ISHE_Service.Implementations
 {
@@ -48,6 +43,16 @@ namespace ISHE_Service.Implementations
             if (!string.IsNullOrEmpty(filter.DeviceType))
             {
                 query = query.Where(device => device.DeviceType!.Contains(filter.DeviceType));
+            }
+
+            if (!string.IsNullOrEmpty(filter.ManufacturerName))
+            {
+                query = query.Where(device => device.Manufacturer.Name.Contains(filter.ManufacturerName)); 
+            }
+
+            if (filter.ManufacturerId.HasValue)
+            {
+                query = query.Where(device => device.ManufacturerId.Equals(filter.ManufacturerId.Value));
             }
 
             if (!string.IsNullOrEmpty(filter.Status.ToString()))
@@ -113,6 +118,7 @@ namespace ISHE_Service.Implementations
                         Name = model.Name,
                         Description = model.Description,
                         Price = model.Price,
+                        InstallationPrice = model.InstallationPrice,
                         DeviceType = model.DeviceType,
                         Status = SmartDeviceStatus.Active.ToString(),
                     };
@@ -136,7 +142,7 @@ namespace ISHE_Service.Implementations
 
         public async Task<SmartDeviceDetailViewModel> UpdateSmartDevice(Guid id, UpdateSmartDeviceModel model)
         {
-
+            
             var smartDevice = await _smartDeviceRepository.GetMany(device => device.Id.Equals(id))
                                     .FirstOrDefaultAsync() ?? throw new NotFoundException("Không tìm thấy smart device");
 
@@ -149,6 +155,7 @@ namespace ISHE_Service.Implementations
             smartDevice.Name = model.Name ?? smartDevice.Name;
             smartDevice.Description = model.Description ?? smartDevice.Description;
             smartDevice.Price = model.Price ?? smartDevice.Price;
+            smartDevice.InstallationPrice = model.InstallationPrice ?? smartDevice.InstallationPrice;
             smartDevice.DeviceType = model.DeviceType ?? smartDevice.DeviceType;
             smartDevice.Status = model.Status ?? smartDevice.Status;
 
