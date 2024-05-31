@@ -1,4 +1,4 @@
-using ISHE_API.Configurations;
+﻿using ISHE_API.Configurations;
 using ISHE_Data.Entities;
 using ISHE_Data.Mapping;
 using ISHE_Utility.Settings;
@@ -9,6 +9,8 @@ using Newtonsoft.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+
 
 builder.Services.Configure<AppSetting>(builder.Configuration.GetSection("AppSetting"));
 builder.Services.AddDbContext<SMART_HOME_DBContext>(options =>
@@ -35,17 +37,24 @@ builder.Services.AddCors(options =>
                           policy.AllowAnyHeader();
                           policy.AllowAnyMethod();
                           policy.WithOrigins(
-                                  "http://localhost:8100",
+                              "http://localhost:8100",
+                              "https://localhost",
                                   "http://127.0.0.1:5173",
-                                  "http://localhost:5173");
+                                  "http://127.0.0.1:5174",
+                                  "http://localhost:5174",
+                                  "http://localhost:5173",
+                                  "http://192.168.56.1:8100",
+                                  "http://192.168.118.2:8100");
                           policy.AllowCredentials();
                       });
 });
 
+
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwagger();
 builder.Services.AddDependenceInjection();
 builder.Services.AddAutoMapper(typeof(GeneralProfile));
+
 
 var app = builder.Build();
 

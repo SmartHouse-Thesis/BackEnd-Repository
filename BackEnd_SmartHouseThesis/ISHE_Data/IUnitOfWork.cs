@@ -1,10 +1,5 @@
 ﻿using ISHE_Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore.Storage;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ISHE_Data
 {
@@ -30,6 +25,8 @@ namespace ISHE_Data
         public IPaymentRepository Payment { get; }
         public ISmartDevicePackageRepository SmartDevicePackage { get; }
         public IFeedbackDevicePackageRepository FeedbackDevicePackage { get; }
+        public INotificationRepository Notification { get; }
+        public IDeviceTokenRepository DeviceToken { get; }
 
         Task<int> SaveChanges();
         IDbContextTransaction Transaction();

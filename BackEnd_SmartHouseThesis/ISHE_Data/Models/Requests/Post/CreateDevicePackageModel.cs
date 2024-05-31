@@ -1,9 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ISHE_Data.Models.Requests.Post
 {
@@ -14,9 +9,10 @@ namespace ISHE_Data.Models.Requests.Post
         public string Name { get; set; } = null!;
         public int? WarrantyDuration { get; set; }
         public string Description { get; set; } = null!;
-
-        public List<Guid> SmartDevicesIds { get; set; } = new List<Guid>();
-
+        public int CompletionTime { get; set; }
         public IFormFile Image { get; set; } = null!;
+        public List<SmartDevices> SmartDeviceIds { get; set; } = new List<SmartDevices>();
     }
+
+    
 }

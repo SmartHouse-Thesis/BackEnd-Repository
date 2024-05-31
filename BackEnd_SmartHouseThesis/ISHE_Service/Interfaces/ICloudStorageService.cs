@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ISHE_Service.Interfaces
+﻿namespace ISHE_Service.Interfaces
 {
     public interface ICloudStorageService
     {
         Task<string> Upload(Guid id, string contentType, Stream stream);
         Task<string> Delete(Guid id);
+        Task<string> UploadContract(string id, string contentType, Stream stream);
+        Task<string> DeleteContract(string id);
     }
 }

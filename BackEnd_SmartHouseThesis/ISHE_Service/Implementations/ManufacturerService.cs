@@ -1,19 +1,14 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using ISHE_Data;
 using ISHE_Data.Entities;
 using ISHE_Data.Models.Requests.Filters;
 using ISHE_Data.Models.Requests.Post;
 using ISHE_Data.Models.Views;
 using ISHE_Data.Repositories.Interfaces;
-using ISHE_Data;
-using ISHE_Utility.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using AutoMapper.QueryableExtensions;
 using ISHE_Service.Interfaces;
+using ISHE_Utility.Exceptions;
+using Microsoft.EntityFrameworkCore;
 
 namespace ISHE_Service.Implementations
 {
@@ -48,7 +43,7 @@ namespace ISHE_Service.Implementations
 
         public async Task<ManufacturerViewModel> CreateManufacturer(CreateManufacturerModel model)
         {
-            if (_manufacturerRepository.Any(manufacturer => manufacturer.Name.Equals(model.Name)))
+            if(_manufacturerRepository.Any(manufacturer => manufacturer.Name.Equals(model.Name)))
             {
                 throw new ConflictException("Manufacturer đã tồn tại");
             }

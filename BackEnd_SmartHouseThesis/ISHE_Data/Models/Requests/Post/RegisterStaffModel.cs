@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ISHE_Data.Models.Requests.Post
+﻿namespace ISHE_Data.Models.Requests.Post
 {
     public class RegisterStaffModel
     {
@@ -12,5 +6,8 @@ namespace ISHE_Data.Models.Requests.Post
         public string Password { get; set; } = null!;
         public string FullName { get; set; } = null!;
         public string Email { get; set; } = null!;
+        public bool IsLead { get; set; }
+        public Guid? StaffLeadId { get; set; }
+
     }
 }

@@ -11,7 +11,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ISHE_API.Controllers
 {
-    [Route("api/surveys")]
+    [Route("api/survey-reports")]
     [ApiController]
     public class SurveyController : ControllerBase
     {

@@ -9,10 +9,12 @@ using ISHE_Data.Models.Requests.Put;
 using ISHE_Data.Models.Views;
 using ISHE_Data.Repositories.Interfaces;
 using ISHE_Service.Interfaces;
+using ISHE_Utility.Constants;
 using ISHE_Utility.Enum;
 using ISHE_Utility.Exceptions;
 using ISHE_Utility.Helpers.FormatDate;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.Contracts;
 
 namespace ISHE_Service.Implementations
 {
@@ -20,10 +22,16 @@ namespace ISHE_Service.Implementations
     {
         private readonly ISurveyRequestRepository _surveyRequestRepository;
         private readonly IStaffAccountRepository _staffAccountRepository;
-        public SurveyRequestService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
+        private readonly ITellerAccountRepository _tellerAccountRepository;
+
+        private readonly INotificationService _notificationService;
+        public SurveyRequestService(IUnitOfWork unitOfWork, IMapper mapper, INotificationService notificationService) : base(unitOfWork, mapper)
         {
             _surveyRequestRepository = unitOfWork.SurveyRequest;
             _staffAccountRepository = unitOfWork.StaffAccount;
+            _tellerAccountRepository = unitOfWork.TellerAccount;
+
+            _notificationService = notificationService;
         }
 
         public async Task<ListViewModel<SurveyRequestViewModel>> GetSurveyRequests(SurveyRequestFilterModel filter, PaginationRequestModel pagination)
@@ -82,6 +90,7 @@ namespace ISHE_Service.Implementations
         public async Task<SurveyRequestViewModel> CreateSurveyRequest(CreateSurveyRequestModel model)
         {
             var surveyDate = FormatDate.CheckFormatDate(model.SurveyDate);
+            IsValidDateToSurvey(surveyDate);
             await CheckCustomerRequest(model.CustomerId, surveyDate);
 
             var request = new SurveyRequest
@@ -93,9 +102,11 @@ namespace ISHE_Service.Implementations
                 Status = SurveyRequestStatus.Pending.ToString()
             };
 
+            //Send noti
+            await SendNotificationToTeller(request);
             _surveyRequestRepository.Add(request);
 
-            //Send noti ?
+           
 
             var result = await _unitOfWork.SaveChanges();
             return result > 0 ? await GetSurveyRequest(request.Id) : null!;
@@ -104,6 +115,7 @@ namespace ISHE_Service.Implementations
         public async Task<SurveyRequestViewModel> UpdateSurveyRequest(Guid id, UpdateSurveyRequestModel model)
         {
             var request = await _surveyRequestRepository.GetMany(sv => sv.Id.Equals(id))
+                                        .Include(x => x.Customer)
                                         .FirstOrDefaultAsync() ?? throw new NotFoundException("Không tìm thầy survey request");
 
             if (!string.IsNullOrEmpty(model.SurveyDate))
@@ -111,19 +123,33 @@ namespace ISHE_Service.Implementations
                 var surveyDate = FormatDate.CheckFormatDate(model.SurveyDate);
                 if (!request.SurveyDate.Date.Equals(surveyDate.Date))
                 {
+                    IsValidDateToSurvey(surveyDate);
                     await CheckCustomerRequest(request.CustomerId, surveyDate);
                     request.SurveyDate = surveyDate;
                 }
             }
+
+            if (!string.IsNullOrEmpty(model.Status))
+            {
+                if (IsValidStatus(request.Status, model.Status))
+                {
+                    request.Status = model.Status;
+                }
+                else
+                {
+                    throw new BadRequestException($"Không thể cập nhật trạng thái từ {request.Status} thành {model.Status}");
+                }
+            }
             
             request.Description = model.Description ?? request.Description;
-            request.Status = model.Status ?? request.Status;
 
-            if (model.StaffId.HasValue)
+            if (model.StaffId.HasValue && model.StaffId.Value != request.StaffId)
             {
                 await CheckStaffIsAvaiableForSurvey(model.StaffId.Value, request.SurveyDate.Date);
                 request.StaffId = model.StaffId.Value;
                 request.Status = SurveyRequestStatus.InProgress.ToString();
+
+                await SendNotificationToStaff(request);
             }
 
             _surveyRequestRepository.Update(request);
@@ -132,6 +158,20 @@ namespace ISHE_Service.Implementations
         }
 
         //PRIVATE METHOD
+        private bool IsValidStatus(string currentStatus, string newStatus)
+        {
+            switch (currentStatus)
+            {
+                case nameof(SurveyRequestStatus.Pending):
+                    return newStatus == nameof(SurveyRequestStatus.Rejected);
+                case nameof(SurveyRequestStatus.InProgress):
+                case nameof(SurveyRequestStatus.Completed):
+                    return false;
+                default:
+                    return false;
+            }
+        }
+
         private async Task CheckCustomerRequest(Guid customerId, DateTime requestDate)
         {
             var existingRequest = await _surveyRequestRepository.GetMany(request => request.CustomerId.Equals(customerId)
@@ -146,25 +186,63 @@ namespace ISHE_Service.Implementations
 
         private async Task CheckStaffIsAvaiableForSurvey(Guid staffId, DateTime surveyDate)
         {
-            //var staffAccount = await _staffRepository.GetMany(staff => staff.AccountId.Equals(staffId)
-            //                 && staff.IsLead
-            //                 && (staff.Contracts == null || !staff.Contracts.Any(contract =>
-            //                    contract.StartPlanDate.Date <= surveyDate.Date && contract.EndPlanDate.Date >= surveyDate.Date))
-            //                 && staff.Surveys.Count(sv => sv.SurveyRequest.SurveyDate.Date == surveyDate.Date) < 3
-            //                 ).FirstOrDefaultAsync() ?? throw new BadRequestException($"Staff đã chọn không phù hợp để tiến hành khảo sát vào ngày {surveyDate.ToString("dd-MM-yyyy")}");
-
+            
             var staffAccount = await _staffAccountRepository.GetMany(staff => staff.AccountId.Equals(staffId))
                 .Include(sv => sv.Contracts)
                 .Include(sv => sv.SurveyRequests)
                 .FirstOrDefaultAsync() ?? throw new BadRequestException($"Không tìm thấy nhân viên với ID {staffId}");
 
             if (!staffAccount.IsLead ||
-                (staffAccount.Contracts != null && staffAccount.Contracts.Any(contract =>
-                    contract.StartPlanDate.Date <= surveyDate.Date && contract.EndPlanDate.Date >= surveyDate.Date)) ||
                 staffAccount.SurveyRequests.Count(sv => sv.SurveyDate.Date == surveyDate.Date) >= 3)
             {
                 throw new BadRequestException($"Nhân viên {staffAccount.FullName} không phù hợp để tham gia khảo sát vào ngày {surveyDate.ToString("dd-MM-yyyy")}");
             }
+        }
+
+        private void IsValidDateToSurvey(DateTime requestDate)
+        {
+            var currentDate = DateTime.Now.Date;
+            if(requestDate.Date <= currentDate)
+            {
+                throw new BadRequestException("Ngày khảo sát phải là ngày trong tương lai");
+            }
+        }
+
+        private async Task SendNotificationToTeller(SurveyRequest request)
+        {
+            var message = new CreateNotificationModel
+            {
+                Title = $"Yêu cầu khảo sát nhà từ khách hàng",
+                Body = $"Có một yêu cầu khảo sát mới từ khách hành. Vui lòng tiếp nhận.",
+                Data = new NotificationDataViewModel
+                {
+                    CreateAt = DateTime.Now,
+                    Type = NotificationType.SurveyRequest,
+                    Link = request.Id.ToString()
+                }
+            };
+            var tellers = await _tellerAccountRepository
+                            .GetAll()
+                            .Select(tl => tl.AccountId)
+                            .FirstOrDefaultAsync();
+            await _notificationService.SendNotification(new List<Guid> { tellers }, message);
+        }
+
+        private async Task SendNotificationToStaff(SurveyRequest request)
+        {
+            var message = new CreateNotificationModel
+            {
+                Title = $"Yêu cầu khảo sát nhà từ teller",
+                Body = $"Có một yêu cầu khảo sát nhà từ khách hàng {request.Customer.FullName} đã được bàn giao cho bạn. Vui lòng tiếp nhận và tiến hành khảo sát.",
+                Data = new NotificationDataViewModel
+                {
+                    CreateAt = DateTime.Now,
+                    Type = NotificationType.SurveyRequest,
+                    Link = request.Id.ToString()
+                }
+            };
+            
+            await _notificationService.SendNotification(new List<Guid> { (Guid)request.StaffId! }, message);
         }
     }
 }

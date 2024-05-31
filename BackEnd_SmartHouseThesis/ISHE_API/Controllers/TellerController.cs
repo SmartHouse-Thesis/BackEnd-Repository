@@ -26,7 +26,7 @@ namespace ISHE_API.Controllers
 
         [HttpGet]
         [ProducesResponseType(typeof(ListViewModel<TellerViewModel>), StatusCodes.Status200OK)]
-        [SwaggerOperation(Summary = "Get all staff accounts.")]
+        [SwaggerOperation(Summary = "Get all teller accounts.")]
         public async Task<ActionResult<ListViewModel<TellerViewModel>>> GetTellers([FromQuery] TellerFilterModel filter, [FromQuery] PaginationRequestModel pagination)
         {
             return await _tellerService.GetTellers(filter, pagination);
@@ -53,7 +53,6 @@ namespace ISHE_API.Controllers
             return CreatedAtAction(nameof(GetTeller), new { id = teller.AccountId }, teller);
         }
 
-
         [HttpPut]
         [Route("{id}")]
         //[Authorize(AccountRole.Teller)]
@@ -74,8 +73,8 @@ namespace ISHE_API.Controllers
         public async Task<ActionResult<TellerViewModel>> UploadAvatar([Required] IFormFile image)
         {
             var auth = (AuthModel?)HttpContext.Items["User"];
-            var staff = await _tellerService.UploadAvatar(auth!.Id, image);
-            return CreatedAtAction(nameof(GetTeller), new { id = staff.AccountId }, staff);
+            var teller = await _tellerService.UploadAvatar(auth!.Id, image);
+            return CreatedAtAction(nameof(GetTeller), new { id = teller.AccountId }, teller);
         }
     }
 }

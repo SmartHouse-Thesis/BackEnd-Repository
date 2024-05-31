@@ -37,7 +37,7 @@ namespace ISHE_API.Controllers
         [ProducesResponseType(typeof(DevicePackageDetailViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
         [SwaggerOperation(Summary = "Get device package by id.")]
-        public async Task<ActionResult<DevicePackageDetailViewModel>> GetPromotion([FromRoute] Guid id)
+        public async Task<ActionResult<DevicePackageDetailViewModel>> GetDevicePackage([FromRoute] Guid id)
         {
             return await _devicePackageService.GetDevicePackage(id);
         }
@@ -47,10 +47,10 @@ namespace ISHE_API.Controllers
         [ProducesResponseType(typeof(PromotionDetailViewModel), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
         [SwaggerOperation(Summary = "Create device package.")]
-        public async Task<ActionResult<DevicePackageDetailViewModel>> CreatePromotion([FromForm][Required] CreateDevicePackageModel model)
+        public async Task<ActionResult<DevicePackageDetailViewModel>> CreateDevicePackage([FromForm][Required] CreateDevicePackageModel model)
         {
-            var promotion = await _devicePackageService.CreateDevicePackage(model);
-            return CreatedAtAction(nameof(GetPromotion), new { id = promotion.Id }, promotion);
+            var package = await _devicePackageService.CreateDevicePackage(model);
+            return CreatedAtAction(nameof(GetDevicePackage), new { id = package.Id }, package);
         }
 
         [HttpPut]
@@ -61,8 +61,8 @@ namespace ISHE_API.Controllers
         [SwaggerOperation(Summary = "Update device package.")]
         public async Task<ActionResult<SmartDeviceDetailViewModel>> UpdateDevicePackage([FromRoute] Guid id, [FromForm] UpdateDevicePackageModel model)
         {
-            var promotion = await _devicePackageService.UpdateDevicePackage(id, model);
-            return CreatedAtAction(nameof(GetPromotion), new { id = promotion.Id }, promotion);
+            var package = await _devicePackageService.UpdateDevicePackage(id, model);
+            return CreatedAtAction(nameof(GetDevicePackage), new { id = package.Id }, package);
         }
     }
 }

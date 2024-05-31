@@ -18,11 +18,13 @@ namespace ISHE_API.Controllers
             _accountService = accountService;
         }
 
+
         [HttpGet]
         [ProducesResponseType(typeof(ListViewModel<AccountViewModel>), StatusCodes.Status200OK)]
         [SwaggerOperation(Summary = "Get all accounts.")]
         public async Task<ActionResult<ListViewModel<AccountViewModel>>> GetAccounts([FromQuery] AccountFilterModel filter, [FromQuery] PaginationRequestModel pagination)
         {
+            //var auth = (AuthModel?)HttpContext.Items["User"];
             var accounts = await _accountService.GetAccounts(filter, pagination);
             return Ok(accounts);
         }

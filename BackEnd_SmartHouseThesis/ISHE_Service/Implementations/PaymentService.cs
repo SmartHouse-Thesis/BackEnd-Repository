@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using ISHE_Data;
 using ISHE_Data.Entities;
 using ISHE_Data.Models.Requests.Post;
+using ISHE_Data.Models.Views;
 using ISHE_Data.Repositories.Interfaces;
 using ISHE_Service.Interfaces;
 using ISHE_Utility.Constants;
@@ -173,6 +175,22 @@ namespace ISHE_Service.Implementations
                 result["return_message"] = ex.Message;
             }
             return result;
+        }
+
+        public async Task<List<PaymentViewModel>> GetRevenues(int? year)
+        {
+            var query = _payment.GetAll();
+
+            if (year.HasValue)
+            {
+                query = query.Where(re => re.CreateAt.Year == year.Value
+                                            && re.Status == PaymentStatus.Successful.ToString());
+            }
+
+            return await query
+                .ProjectTo<PaymentViewModel>(_mapper.ConfigurationProvider)
+                .OrderByDescending(re => re.CreateAt)
+                .ToListAsync();
         }
 
         //PRIVATE METHOD
