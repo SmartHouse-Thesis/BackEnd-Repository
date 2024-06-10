@@ -1,4 +1,7 @@
-﻿using ISHE_API.Configurations;
+
+﻿using Hangfire;
+using ISHE_API.Configurations;
+
 using ISHE_Data.Entities;
 using ISHE_Data.Mapping;
 using ISHE_Utility.Settings;
@@ -44,7 +47,10 @@ builder.Services.AddCors(options =>
                                   "http://localhost:5174",
                                   "http://localhost:5173",
                                   "http://192.168.56.1:8100",
-                                  "http://192.168.118.2:8100");
+                                  "http://192.168.118.2:8100",
+                                  "https://phatdat-store.web.app",
+                                  "https://phatdat-teller.web.app");
+
                           policy.AllowCredentials();
                       });
 });
@@ -56,7 +62,16 @@ builder.Services.AddDependenceInjection();
 builder.Services.AddAutoMapper(typeof(GeneralProfile));
 
 
+//HangFire
+builder.Services.AddHangfireServices(builder.Configuration);
+
+
 var app = builder.Build();
+
+//HangFire
+app.AddHangfireDashboard();
+var recurringJobManager = app.Services.GetRequiredService<IRecurringJobManager>();
+app.Services.AddHangfireJobs(recurringJobManager);
 
 app.UseCors(MyAllowSpecificOrigins);
 

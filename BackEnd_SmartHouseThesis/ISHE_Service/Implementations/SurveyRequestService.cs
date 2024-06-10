@@ -23,15 +23,22 @@ namespace ISHE_Service.Implementations
         private readonly ISurveyRequestRepository _surveyRequestRepository;
         private readonly IStaffAccountRepository _staffAccountRepository;
         private readonly ITellerAccountRepository _tellerAccountRepository;
+        private readonly ICustomerAccountRepository _customerAccount;
+
+        private readonly ISendMailService _sendMailService;
 
         private readonly INotificationService _notificationService;
-        public SurveyRequestService(IUnitOfWork unitOfWork, IMapper mapper, INotificationService notificationService) : base(unitOfWork, mapper)
+        public SurveyRequestService(IUnitOfWork unitOfWork, IMapper mapper, INotificationService notificationService, ISendMailService sendMailService) : base(unitOfWork, mapper)
+
         {
             _surveyRequestRepository = unitOfWork.SurveyRequest;
             _staffAccountRepository = unitOfWork.StaffAccount;
             _tellerAccountRepository = unitOfWork.TellerAccount;
 
+            _customerAccount = unitOfWork.CustomerAccount;
             _notificationService = notificationService;
+            _sendMailService = sendMailService;
+
         }
 
         public async Task<ListViewModel<SurveyRequestViewModel>> GetSurveyRequests(SurveyRequestFilterModel filter, PaginationRequestModel pagination)
@@ -116,6 +123,9 @@ namespace ISHE_Service.Implementations
         {
             var request = await _surveyRequestRepository.GetMany(sv => sv.Id.Equals(id))
                                         .Include(x => x.Customer)
+
+                                        .Include(x => x.Staff)
+
                                         .FirstOrDefaultAsync() ?? throw new NotFoundException("Không tìm thầy survey request");
 
             if (!string.IsNullOrEmpty(model.SurveyDate))
@@ -131,14 +141,16 @@ namespace ISHE_Service.Implementations
 
             if (!string.IsNullOrEmpty(model.Status))
             {
-                if (IsValidStatus(request.Status, model.Status))
-                {
+
+                //if (IsValidStatus(request.Status, model.Status))
+                //{
                     request.Status = model.Status;
-                }
-                else
-                {
-                    throw new BadRequestException($"Không thể cập nhật trạng thái từ {request.Status} thành {model.Status}");
-                }
+                //}
+                //else
+                //{
+                //    throw new BadRequestException($"Không thể cập nhật trạng thái từ {request.Status} thành {model.Status}");
+                //}
+
             }
             
             request.Description = model.Description ?? request.Description;
@@ -150,6 +162,9 @@ namespace ISHE_Service.Implementations
                 request.Status = SurveyRequestStatus.InProgress.ToString();
 
                 await SendNotificationToStaff(request);
+
+                await SendNotificationToCustomer(request);
+
             }
 
             _surveyRequestRepository.Update(request);
@@ -224,8 +239,10 @@ namespace ISHE_Service.Implementations
             var tellers = await _tellerAccountRepository
                             .GetAll()
                             .Select(tl => tl.AccountId)
-                            .FirstOrDefaultAsync();
-            await _notificationService.SendNotification(new List<Guid> { tellers }, message);
+
+                            .ToListAsync();
+            await _notificationService.SendNotification(tellers , message);
+
         }
 
         private async Task SendNotificationToStaff(SurveyRequest request)
@@ -243,6 +260,34 @@ namespace ISHE_Service.Implementations
             };
             
             await _notificationService.SendNotification(new List<Guid> { (Guid)request.StaffId! }, message);
+
+
+            await _sendMailService.SendEmail(request.Staff!.Email!, message.Title, message.Body);
+        }
+
+        private async Task SendNotificationToCustomer(SurveyRequest request)
+        {
+            var message = new CreateNotificationModel
+            {
+                Title = $"Yêu cầu khảo sát nhà đã được tiếp nhận",
+                Body = $"Yêu cầu khảo sát nhà của bạn đã được tiếp nhận và bàn giao cho nhân viên {request.Staff!.FullName}. " +
+                $"Nhân viên sẽ liên hệ cho bạn vào ngày {request.SurveyDate} để tiến hành khảo sát. Chân thành cảm ơn bạn đã tin tưởng và sử dụng dịch vụ bên chúng tôi.",
+                Data = new NotificationDataViewModel
+                {
+                    CreateAt = DateTime.Now,
+                    Type = NotificationType.SurveyRequest,
+                    Link = request.Id.ToString()
+                }
+            };
+
+            await _notificationService.SendNotification(new List<Guid> { (Guid)request.CustomerId! }, message);
+
+            var email = await _customerAccount.GetMany(s => s.AccountId == request.CustomerId).Select(e => e.Email).FirstOrDefaultAsync();
+            if (email != null)
+            {
+                await _sendMailService.SendEmail(email, message.Title, message.Body);
+            }
+
         }
     }
 }

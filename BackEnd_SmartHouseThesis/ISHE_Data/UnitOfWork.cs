@@ -32,6 +32,9 @@ namespace ISHE_Data
         private INotificationRepository _notification = null!;
         private IDeviceTokenRepository _deviceToken = null!;
 
+        private IContractModificationRepository _contractModification = null!;
+
+
         public UnitOfWork(SMART_HOME_DBContext context)
         {
             _context = context;
@@ -142,6 +145,12 @@ namespace ISHE_Data
         {
             get { return _deviceToken ??= new DeviceTokenRepository(_context); }
         }
+
+        public IContractModificationRepository ContractModification
+        {
+            get { return _contractModification ??= new ContractModificationRepository(_context); }
+        }
+
         public async Task<int> SaveChanges()
         {
             return await _context.SaveChangesAsync();

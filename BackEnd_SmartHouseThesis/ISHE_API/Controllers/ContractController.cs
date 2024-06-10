@@ -56,9 +56,32 @@ namespace ISHE_API.Controllers
         [ProducesResponseType(typeof(ContractViewModel), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
         [SwaggerOperation(Summary = "Update contract.")]
-        public async Task<ActionResult<ContractViewModel>> UpdateSurvey([FromRoute] string id, [FromForm] UpdateContractModel model)
+        public async Task<ActionResult<ContractViewModel>> UpdateContract([FromRoute] string id, [FromBody] UpdateContractModel model)
+
         {
             var contract = await _contractService.UpdateContract(id, model);
+            return CreatedAtAction(nameof(GetContract), new { id = contract.Id }, contract);
+        }
+
+        [HttpPut]
+        [Route("upload-image/{id}")]
+        //[Authorize(AccountRole.Teller)]
+        [ProducesResponseType(typeof(ContractViewModel), StatusCodes.Status201Created)]
+        [SwaggerOperation(Summary = "Upload contract image.")]
+        public async Task<ActionResult<ContractViewModel>> UploadContractImage([FromRoute] string id, [Required] IFormFile image)
+        {
+            var contract = await _contractService.UploadContractImage(id, image);
+            return CreatedAtAction(nameof(GetContract), new { id = contract.Id }, contract);
+        }
+
+        [HttpPut]
+        [Route("upload-acceptance/{id}")]
+        //[Authorize(AccountRole.Teller)]
+        [ProducesResponseType(typeof(ContractViewModel), StatusCodes.Status201Created)]
+        [SwaggerOperation(Summary = "Upload contract acceptance.")]
+        public async Task<ActionResult<ContractViewModel>> UploadContractAcceptance([FromRoute] string id, [Required] IFormFile image)
+        {
+            var contract = await _contractService.UploadContractAcceptance(id, image);
             return CreatedAtAction(nameof(GetContract), new { id = contract.Id }, contract);
         }
 

@@ -20,6 +20,7 @@ namespace ISHE_Data.Entities
         public virtual DbSet<Account> Accounts { get; set; } = null!;
         public virtual DbSet<Contract> Contracts { get; set; } = null!;
         public virtual DbSet<ContractDetail> ContractDetails { get; set; } = null!;
+        public virtual DbSet<ContractModificationRequest> ContractModificationRequests { get; set; } = null!;
         public virtual DbSet<CustomerAccount> CustomerAccounts { get; set; } = null!;
         public virtual DbSet<DevicePackage> DevicePackages { get; set; } = null!;
         public virtual DbSet<DevicePackageUsage> DevicePackageUsages { get; set; } = null!;
@@ -44,7 +45,6 @@ namespace ISHE_Data.Entities
             if (!optionsBuilder.IsConfigured)
             {
 //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                //optionsBuilder.UseSqlServer("Server=TAN-TRUNG\\HAMMER;Database=SMART_HOME_DB;Persist Security Info=False;User ID=sa;Password=123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;");
             }
         }
 
@@ -191,6 +191,32 @@ namespace ISHE_Data.Entities
                     .HasForeignKey(d => d.SmartDeviceId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__ContractD__Smart__503BEA1C");
+            });
+
+            modelBuilder.Entity<ContractModificationRequest>(entity =>
+            {
+                entity.ToTable("ContractModificationRequest");
+
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.ContractId)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.CreateAt)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(dateadd(hour,(7),getutcdate()))");
+
+                entity.Property(e => e.Status).HasMaxLength(100);
+
+                entity.Property(e => e.Type).HasMaxLength(100);
+
+                entity.HasOne(d => d.Contract)
+                    .WithMany(p => p.ContractModificationRequests)
+                    .HasForeignKey(d => d.ContractId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__ContractM__Contr__0880433F");
+
             });
 
             modelBuilder.Entity<CustomerAccount>(entity =>
@@ -355,7 +381,11 @@ namespace ISHE_Data.Entities
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(dateadd(hour,(7),getutcdate()))");
 
+                entity.Property(e => e.Image).IsUnicode(false);
+
                 entity.Property(e => e.Name).HasMaxLength(255);
+
+                entity.Property(e => e.Origin).HasMaxLength(255);
             });
 
             modelBuilder.Entity<Notification>(entity =>
@@ -451,6 +481,19 @@ namespace ISHE_Data.Entities
                 entity.Property(e => e.StartDate).HasColumnType("datetime");
 
                 entity.Property(e => e.Status).HasMaxLength(100);
+
+                entity.HasMany(d => d.DevicePackages)
+                    .WithMany(p => p.Promotions)
+                    .UsingEntity<Dictionary<string, object>>(
+                        "SmartDevicePromotion",
+                        l => l.HasOne<DevicePackage>().WithMany().HasForeignKey("DevicePackageId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK__SmartDevi__Devic__214BF109"),
+                        r => r.HasOne<Promotion>().WithMany().HasForeignKey("PromotionId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK__SmartDevi__Promo__2057CCD0"),
+                        j =>
+                        {
+                            j.HasKey("PromotionId", "DevicePackageId").HasName("PK__SmartDev__B890BF4271560E8E");
+
+                            j.ToTable("SmartDevicePromotion");
+                        });
             });
 
             modelBuilder.Entity<Role>(entity =>

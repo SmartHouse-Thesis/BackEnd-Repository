@@ -8,6 +8,7 @@ namespace ISHE_Data.Entities
         public Contract()
         {
             ContractDetails = new HashSet<ContractDetail>();
+            ContractModificationRequests = new HashSet<ContractModificationRequest>();
             DevicePackageUsages = new HashSet<DevicePackageUsage>();
             Payments = new HashSet<Payment>();
         }
@@ -35,6 +36,7 @@ namespace ISHE_Data.Entities
         public virtual TellerAccount Teller { get; set; } = null!;
         public virtual Acceptance? Acceptance { get; set; }
         public virtual ICollection<ContractDetail> ContractDetails { get; set; }
+        public virtual ICollection<ContractModificationRequest> ContractModificationRequests { get; set; }
         public virtual ICollection<DevicePackageUsage> DevicePackageUsages { get; set; }
         public virtual ICollection<Payment> Payments { get; set; }
     }

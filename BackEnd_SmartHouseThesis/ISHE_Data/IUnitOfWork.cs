@@ -27,6 +27,8 @@ namespace ISHE_Data
         public IFeedbackDevicePackageRepository FeedbackDevicePackage { get; }
         public INotificationRepository Notification { get; }
         public IDeviceTokenRepository DeviceToken { get; }
+        public IContractModificationRepository ContractModification { get; }
+
 
         Task<int> SaveChanges();
         IDbContextTransaction Transaction();

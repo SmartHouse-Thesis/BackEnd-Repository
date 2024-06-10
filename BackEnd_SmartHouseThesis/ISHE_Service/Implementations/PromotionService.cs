@@ -13,6 +13,9 @@ using ISHE_Utility.Enum;
 using ISHE_Utility.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
+using System.Diagnostics.Contracts;
+
+
 namespace ISHE_Service.Implementations
 {
     public class PromotionService : BaseService, IPromotionService
@@ -76,8 +79,8 @@ namespace ISHE_Service.Implementations
             {
                 try
                 {
-                    CheckValidDate(model.StartDate, model.EndDate);
-
+                    
+                    var packages = await AddDevicePackage(model.DevicePackageIds, model.StartDate, model.EndDate) ?? new List<DevicePackage>();
                     promotionId = Guid.NewGuid();
                     var promotion = new Promotion
                     {
@@ -87,11 +90,12 @@ namespace ISHE_Service.Implementations
                         StartDate = model.StartDate,
                         EndDate = model.EndDate,
                         Description = model.Description,
-                        Status = PromotionStatus.Active.ToString()
+                        DevicePackages = packages,
+                        Status = PromotionStatus.InActive.ToString()
                     };
 
                     _promotionRepository.Add(promotion);
-                    await AddPromotionIdToDevicePackage(promotionId, model.DevicePackageIds, false);
+                    //await AddPromotionIdToDevicePackage(promotionId, model.DevicePackageIds, false);
 
                     result = await _unitOfWork.SaveChanges();
 
@@ -109,64 +113,241 @@ namespace ISHE_Service.Implementations
         public async Task<PromotionDetailViewModel> UpdatePromotion(Guid id, UpdatePromotionModel model)
         {
             var promotion = await _promotionRepository.GetMany(pro => pro.Id.Equals(id))
+                .Include(x => x.DevicePackages)
                 .FirstOrDefaultAsync() ?? throw new NotFoundException("Không tìm thấy promotion");
+
+            
 
             promotion.Name = model.Name ?? promotion.Name;
             promotion.DiscountAmount = model.DiscountAmount ?? promotion.DiscountAmount;
-            promotion.StartDate = model.StartDate ?? promotion.StartDate;
-            promotion.EndDate = model.EndDate ?? promotion.EndDate;
-            promotion.Description = model.Description ?? promotion.Description;
-            promotion.Status = model.Status ?? promotion.Status;
+            //promotion.StartDate = model.StartDate ?? promotion.StartDate;
+            //promotion.EndDate = model.EndDate ?? promotion.EndDate;
+            //CheckValidDate(promotion.StartDate, promotion.EndDate);
+            if (model.EndDate.HasValue)
+            {
+                if(promotion.Status == PromotionStatus.Expired.ToString())
+                {
+                    throw new BadRequestException("Khuyến mãi đã hết hạn");
+                }
+                if (model.EndDate <= DateTime.Now)
+                {
+                    throw new BadRequestException("Ngày kết thúc phải lớn hơn thời gian hiện tại");
+                }
+                if(model.EndDate < promotion.StartDate)
+                {
+                    throw new BadRequestException("Ngày kết thúc phải lớn hơn ngày bắt đầu");
+                }
 
+                promotion.EndDate = model.EndDate.Value;
+            }
+            
+
+            promotion.Description = model.Description ?? promotion.Description;
+            if (!string.IsNullOrEmpty(model.Status))
+            {
+                UpdateStatus(promotion, model.Status);
+            }
+            promotion.Status = model.Status ?? promotion.Status;
+            
+            if (model.DevicePackageIds != null && model.DevicePackageIds.Any())
+            {
+                var packages = await UpdateDevicePackage(model.DevicePackageIds, promotion.StartDate, promotion.EndDate, id) ?? new List<DevicePackage>();
+                promotion.DevicePackages.Clear();
+                promotion.DevicePackages = packages;
+            }
             _promotionRepository.Update(promotion);
-            await AddPromotionIdToDevicePackage(id, model.DevicePackageIds, true);
+            //await AddPromotionIdToDevicePackage(id, model.DevicePackageIds, true);
 
             var result = await _unitOfWork.SaveChanges();
 
             return result > 0 ? await GetPromotion(id) : null!;
         }
 
-        //PRIVATE METHOD
-        private async Task<ICollection<DevicePackage>> AddPromotionIdToDevicePackage(Guid promotionId, List<Guid>? devicePackageIds, bool isUpdate)
+        private void UpdateStatus(Promotion promotion, string newStatus)
         {
-            var listDevicePackage = new List<DevicePackage>();
+            switch (promotion.Status)
+            {
+                case nameof(PromotionStatus.Active):
+                    if(newStatus == nameof(PromotionStatus.Expired))
+                    {
+                        promotion.Status = newStatus;
+                        promotion.EndDate = DateTime.Now;
+                    }
+                    else
+                    {
+                        throw new BadRequestException($"Không thể cập nhật trạng thái từ {promotion.Status} thành {newStatus}");
+                    }
+                        break;
+                //case nameof(PromotionStatus.InActive):
+                //case nameof(PromotionStatus.Expired):
+                //    promotion.Status = newStatus;
+                //    break;
+                default:
+                    throw new BadRequestException($"Không thể cập nhật trạng thái từ {promotion.Status} thành {newStatus}");
+            }
+        }
+
+        public async Task CheckExpiredPromotion()
+        {
+            var currentTime = DateTime.Now;
+
+            var expiredPromotion = await _promotionRepository
+                    .GetMany(promotion => promotion.EndDate.Date < currentTime.Date && promotion.Status != PromotionStatus.Expired.ToString())
+                    .ToListAsync();
+
+            if (expiredPromotion.Count == 0) return;
+
+            foreach (var discount in expiredPromotion)
+            {
+                discount.Status = PromotionStatus.Expired.ToString();
+            }
+
+            _promotionRepository.UpdateRange(expiredPromotion);
+            await _unitOfWork.SaveChanges();
+        }
+
+        public async Task CheckActivePromotion()
+        {
+            var currentTime = DateTime.Now;
+
+            var activePromotion = await _promotionRepository
+                    .GetMany(promotion => promotion.StartDate.Date <= currentTime.Date && promotion.Status == PromotionStatus.InActive.ToString())
+                    .ToListAsync();
+
+            if (activePromotion.Count == 0) return;
+
+            foreach (var discount in activePromotion)
+            {
+                discount.Status = PromotionStatus.Active.ToString();
+            }
+
+            _promotionRepository.UpdateRange(activePromotion);
+            await _unitOfWork.SaveChanges();
+        }
+
+        //PRIVATE METHOD
+
+        private async Task<List<DevicePackage>?> AddDevicePackage(List<Guid>? devicePackageIds, DateTime startDate, DateTime endDate)
+        {
+            CheckValidDate(startDate, endDate);
+
+            var result = new List<DevicePackage>();
             if (devicePackageIds != null && devicePackageIds.Any())
             {
-                if (isUpdate)
-                {
-                    var existDevicePackages = await _devicePackageRepository.GetMany(device => device.PromotionId.Equals(promotionId)).ToListAsync();
-                    foreach (var devicePackage in existDevicePackages)
-                    {
-                        devicePackage.PromotionId = null;
-                    }
-                    _devicePackageRepository.UpdateRange(existDevicePackages);
-                }
-
+                var uniqueIds = new HashSet<Guid>();
                 foreach (var devicePackageId in devicePackageIds)
                 {
-                    var devicePackage = await _devicePackageRepository.GetMany(device => device.Id.Equals(devicePackageId))
-                        .FirstOrDefaultAsync() ?? throw new NotFoundException("Không tìm thấy device package id: " + devicePackageId);
+                    if (uniqueIds.Add(devicePackageId))
+                    {
+                        var package = await _devicePackageRepository.GetMany(d => d.Id == devicePackageId)
+                            .Include(p => p.Promotions)
+                            .FirstOrDefaultAsync() ?? throw new NotFoundException("Không tìm thấy package");
+                        //check điều kiện invalue
+                        if(package.Status == DevicePackageStatus.InActive.ToString())
+                        {
+                            throw new BadRequestException($"Gói {package.Name} đã không còn được hỗ trợ");
+                        }
 
-                    devicePackage.PromotionId = promotionId;
-                    _devicePackageRepository.Update(devicePackage);
+                        if(package.Promotions != null && package.Promotions.Count > 0)
+                        {
+                            var overLapping = package.Promotions.FirstOrDefault(pro => pro.StartDate <= endDate && pro.EndDate >= startDate);
+                            if(overLapping != null)
+                            {
+                                throw new ConflictException($"Gói {package.Name} đã có chương trình khuyến mãi trong thời gian trên");
+                            }
+                        }
 
-                    listDevicePackage.Add(devicePackage);
+                        result.Add(package);
+                    }
                 }
-
             }
-            return listDevicePackage;
+            return result;
         }
+
+        private async Task<List<DevicePackage>?> UpdateDevicePackage(List<Guid>? devicePackageIds, DateTime startDate, DateTime endDate, Guid promotionId)
+        {
+            //CheckValidDate(startDate, endDate);
+
+            var result = new List<DevicePackage>();
+            if (devicePackageIds != null && devicePackageIds.Any())
+            {
+                var uniqueIds = new HashSet<Guid>();
+                foreach (var devicePackageId in devicePackageIds)
+                {
+                    if (uniqueIds.Add(devicePackageId))
+                    {
+                        var package = await _devicePackageRepository.GetMany(d => d.Id == devicePackageId)
+                            .Include(p => p.Promotions)
+                            .FirstOrDefaultAsync() ?? throw new NotFoundException("Không tìm thấy package");
+                        //check điều kiện invalue
+                        if (package.Status == DevicePackageStatus.InActive.ToString())
+                        {
+                            throw new BadRequestException($"Gói {package.Name} đã không còn được hỗ trợ");
+                        }
+
+                        if (package.Promotions != null && package.Promotions.Count > 0)
+                        {
+                            var overLapping = package.Promotions.FirstOrDefault(pro => pro.Id != promotionId && (pro.StartDate <= endDate && pro.EndDate >= startDate));
+                            if (overLapping != null)
+                            {
+                                throw new ConflictException($"Gói {package.Name} đã có chương trình khuyến mãi trong thời gian trên");
+                            }
+                        }
+
+                        result.Add(package);
+                    }
+                }
+            }
+            return result;
+        }
+
+
+        //private async Task<ICollection<DevicePackage>> AddPromotionIdToDevicePackage(Guid promotionId, List<Guid>? devicePackageIds, bool isUpdate)
+        //{
+        //    var listDevicePackage = new List<DevicePackage>();
+        //    if (devicePackageIds != null && devicePackageIds.Any())
+        //    {
+        //        if (isUpdate)
+        //        {
+        //            var existDevicePackages = await _devicePackageRepository.GetMany(device => device.PromotionId.Equals(promotionId)).ToListAsync();
+        //            foreach (var devicePackage in existDevicePackages)
+        //            {
+        //                devicePackage.PromotionId = null;
+        //            }
+        //            _devicePackageRepository.UpdateRange(existDevicePackages);
+        //        }
+
+        //        foreach (var devicePackageId in devicePackageIds)
+        //        {
+        //            var devicePackage = await _devicePackageRepository.GetMany(device => device.Id.Equals(devicePackageId))
+        //                .FirstOrDefaultAsync() ?? throw new NotFoundException("Không tìm thấy device package id: " + devicePackageId);
+
+        //            devicePackage.PromotionId = promotionId;
+        //            _devicePackageRepository.Update(devicePackage);
+
+        //            listDevicePackage.Add(devicePackage);
+        //        }
+
+        //    }
+        //    return listDevicePackage;
+        //}
 
         private void CheckValidDate(DateTime startDate, DateTime endDate)
         {
-            if (endDate < DateTime.Now)
+            if(startDate <= DateTime.Now.Date)
             {
-                throw new BadRequestException("Thời gian khuyến mãi phải lớn hơn hiện tại");
+                throw new BadRequestException("Thời gian bắt đầu phải lớn hơn hiện tại");
             }
-            else if (startDate > endDate)
+
+            if (endDate <= startDate)
             {
-                throw new BadRequestException("Thời gian khuyến mãi sai");
+                throw new BadRequestException("Thời gian kết thúc khuyến mãi phải lớn ngày bắt đầu");
             }
+            //else if (startDate > endDate)
+            //{
+            //    throw new BadRequestException("Thời gian khuyến mãi sai");
+            //}
+
         }
     }
 }

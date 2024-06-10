@@ -9,6 +9,7 @@ using ISHE_Data.Models.Requests.Put;
 using ISHE_Data.Models.Views;
 using ISHE_Data.Repositories.Interfaces;
 using ISHE_Service.Interfaces;
+using ISHE_Utility.Constants;
 using ISHE_Utility.Enum;
 using ISHE_Utility.Exceptions;
 using Microsoft.EntityFrameworkCore;
@@ -20,17 +21,31 @@ namespace ISHE_Service.Implementations
         private readonly ISurveyRepository _surveyRepository;
         private readonly IStaffAccountRepository _staffRepository;
         private readonly ISurveyRequestRepository _surveyRequestRepository;
-        public SurveyService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
+        private readonly INotificationService _notificationService;
+        private readonly ITellerAccountRepository _tellerAccountRepository;
+        private readonly IDevicePackageRepository _devicePackageRepository;
+        public SurveyService(IUnitOfWork unitOfWork, IMapper mapper, INotificationService notificationService) : base(unitOfWork, mapper)
         {
             _surveyRepository = unitOfWork.Survey;
             _staffRepository = unitOfWork.StaffAccount;
             _surveyRequestRepository = unitOfWork.SurveyRequest;
+            _notificationService = notificationService;
+            _tellerAccountRepository = unitOfWork.TellerAccount;
+            _devicePackageRepository = unitOfWork.DevicePackage;
         }
 
         public async Task<ListViewModel<SurveyViewModel>> GetSurveys(SurveyFilterModel filter, PaginationRequestModel pagination)
         {
             var query = _surveyRepository.GetAll();
 
+            if (filter.StaffId.HasValue)
+            {
+                query = query.Where(sv => sv.SurveyRequest.StaffId == filter.StaffId.Value);
+            }
+            if (!string.IsNullOrEmpty(filter.CustomerName))
+            {
+                query = query.Where(sv => sv.SurveyRequest.Customer.FullName.Contains(filter.CustomerName));
+            }
 
             if (filter.AppointmentDate.HasValue)
             {
@@ -74,8 +89,23 @@ namespace ISHE_Service.Implementations
         public async Task<SurveyViewModel> CreateSurvey(CreateSurveyModel model)
         {
             var surveyRequest = await _surveyRequestRepository.GetMany(sv => sv.Id.Equals(model.SurveyRequestId))
+                .Include(sv => sv.Customer)
                 .FirstOrDefaultAsync() ?? throw new NotFoundException("Không tìm thấy survey request");
+            if(surveyRequest.Status != SurveyRequestStatus.InProgress.ToString())
+            {
+                throw new BadRequestException($"Survey request status: {surveyRequest.Status}");
+            }
 
+            if (model.RecommendDevicePackageId.HasValue)
+            {
+                var devicePackage = await _devicePackageRepository.GetMany(d => d.Id == model.RecommendDevicePackageId).FirstOrDefaultAsync() ?? throw new NotFoundException("Không tìm thấy device package");
+                
+                if (devicePackage.Status == DevicePackageStatus.InActive.ToString())
+                {
+                    throw new BadRequestException("Device package không còn hỗ trợ trên hệ thống");
+                }
+            }
+            
             //await CheckStaffIsAvaiableForSurvey(model.StaffId, surveyRequest.SurveyDate);
 
             var survey = new Survey
@@ -88,6 +118,9 @@ namespace ISHE_Service.Implementations
                 AppointmentDate = model.AppointmentDate,
                 Status = SurveyStatus.Pending.ToString(),
             };
+
+            //sendNoti
+            await SendNotificationToTeller(survey.Id, surveyRequest.Customer.FullName);
 
             _surveyRepository.Add(survey);
 
@@ -116,6 +149,25 @@ namespace ISHE_Service.Implementations
         }
 
         //PRIVATE METHOD
+        private async Task SendNotificationToTeller(Guid reportId, string customerName)
+        {
+            var message = new CreateNotificationModel
+            {
+                Title = $"Báo cáo hoàn thành khảo sát nhà",
+                Body = $"Nhân viên đã hoàn thành thu thập thông tin nhà của khách hàng {customerName}. Vui lòng kiểm tra và xử lý báo cáo này.",
+                Data = new NotificationDataViewModel
+                {
+                    CreateAt = DateTime.Now,
+                    Type = NotificationType.SurveyReport,
+                    Link = reportId.ToString()
+                }
+            };
 
+            var tellers = await _tellerAccountRepository
+                            .GetAll()
+                            .Select(tl => tl.AccountId)
+                            .ToListAsync();
+            await _notificationService.SendNotification(tellers, message);
+        }
     }
 }

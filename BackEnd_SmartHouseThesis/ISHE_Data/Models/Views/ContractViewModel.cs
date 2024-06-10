@@ -1,4 +1,6 @@
-﻿namespace ISHE_Data.Models.Views
+﻿using ISHE_Data.Entities;
+
+namespace ISHE_Data.Models.Views
 {
     public class ContractViewModel
     {
@@ -22,7 +24,7 @@
         public virtual AcceptanceViewModel? Acceptance { get; set; }
         public virtual ICollection<DevicePackageUsageViewModel> DevicePackageUsages { get; set; } = new List<DevicePackageUsageViewModel>();
         public virtual ICollection<ContractDetailViewModel> ContractDetails { get; set; } = new List<ContractDetailViewModel>();
-
+        public virtual ICollection<ContractModificationViewModel> ContractModificationRequests { get; set; } = new List<ContractModificationViewModel>();
         public virtual ICollection<PaymentViewModel> Payments { get; set; } = new List<PaymentViewModel>();
     }
 }

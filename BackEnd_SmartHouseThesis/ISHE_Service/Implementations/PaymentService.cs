@@ -4,6 +4,8 @@ using ISHE_Data;
 using ISHE_Data.Entities;
 using ISHE_Data.Models.Requests.Post;
 using ISHE_Data.Models.Views;
+using ISHE_Data.Repositories.Implementations;
+
 using ISHE_Data.Repositories.Interfaces;
 using ISHE_Service.Interfaces;
 using ISHE_Utility.Constants;
@@ -21,12 +23,14 @@ namespace ISHE_Service.Implementations
     {
         private readonly IContractRepository _contract;
         private readonly IPaymentRepository _payment;
+        private readonly INotificationService _notificationService;
         private readonly AppSetting _appSettings;
-        public PaymentService(IUnitOfWork unitOfWork, IMapper mapper, IOptions<AppSetting> appSettings) : base(unitOfWork, mapper)
+        public PaymentService(IUnitOfWork unitOfWork, IMapper mapper, IOptions<AppSetting> appSettings, INotificationService notificationService) : base(unitOfWork, mapper)
         {
             _contract = unitOfWork.Contract;
             _payment = unitOfWork.Payment;
             _appSettings = appSettings.Value;
+            _notificationService = notificationService;
         }
 
         public async Task ProcessCashPayment(CreatePaymentModel model)
@@ -80,7 +84,8 @@ namespace ISHE_Service.Implementations
             var embed_data = new
             {
                 merchantinfo = "Phat Dat Store",
-                redirecturl = $"https://www.youtube.com"
+                preferred_payment_method = new object[] { },
+                redirecturl = $"https://localhost/customer-role/contracts"
             };
             DateTime now = DateTime.UtcNow.AddHours(7);
             string AppTransId = now.ToString("yyMMddHHmmssfff") + "_" + model.ContractId;
@@ -110,7 +115,7 @@ namespace ISHE_Service.Implementations
                 { "embed_data", JsonConvert.SerializeObject(embed_data) },
                 { "item", JsonConvert.SerializeObject(items) },
                 { "description", $"Phat Dat - Thanh toán {model.TypePayment.ToLower()} hợp đồng #{model.ContractId}" },
-                { "bank_code", "zalopayapp" },
+                { "bank_code", "" },
                 { "callback_url", _appSettings.ZaloPay.CallbackUrl }
             };
 
@@ -157,7 +162,8 @@ namespace ISHE_Service.Implementations
                     var contract = await _contract.GetMany(ct => ct.Id.Equals(payment.ContractId)).FirstOrDefaultAsync();
                     if (contract == null) return false;
 
-                    contract.Status = HandleCheckStatusContract(payment);
+
+                    contract.Status = await HandleCheckStatusContract(payment, contract.TellerId);
                     
                     payment.Status = PaymentStatus.Successful.ToString();
                     _contract.Update(contract);
@@ -177,14 +183,15 @@ namespace ISHE_Service.Implementations
             return result;
         }
 
-        public async Task<List<PaymentViewModel>> GetRevenues(int? year)
-        {
-            var query = _payment.GetAll();
 
-            if (year.HasValue)
+        public async Task<List<PaymentViewModel>> GetRevenues(int? month)
+        {
+            var query = _payment.GetMany(re => re.Status == PaymentStatus.Successful.ToString());
+
+            if (month.HasValue)
             {
-                query = query.Where(re => re.CreateAt.Year == year.Value
-                                            && re.Status == PaymentStatus.Successful.ToString());
+                query = query.Where(re => re.CreateAt.Month == month.Value);
+
             }
 
             return await query
@@ -195,16 +202,18 @@ namespace ISHE_Service.Implementations
 
         //PRIVATE METHOD
 
-        private string HandleCheckStatusContract(Payment payment)
+        private async Task<string> HandleCheckStatusContract(Payment payment, Guid tellerId)
         {
             var result = "";
             if (payment.Name.Equals(PaymentType.Deposit))
             {
                 result = ContractStatus.DepositPaid.ToString();
+                await SendNotificationToTeller(payment.ContractId, "đật cọc", tellerId);
             }
             if (payment.Name.Equals(PaymentType.Completion))
             {
                 result = ContractStatus.Completed.ToString();
+                await SendNotificationToTeller(payment.ContractId, "hoàn thành", tellerId);
             }
             return result;
         }
@@ -225,6 +234,25 @@ namespace ISHE_Service.Implementations
                 throw new BadRequestException("Loại thanh toán không hợp lệ");
             }
             return totalAmount;
+        }
+
+
+        private async Task SendNotificationToTeller(string contractId, string type, Guid tellerId)
+        {
+            var message = new CreateNotificationModel
+            {
+                Title = $"Thanh toán {type} hợp đồng {contractId}",
+                Body = $"Khách hàng đã thanh toán thành công tiền {type} cho hợp đồng. Vui lòng kiểm tra và xử lý hợp đồng này.",
+                Data = new NotificationDataViewModel
+                {
+                    CreateAt = DateTime.Now,
+                    Type = type == "đật cọc" ? NotificationType.Deposit : NotificationType.Complete,
+                    Link = contractId
+                }
+            };
+
+           
+            await _notificationService.SendNotification(new List<Guid> { tellerId }, message);
         }
     }
 }
