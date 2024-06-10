@@ -29,6 +29,7 @@ namespace ISHE_Data
         public IDeviceTokenRepository DeviceToken { get; }
         public IContractModificationRepository ContractModification { get; }
 
+
         Task<int> SaveChanges();
         IDbContextTransaction Transaction();
     }

@@ -33,6 +33,7 @@ namespace ISHE_API.Configurations
             services.AddScoped<IContractModificationService, ContractModificationService>();
             services.AddScoped<ISendMailService, SendMailService>();
 
+
             services.AddScoped<IPaymentService, PaymentService>();
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();

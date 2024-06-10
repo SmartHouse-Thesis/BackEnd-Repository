@@ -12,7 +12,9 @@ using ISHE_Service.Interfaces;
 using ISHE_Utility.Enum;
 using ISHE_Utility.Exceptions;
 using Microsoft.EntityFrameworkCore;
+
 using System.Diagnostics.Contracts;
+
 
 namespace ISHE_Service.Implementations
 {
@@ -345,6 +347,7 @@ namespace ISHE_Service.Implementations
             //{
             //    throw new BadRequestException("Thời gian khuyến mãi sai");
             //}
+
         }
     }
 }

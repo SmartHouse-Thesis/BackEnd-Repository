@@ -8,6 +8,8 @@ namespace ISHE_Service.Interfaces
         Task ProcessCashPayment(CreatePaymentModel model);
         Task<dynamic> ProcessZalopayPayment(CreatePaymentModel model);
         Task<dynamic> IsValidCallback(dynamic cbdata);
+
         Task<List<PaymentViewModel>> GetRevenues(int? month);
+
     }
 }

@@ -15,7 +15,7 @@
         public virtual ManufacturerViewModel Manufacturer { get; set; } = null!;
         public virtual ICollection<PromotionViewModel>? Promotions { get; set; }
         //public virtual ICollection<ConstructionContract> ConstructionContracts { get; set; }
-        // public virtual ICollection<FeedbackDevicePackage> FeedbackDevicePackages { get; set; }
+       // public virtual ICollection<FeedbackDevicePackage> FeedbackDevicePackages { get; set; }
         public virtual ICollection<ImageViewModel> Images { get; set; } = new List<ImageViewModel>();
         //public virtual ICollection<Policy> Policies { get; set; }
 

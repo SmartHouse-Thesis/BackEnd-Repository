@@ -8,5 +8,6 @@
         public const string ContractsModification  = "Contracts Modification";
         public const string Deposit = "Deposit";
         public const string Complete = "Complete";
+
     }
 }

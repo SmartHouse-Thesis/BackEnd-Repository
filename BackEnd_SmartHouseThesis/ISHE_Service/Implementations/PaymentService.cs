@@ -5,6 +5,7 @@ using ISHE_Data.Entities;
 using ISHE_Data.Models.Requests.Post;
 using ISHE_Data.Models.Views;
 using ISHE_Data.Repositories.Implementations;
+
 using ISHE_Data.Repositories.Interfaces;
 using ISHE_Service.Interfaces;
 using ISHE_Utility.Constants;
@@ -182,6 +183,7 @@ namespace ISHE_Service.Implementations
             return result;
         }
 
+
         public async Task<List<PaymentViewModel>> GetRevenues(int? month)
         {
             var query = _payment.GetMany(re => re.Status == PaymentStatus.Successful.ToString());
@@ -189,6 +191,7 @@ namespace ISHE_Service.Implementations
             if (month.HasValue)
             {
                 query = query.Where(re => re.CreateAt.Month == month.Value);
+
             }
 
             return await query

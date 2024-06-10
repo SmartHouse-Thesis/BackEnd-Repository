@@ -31,7 +31,9 @@ namespace ISHE_Data
         private IFeedbackDevicePackageRepository _feedbackDevicePackage = null!;
         private INotificationRepository _notification = null!;
         private IDeviceTokenRepository _deviceToken = null!;
+
         private IContractModificationRepository _contractModification = null!;
+
 
         public UnitOfWork(SMART_HOME_DBContext context)
         {

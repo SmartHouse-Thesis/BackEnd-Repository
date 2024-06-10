@@ -14,6 +14,7 @@ using ISHE_Utility.Enum;
 using ISHE_Utility.Exceptions;
 using ISHE_Utility.Helpers.FormatDate;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.Contracts;
 
 namespace ISHE_Service.Implementations
 {
@@ -28,13 +29,16 @@ namespace ISHE_Service.Implementations
 
         private readonly INotificationService _notificationService;
         public SurveyRequestService(IUnitOfWork unitOfWork, IMapper mapper, INotificationService notificationService, ISendMailService sendMailService) : base(unitOfWork, mapper)
+
         {
             _surveyRequestRepository = unitOfWork.SurveyRequest;
             _staffAccountRepository = unitOfWork.StaffAccount;
             _tellerAccountRepository = unitOfWork.TellerAccount;
+
             _customerAccount = unitOfWork.CustomerAccount;
             _notificationService = notificationService;
             _sendMailService = sendMailService;
+
         }
 
         public async Task<ListViewModel<SurveyRequestViewModel>> GetSurveyRequests(SurveyRequestFilterModel filter, PaginationRequestModel pagination)
@@ -119,7 +123,9 @@ namespace ISHE_Service.Implementations
         {
             var request = await _surveyRequestRepository.GetMany(sv => sv.Id.Equals(id))
                                         .Include(x => x.Customer)
+
                                         .Include(x => x.Staff)
+
                                         .FirstOrDefaultAsync() ?? throw new NotFoundException("Không tìm thầy survey request");
 
             if (!string.IsNullOrEmpty(model.SurveyDate))
@@ -135,6 +141,7 @@ namespace ISHE_Service.Implementations
 
             if (!string.IsNullOrEmpty(model.Status))
             {
+
                 //if (IsValidStatus(request.Status, model.Status))
                 //{
                     request.Status = model.Status;
@@ -143,6 +150,7 @@ namespace ISHE_Service.Implementations
                 //{
                 //    throw new BadRequestException($"Không thể cập nhật trạng thái từ {request.Status} thành {model.Status}");
                 //}
+
             }
             
             request.Description = model.Description ?? request.Description;
@@ -154,7 +162,9 @@ namespace ISHE_Service.Implementations
                 request.Status = SurveyRequestStatus.InProgress.ToString();
 
                 await SendNotificationToStaff(request);
+
                 await SendNotificationToCustomer(request);
+
             }
 
             _surveyRequestRepository.Update(request);
@@ -229,8 +239,10 @@ namespace ISHE_Service.Implementations
             var tellers = await _tellerAccountRepository
                             .GetAll()
                             .Select(tl => tl.AccountId)
+
                             .ToListAsync();
             await _notificationService.SendNotification(tellers , message);
+
         }
 
         private async Task SendNotificationToStaff(SurveyRequest request)
@@ -248,6 +260,7 @@ namespace ISHE_Service.Implementations
             };
             
             await _notificationService.SendNotification(new List<Guid> { (Guid)request.StaffId! }, message);
+
 
             await _sendMailService.SendEmail(request.Staff!.Email!, message.Title, message.Body);
         }
@@ -274,6 +287,7 @@ namespace ISHE_Service.Implementations
             {
                 await _sendMailService.SendEmail(email, message.Title, message.Body);
             }
+
         }
     }
 }

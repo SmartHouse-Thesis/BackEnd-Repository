@@ -1,6 +1,8 @@
+
 ﻿using ISHE_Data.Entities;
 
 namespace ISHE_Data.Models.Views
+
 {
     public class DevicePackageDetailViewModel
     {

@@ -45,7 +45,6 @@ namespace ISHE_Data.Entities
             if (!optionsBuilder.IsConfigured)
             {
 //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-//                optionsBuilder.UseSqlServer("Server=TAN-TRUNG\\HAMMER;Database=SMART_HOME_DB;Persist Security Info=False;User ID=sa;Password=123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;");
             }
         }
 
@@ -217,6 +216,7 @@ namespace ISHE_Data.Entities
                     .HasForeignKey(d => d.ContractId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__ContractM__Contr__0880433F");
+
             });
 
             modelBuilder.Entity<CustomerAccount>(entity =>
@@ -268,6 +268,11 @@ namespace ISHE_Data.Entities
                     .HasForeignKey(d => d.ManufacturerId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__DevicePac__Manuf__4AB81AF0");
+
+                entity.HasOne(d => d.Promotion)
+                    .WithMany(p => p.DevicePackages)
+                    .HasForeignKey(d => d.PromotionId)
+                    .HasConstraintName("FK__DevicePac__Promo__4BAC3F29");
             });
 
             modelBuilder.Entity<DevicePackageUsage>(entity =>

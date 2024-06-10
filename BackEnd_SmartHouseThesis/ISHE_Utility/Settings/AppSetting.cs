@@ -10,8 +10,6 @@
         public string Folder { get; set; } = null!;
         public string FolderContract {  get; set; } = null!;
         public ZaloPaySetting ZaloPay { get; set; } = null!;
-
-
         public string NameApp { get; set; } = null!;
         public string EMailAddress { get; set; } = null!;
         public bool UseSSL { get; set; }

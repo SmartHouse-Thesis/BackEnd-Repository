@@ -8,8 +8,8 @@ namespace ISHE_Data.Models.Requests.Put
         public Guid? StaffId { get; set; }
         public string? Title { get; set; }
         public string? Description { get; set; }
-
         public string? Status { get; set; }
+        public IFormFile? Image { get; set; }
         public List<Guid>? DevicePackages { get; set; } = new List<Guid>();
 
         public List<SmartDevices>? ContractDetails { get; set; }

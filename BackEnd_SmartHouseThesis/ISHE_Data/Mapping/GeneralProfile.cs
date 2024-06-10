@@ -103,6 +103,7 @@ namespace ISHE_Data.Mapping
 
             CreateMap<DevicePackage, PatialDevicePackageViewModel>()
                 .ForMember(dest => dest.Images, otp => otp.MapFrom(src => src.Images.FirstOrDefault()!.Url));
+
         }
     }
 }

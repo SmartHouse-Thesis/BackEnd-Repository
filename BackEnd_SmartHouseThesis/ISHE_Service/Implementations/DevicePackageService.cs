@@ -25,7 +25,9 @@ namespace ISHE_Service.Implementations
         private readonly IPromotionRepository _promotionRepository;
         private readonly IImageRepository _imageRepository;
         private readonly ISmartDevicePackageRepository _smartDevicePackage;
+
         private readonly IDevicePackageUsageRepository _devicePackageUsageRepository;
+
 
         private readonly ICloudStorageService _cloudStorageService;
 
@@ -37,7 +39,9 @@ namespace ISHE_Service.Implementations
             _promotionRepository = unitOfWork.Promotion;
             _imageRepository = unitOfWork.Image;
             _smartDevicePackage = unitOfWork.SmartDevicePackage;
+
             _devicePackageUsageRepository = unitOfWork.DevicePackageUsage;
+
 
             _cloudStorageService = cloudStorageService;
         }
@@ -144,7 +148,9 @@ namespace ISHE_Service.Implementations
                 try
                 {
                     var manufactureId = await CheckManufacturer(model.ManufacturerId);
+
                     List<Promotion>? promotion = await CheckPromotion(model.PromotionIds) ?? new List<Promotion>();
+
                     devicePackageId = Guid.NewGuid();
                     var totalPrice = await AddSmartDevices(devicePackageId, model.SmartDeviceIds);
 
@@ -158,7 +164,9 @@ namespace ISHE_Service.Implementations
                         CompletionTime = model.CompletionTime,
                         Description = model.Description,
                         Price = totalPrice,
+
                         Status = totalPrice > 0 ? DevicePackageStatus.Active.ToString() : DevicePackageStatus.InActive.ToString(),
+
                     };
 
                     _packageRepository.Add(devicePackage);
@@ -182,7 +190,9 @@ namespace ISHE_Service.Implementations
         public async Task<DevicePackageDetailViewModel> UpdateDevicePackage(Guid id, UpdateDevicePackageModel model)
         {
             var devicePackage = await _packageRepository.GetMany(device => device.Id.Equals(id))
+
                 .Include(x => x.Promotions)
+
                 .FirstOrDefaultAsync() ?? throw new NotFoundException("Không tìm thấy device package");
 
             if (model.ManufacturerId.HasValue)
@@ -206,6 +216,7 @@ namespace ISHE_Service.Implementations
                 //devicePackage.SmartDevices.Clear();
                 //devicePackage.SmartDevices = smartDevices;
                 //devicePackage.Price = totalPrice;
+
             }
 
             if(model.PromotionIds != null && model.PromotionIds.Count() > 0)
@@ -222,6 +233,7 @@ namespace ISHE_Service.Implementations
 
             devicePackage.Name = model.Name ?? devicePackage.Name;
             //devicePackage.PromotionId = model.PromotionId ?? devicePackage.PromotionId;
+
             devicePackage.WarrantyDuration = model.WarrantyDuration ?? devicePackage.WarrantyDuration;
             devicePackage.CompletionTime = model.CompletionTime ?? devicePackage.CompletionTime;
             devicePackage.Description = model.Description ?? devicePackage.Description;
@@ -344,6 +356,7 @@ namespace ISHE_Service.Implementations
         {
             int totalPrice = 0;
 
+
             var uniques = new HashSet<Guid>();
             foreach(var item in smartDevices)
             {
@@ -367,6 +380,7 @@ namespace ISHE_Service.Implementations
                     totalPrice += device.Price * item.Quantity;
                 }
                  
+
             }
             return totalPrice;
         }
@@ -403,6 +417,7 @@ namespace ISHE_Service.Implementations
                 }
                 else
                 {
+
                     if (device.Status == SmartDeviceStatus.InActive.ToString())
                     {
                         throw new BadRequestException("Smart device không còn được hỗ trợ trên hệ thống");

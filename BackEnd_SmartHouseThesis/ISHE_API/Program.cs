@@ -1,5 +1,7 @@
+
 ﻿using Hangfire;
 using ISHE_API.Configurations;
+
 using ISHE_Data.Entities;
 using ISHE_Data.Mapping;
 using ISHE_Utility.Settings;
@@ -48,6 +50,7 @@ builder.Services.AddCors(options =>
                                   "http://192.168.118.2:8100",
                                   "https://phatdat-store.web.app",
                                   "https://phatdat-teller.web.app");
+
                           policy.AllowCredentials();
                       });
 });
@@ -58,8 +61,10 @@ builder.Services.AddSwagger();
 builder.Services.AddDependenceInjection();
 builder.Services.AddAutoMapper(typeof(GeneralProfile));
 
+
 //HangFire
 builder.Services.AddHangfireServices(builder.Configuration);
+
 
 var app = builder.Build();
 

@@ -14,7 +14,9 @@ using ISHE_Utility.Constants;
 using ISHE_Utility.Enum;
 using ISHE_Utility.Exceptions;
 using ISHE_Utility.Helpers.Utils;
+
 using ISHE_Utility.Settings;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -37,15 +39,19 @@ namespace ISHE_Service.Implementations
         private readonly ISurveyRequestRepository _surveyRequest;
         private readonly ISurveyRepository _survey;
         private readonly ICloudStorageService _cloudStorageService;
+
         private readonly IAcceptanceRepository _acceptance;
         private readonly ITellerAccountRepository _teller;
+
 
         private readonly INotificationService _notificationService;
         private readonly IPaymentService _paymentService;
         private readonly AppSetting _appSetting;
         private readonly ISendMailService _sendMailService;
 
+
         public ContractService(IUnitOfWork unitOfWork, IMapper mapper, IPaymentService paymentService, ICloudStorageService cloudStorageService, IOptions<AppSetting> appSettings, INotificationService notificationService, ISendMailService sendMailService) : base(unitOfWork, mapper)
+
         {
             _contract = unitOfWork.Contract;
             _contractDetail = unitOfWork.ContractDetail;
@@ -61,9 +67,11 @@ namespace ISHE_Service.Implementations
             _customerAccount = unitOfWork.CustomerAccount;
             _paymentService = paymentService;
             _cloudStorageService = cloudStorageService;
+
             _appSetting = appSettings.Value;
             _notificationService = notificationService;
             _sendMailService = sendMailService;
+
         }
 
 
@@ -125,6 +133,7 @@ namespace ISHE_Service.Implementations
             {
                 try
                 {
+
                     await checkInputId(model.TellerId, model.StaffId);
                     var customer = await GetCustomer(model.SurveyId);
                     contractId = GenerateContractId();
@@ -133,6 +142,7 @@ namespace ISHE_Service.Implementations
 
                     var startPlanDate = CheckFormatDate(model.StartPlanDate.ToString());
                     var endPlanDate = startPlanDate.AddDays(totalDay);
+
                     await CheckStaff(model.StaffId, startPlanDate, endPlanDate);
 
                     var contract = new Contract
@@ -187,11 +197,20 @@ namespace ISHE_Service.Implementations
             {
                 UpdateContractStatus(contract, model.Status);
             }
-
-
             contract.Title = model.Title ?? contract.Title;
             contract.Description = model.Description ?? contract.Description;
 
+
+            var totalPackagePrice = (int)contract.DevicePackageUsages.Sum(usage => usage.DiscountAmount.HasValue ? usage.Price * (100 - usage.DiscountAmount) / 100 : usage.Price)!;
+            var totalDevicePrice = contract.ContractDetails
+                .Where(detail => detail.Type.Equals(ContractDetailType.Purchase))
+                .Sum(detail => (detail.Price + detail.InstallationPrice) * detail.Quantity);
+
+            if (model.StaffId.HasValue)
+            {
+                await CheckStaff(model.StaffId.Value, contract.StartPlanDate, contract.EndPlanDate);
+                contract.StaffId = model.StaffId.Value;
+            }
 
             var totalPackagePrice = (int)contract.DevicePackageUsages.Sum(usage => usage.DiscountAmount.HasValue ? usage.Price * (100 - usage.DiscountAmount) / 100 : usage.Price)!;
             var totalDevicePrice = contract.ContractDetails
@@ -272,6 +291,19 @@ namespace ISHE_Service.Implementations
         }
 
         //PRIVATE METHOD
+        private async Task<string> UploadContractImage(string contractId, IFormFile image)
+        {
+            if (!image.ContentType.StartsWith("image/"))
+            {
+                throw new BadRequestException("File không phải là hình ảnh");
+            }
+
+            await _cloudStorageService.DeleteContract(contractId);
+
+            var url = await _cloudStorageService.UploadContract(contractId, image.ContentType, image.OpenReadStream());
+            return url;
+        }
+
 
         private async Task CheckStaff(Guid staffId, DateTime startDate, DateTime endDate)
         {
@@ -289,6 +321,7 @@ namespace ISHE_Service.Implementations
             if (overlappingContracts.Any())
             {
                 throw new BadRequestException($"Staff đã được giao hợp đồng trong khoảng thời gian {startDate.ToString("dd/MM/yyyy")} - {endDate.ToString("dd/MM/yyyy")} này");
+
             }
         }
 
@@ -327,6 +360,7 @@ namespace ISHE_Service.Implementations
             _survey.Update(survey);
 
             return survey.SurveyRequest.Customer;
+
         }
 
         private async Task<int> CreateContractDetail(string contractId, List<SmartDevices> details, bool IsUpdate)
@@ -365,6 +399,7 @@ namespace ISHE_Service.Implementations
                         Quantity = quantity,
                         IsInstallation = true,
                     };
+
 
                     _contractDetail.Add(detail);
 
@@ -469,11 +504,14 @@ namespace ISHE_Service.Implementations
         }
 
 
+
         private void UpdateContractStatus(Contract contract, string newStatus)
+
         {
             switch (contract.Status)
             {
                 case nameof(ContractStatus.PendingDeposit):
+
                     if (newStatus == nameof(ContractStatus.Cancelled))
                     {
                         contract.Status = ContractStatus.Cancelled.ToString();
@@ -483,6 +521,7 @@ namespace ISHE_Service.Implementations
                         throw new BadRequestException($"Không thể cập nhật trạng thái từ {contract.Status} thành {newStatus}");
                     }
                     break;
+
                 case nameof(ContractStatus.DepositPaid):
                     if (newStatus == nameof(ContractStatus.InProgress))
                     {
@@ -525,6 +564,7 @@ namespace ISHE_Service.Implementations
                     break;
                 default:
                     throw new BadRequestException($"Không thể cập nhật trạng thái từ {contract.Status} thành {newStatus}");
+
             }
         }
 

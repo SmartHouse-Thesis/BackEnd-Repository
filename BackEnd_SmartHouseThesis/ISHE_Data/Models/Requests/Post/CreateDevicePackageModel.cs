@@ -13,6 +13,7 @@ namespace ISHE_Data.Models.Requests.Post
         public IFormFile Image { get; set; } = null!;
 
         public List<Guid>? PromotionIds { get; set; }
+
         public List<SmartDevices> SmartDeviceIds { get; set; } = new List<SmartDevices>();
     }
 
